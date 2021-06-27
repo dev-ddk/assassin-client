@@ -50,53 +50,54 @@ class Homepage extends StatelessWidget {
         title: const Text("ASSASIN LOGIN PAGE"),
       ),
       body: SingleChildScrollView(
-          child: Padding(
-        padding: const EdgeInsets.all(32.0),
-        child: Form(
-          key: _formKey,
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset("assets/logo.jpg"),
-                const SizedBox(height: 25),
-                TextFormField(
-                  validator: (value) {
-                    if (value?.isEmpty ?? false) {
-                      return 'Email should contain stuff';
-                    }
-                    return null;
-                  },
-                  textAlign: TextAlign.center,
-                  decoration: const InputDecoration(hintText: 'Mario Rossi'),
-                ),
-                PasswordToggleField(
-                  hint: "Password",
-                  validator: (value) {
-                    if (value?.isEmpty ?? false) {
-                      return 'passowrd should contain stuff';
-                    }
-                    return null;
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Processing Data')));
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Form(
+            key: _formKey,
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset("assets/logo.jpg"),
+                  const SizedBox(height: 25),
+                  TextFormField(
+                    validator: (value) {
+                      if (value?.isEmpty ?? false) {
+                        return 'Email should contain stuff';
                       }
+                      return null;
                     },
-                    child: const Text('Submit'),
+                    textAlign: TextAlign.center,
+                    decoration: const InputDecoration(hintText: 'Mario Rossi'),
                   ),
-                ),
-              ],
+                  PasswordToggleField(
+                    hint: "Password",
+                    validator: (value) {
+                      if (value?.isEmpty ?? false) {
+                        return 'passowrd should contain stuff';
+                      }
+                      return null;
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Processing Data')));
+                        }
+                      },
+                      child: const Text('Submit'),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      )),
+      ),
     );
   }
 }
