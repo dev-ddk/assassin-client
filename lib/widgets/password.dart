@@ -18,15 +18,15 @@ class PasswordFieldModel extends ChangeNotifier {
   }
 }
 
-final focusNodeProvider = ChangeNotifierProvider((ref) => FocusNode());
-final fieldModelProvider =
-    ChangeNotifierProvider((ref) => PasswordFieldModel());
-
 class PasswordToggleField extends ConsumerWidget {
   final passwordController = TextEditingController();
   final String? hint;
   final TextAlign textAlign;
   final String? Function(String?)? validator;
+
+  final focusNodeProvider = ChangeNotifierProvider((ref) => FocusNode());
+  final fieldModelProvider =
+      ChangeNotifierProvider((ref) => PasswordFieldModel());
 
   static final iconShow = Icons.ac_unit;
   static final iconHide = Icons.handyman_outlined;
