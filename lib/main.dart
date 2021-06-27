@@ -1,11 +1,14 @@
 // Flutter imports:
 import 'package:flutter/material.dart';
 
+// Package imports:
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 // Project imports:
 import 'package:assassin_client/widgets/password.dart';
 
 void main() {
-  runApp(const AssassinApp());
+  runApp(const ProviderScope(child: AssassinApp()));
 }
 
 class AssassinApp extends StatelessWidget {

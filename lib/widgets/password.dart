@@ -3,27 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 // Package imports:
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PasswordFieldModel extends ChangeNotifier {
-  String _password;
   bool _show;
 
-  PasswordFieldModel()
-      : _password = "",
-        _show = false;
+  PasswordFieldModel() : _show = false;
 
   get show => _show;
-  get password => _password;
 
-  void toggle(String currPass) {
-    _password = currPass;
+  void toggle() {
     _show = !_show;
     notifyListeners();
   }
 }
 
-class PasswordToggleField extends StatelessWidget {
+final focusNodeProvider = ChangeNotifierProvider((ref) => FocusNode());
+final fieldModelProvider =
+    ChangeNotifierProvider((ref) => PasswordFieldModel());
+
+class PasswordToggleField extends ConsumerWidget {
   final passwordController = TextEditingController();
   final String? hint;
   final TextAlign textAlign;
@@ -37,36 +36,31 @@ class PasswordToggleField extends StatelessWidget {
       : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider<FocusNode>(
-      create: (_) => FocusNode(),
-      child: ChangeNotifierProvider(
-        create: (_) => PasswordFieldModel(),
-        child: Consumer2<PasswordFieldModel, FocusNode>(
-          builder: (context, pwfield, focusNode, child) => Stack(
-            children: [
-              TextFormField(
-                controller: passwordController,
-                focusNode: focusNode,
-                obscureText: !pwfield.show,
-                textAlign: textAlign,
-                validator: validator,
-                decoration: InputDecoration(hintText: hint),
-              ),
-              Visibility(
-                visible: focusNode.hasFocus,
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: IconButton(
-                    icon: Icon(pwfield.show ? iconShow : iconHide),
-                    onPressed: () => pwfield.toggle(passwordController.text),
-                  ),
-                ),
-              ),
-            ],
+  Widget build(BuildContext context, ScopedReader watch) {
+    final focusNode = watch(focusNodeProvider);
+    final pwfield = watch(fieldModelProvider);
+
+    return Stack(
+      children: [
+        TextFormField(
+          controller: passwordController,
+          focusNode: focusNode,
+          obscureText: !pwfield.show,
+          textAlign: textAlign,
+          validator: validator,
+          decoration: InputDecoration(hintText: hint),
+        ),
+        Visibility(
+          visible: focusNode.hasFocus,
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: IconButton(
+              icon: Icon(pwfield.show ? iconShow : iconHide),
+              onPressed: () => pwfield.toggle(),
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
 }

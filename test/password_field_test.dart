@@ -9,6 +9,7 @@
 import 'package:flutter/material.dart';
 
 // Package imports:
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // Project imports:
@@ -21,7 +22,7 @@ void main() {
 
     const hint = "Password";
 
-    await tester.pumpWidget(const AssassinApp());
+    await tester.pumpWidget(const ProviderScope(child: AssassinApp()));
 
     //No icons when text is not focused
     expect(find.byIcon(PasswordToggleField.iconHide), findsNothing);
