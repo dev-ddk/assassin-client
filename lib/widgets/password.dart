@@ -5,47 +5,36 @@ import 'package:flutter/widgets.dart';
 // Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class PasswordFieldModel extends ChangeNotifier {
-  bool _show;
-
-  PasswordFieldModel() : _show = false;
-
-  get show => _show;
-
-  void toggle() {
-    _show = !_show;
-    notifyListeners();
-  }
-}
-
 class PasswordToggleField extends ConsumerWidget {
   final passwordController = TextEditingController();
   final String? hint;
   final TextAlign textAlign;
   final String? Function(String?)? validator;
 
-  final focusNodeProvider = ChangeNotifierProvider((ref) => FocusNode());
-  final fieldModelProvider =
-      ChangeNotifierProvider((ref) => PasswordFieldModel());
+  final focusNodeProvider = ChangeNotifierProvider((_) => FocusNode());
+  final hidePwdStateProvider = StateProvider<bool>((_) => true);
 
   static final iconShow = Icons.ac_unit;
   static final iconHide = Icons.handyman_outlined;
 
-  PasswordToggleField(
-      {Key? key, this.hint, this.validator, this.textAlign = TextAlign.center})
-      : super(key: key);
+  PasswordToggleField({
+    Key? key,
+    this.hint,
+    this.validator,
+    this.textAlign = TextAlign.center,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final focusNode = watch(focusNodeProvider);
-    final pwfield = watch(fieldModelProvider);
+    final hidePassword = watch(hidePwdStateProvider).state;
 
     return Stack(
       children: [
         TextFormField(
           controller: passwordController,
           focusNode: focusNode,
-          obscureText: !pwfield.show,
+          obscureText: hidePassword,
           textAlign: textAlign,
           validator: validator,
           decoration: InputDecoration(hintText: hint),
@@ -55,8 +44,9 @@ class PasswordToggleField extends ConsumerWidget {
           child: Align(
             alignment: Alignment.centerRight,
             child: IconButton(
-              icon: Icon(pwfield.show ? iconShow : iconHide),
-              onPressed: () => pwfield.toggle(),
+              icon: Icon(hidePassword ? iconHide : iconShow),
+              // invert hide state
+              onPressed: () => context.read(hidePwdStateProvider).state ^= true,
             ),
           ),
         ),
