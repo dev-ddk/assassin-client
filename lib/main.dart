@@ -5,12 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Project imports:
+import 'package:assassin_client/pages/edit_profile.dart';
 import 'package:assassin_client/pages/target.dart';
 import 'package:assassin_client/widgets/password.dart';
 
 void main() {
   runApp(const ProviderScope(child: AssassinApp()));
 }
+
+final routes = {
+  '/target': (context) => const TargetRoute(),
+  '/edit-profile': (context) => const EditProfileRoute(),
+};
 
 class AssassinApp extends StatelessWidget {
   const AssassinApp({Key? key}) : super(key: key);
@@ -33,9 +39,7 @@ class AssassinApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: Homepage(),
-      routes: {
-        '/target': (context) => const TargetRoute(),
-      },
+      routes: routes,
     );
   }
 }
@@ -63,6 +67,7 @@ class Homepage extends StatelessWidget {
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  DebugRoutes(),
                   Image.asset("assets/logo.jpg"),
                   const SizedBox(height: 25),
                   TextFormField(
@@ -104,6 +109,29 @@ class Homepage extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class DebugRoutes extends StatelessWidget {
+  const DebugRoutes({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        for (final route in routes.keys)
+          Container(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => Navigator.pushNamed(context, route),
+              child: Text(route),
+              style: ElevatedButton.styleFrom(primary: Colors.red),
+            ),
+          ),
+      ],
     );
   }
 }
