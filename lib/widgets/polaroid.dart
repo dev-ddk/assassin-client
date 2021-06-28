@@ -17,7 +17,7 @@ class _StepCurve extends Curve {
 }
 
 class Polaroid extends ConsumerWidget {
-  Polaroid({
+  const Polaroid({
     Key? key,
     required this.targetLabel,
     required this.targetPicture,
@@ -62,7 +62,7 @@ class Polaroid extends ConsumerWidget {
                         //TODO: add 'handwritten' font
                         style: Theme.of(context).textTheme.headline6,
                       ),
-                      SizedBox(height: 50)
+                      const SizedBox(height: 50)
                     ],
                   ),
                 ),

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Project imports:
+import 'package:assassin_client/pages/target.dart';
 import 'package:assassin_client/widgets/password.dart';
 
 void main() {
@@ -31,15 +32,18 @@ class AssassinApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: Homepage(title: 'Flutter Demo Home Page'),
+      home: Homepage(),
+      routes: {
+        '/target': (context) => const TargetRoute(),
+      },
     );
   }
 }
 
 class Homepage extends StatelessWidget {
-  final String title;
+  final String title = "ASSASSIN APP";
   final _formKey = GlobalKey<FormState>();
-  Homepage({Key? key, required this.title}) : super(key: key);
+  Homepage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -83,10 +87,12 @@ class Homepage extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Processing Data')));
+                          await Future.delayed(const Duration(seconds: 2));
+                          Navigator.pushNamed(context, '/target');
                         }
                       },
                       child: const Text('Submit'),
