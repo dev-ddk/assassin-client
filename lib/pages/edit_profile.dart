@@ -12,19 +12,18 @@ class EditProfileRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Edit Profile"),
+        title: const Text('Edit Profile'),
       ),
       body: Center(
         child: ElevatedButton(
-          child: Text("Select Photo"),
           onPressed: () async {
-            FilePickerResult? result = await FilePicker.platform.pickFiles(
+            final result = await FilePicker.platform.pickFiles(
               type: FileType.custom,
               allowedExtensions: ['jpg', 'png', 'jpeg'],
             );
 
             if (result != null) {
-              PlatformFile file = result.files.first;
+              final file = result.files.first;
               print(file.name);
               print(file.bytes);
               print(file.size);
@@ -34,6 +33,7 @@ class EditProfileRoute extends StatelessWidget {
               // User canceled the picker
             }
           },
+          child: Text('Select Photo'),
         ),
       ),
     );

@@ -20,7 +20,7 @@ void main() {
   testWidgets('Show Hide Password', (WidgetTester tester) async {
     // Build our app and trigger a frame.
 
-    const hint = "Password";
+    const hint = 'Password';
 
     await tester.pumpWidget(const ProviderScope(child: AssassinApp()));
 

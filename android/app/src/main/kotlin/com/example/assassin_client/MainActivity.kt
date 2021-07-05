@@ -1,4 +1,4 @@
-package com.example.assassin_client
+package it.devddk.assassin
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -31,7 +31,7 @@ class Polaroid extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final rotationState = watch(rotationProvider).state;
-    final Random rng = Random();
+    final rng = Random();
 
     return GestureDetector(
       onTap: () => context.read(rotationProvider).state ^= true,
@@ -46,7 +46,7 @@ class Polaroid extends ConsumerWidget {
           curve: Curves.easeInOut,
           child: Stack(
             children: [
-              Image(image: AssetImage("assets/polaroid.png")),
+              Image(image: AssetImage('assets/polaroid.png')),
               AnimatedOpacity(
                 curve: _StepCurve(),
                 duration: animateDuration,

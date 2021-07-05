@@ -9,6 +9,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Project imports:
+import 'package:assassin_client/widgets/form_fields.dart';
 import 'package:assassin_client/widgets/polaroid.dart';
 
 final rotateProvider = StateProvider<bool>((ref) => false);
@@ -20,19 +21,27 @@ class TargetRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Second Route"),
+        title: const Text('Second Route'),
       ),
-      body: Polaroid(
-        targetLabel: "Target",
-        targetPicture: Container(
-          color: Colors.red,
-          alignment: Alignment.center,
-          child: Transform.rotate(
-            angle: -pi / 4,
-            child: Text("Target Profile Picture"),
+      body: Column(
+        children: [
+          Polaroid(
+            targetLabel: 'Target',
+            targetPicture: Container(
+              color: Colors.red,
+              alignment: Alignment.center,
+              child: Transform.rotate(
+                angle: -pi / 4,
+                child: const Text('Target Profile Picture'),
+              ),
+            ),
+            animateDuration: Duration(milliseconds: 400),
           ),
-        ),
-        animateDuration: Duration(milliseconds: 400),
+          AssassinFormField(
+            icon: Icons.ac_unit,
+            obscureText: true,
+          ),
+        ],
       ),
     );
   }

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1056907264163",
+    "project_id": "assassin-8c704",
+    "storage_bucket": "assassin-8c704.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1056907264163:android:97a762781e097f97d8bf16",
+        "android_client_info": {
+          "package_name": "it.devddk.assassin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1056907264163-nslfa52871f996g5nk32ct85inh5gjme.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDr4j0bFc-8xze_7hwaNSQIy1S-m-Vj5Lg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1056907264163-nslfa52871f996g5nk32ct85inh5gjme.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
