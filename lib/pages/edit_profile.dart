@@ -5,13 +5,18 @@ import 'package:flutter/widgets.dart';
 // Package imports:
 import 'package:file_picker/file_picker.dart';
 
+// Project imports:
+import 'package:assassin_client/colors.dart';
+
 class EditProfileRoute extends StatelessWidget {
   const EditProfileRoute({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: assassinDarkestBlue,
       appBar: AppBar(
+        backgroundColor: assassinDarkBlue,
         title: const Text('Edit Profile'),
       ),
       body: Center(

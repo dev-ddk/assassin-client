@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Project imports:
 import 'package:assassin_client/pages/edit_profile.dart';
+import 'package:assassin_client/pages/logged_in.dart';
 import 'package:assassin_client/pages/login.dart';
 import 'package:assassin_client/pages/target.dart';
 
@@ -18,8 +19,13 @@ void main() {
 
 final routes = {
   '/login': (context) => LoginRoute(),
+  '/homepage': (context) => HomePage(),
   '/target': (context) => const TargetRoute(),
   '/edit-profile': (context) => const EditProfileRoute(),
+  '/homepage/target': (context) => const TargetRoute(),
+  '/homepage/game': (context) => const EditProfileRoute(),
+  '/homepage/report': (context) => const TargetRoute(),
+  '/homepage/profile': (context) => const EditProfileRoute(),
 };
 
 final firebaseProvider = FutureProvider<FirebaseApp>(

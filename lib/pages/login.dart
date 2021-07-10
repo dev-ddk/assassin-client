@@ -47,7 +47,9 @@ class LoginRoute extends StatelessWidget {
                   children: [
                     Form(
                       key: _formKey,
-                      child: _buildBody(constraints, context, auth),
+                      child: AutofillGroup(
+                        child: _buildBody(constraints, context, auth),
+                      ),
                     ),
                     _buildRegisterButton(context),
                   ],
@@ -151,12 +153,20 @@ class LoginRoute extends StatelessWidget {
       onPressed: () async {
         FocusManager.instance.primaryFocus?.unfocus();
 
-        await _doLogin(auth, context);
+        final login = await _doLogin(auth, context);
+
+        final displayContent = login?.toString() ?? 'Login Failed';
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(displayContent)),
+        );
+
+        await Navigator.pushNamed(context, '/homepage');
       },
     );
   }
 
-  Future<void> _doLogin(auth, context) async {
+  Future<UserCredential?> _doLogin(FirebaseAuth auth, context) async {
     if (_formKey.currentState!.validate()) {
       try {
         final userCredential = await auth.signInWithEmailAndPassword(
@@ -164,14 +174,8 @@ class LoginRoute extends StatelessWidget {
           password: passwordController.text,
         );
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(userCredential.toString())),
-        );
-      } on FirebaseAuthException catch (_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login Failed')),
-        );
-      }
+        return userCredential;
+      } on FirebaseAuthException catch (_) {}
     }
   }
 

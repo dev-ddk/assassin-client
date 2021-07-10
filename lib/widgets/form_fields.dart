@@ -68,6 +68,9 @@ class AssassinFormField extends ConsumerWidget {
             controller: controller,
             validator: validator,
             textAlign: TextAlign.center,
+            autofillHints: [
+              obscureText ? AutofillHints.password : AutofillHints.email,
+            ],
             obscureText: obscureText && hidePassword,
             enabled: enabled,
             decoration: _buildInputDecoration(

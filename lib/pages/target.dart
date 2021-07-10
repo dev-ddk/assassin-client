@@ -9,7 +9,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Project imports:
-import 'package:assassin_client/widgets/form_fields.dart';
+import 'package:assassin_client/colors.dart';
 import 'package:assassin_client/widgets/polaroid.dart';
 
 final rotateProvider = StateProvider<bool>((ref) => false);
@@ -20,7 +20,9 @@ class TargetRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: assassinDarkestBlue,
       appBar: AppBar(
+        backgroundColor: assassinDarkBlue,
         title: const Text('Second Route'),
       ),
       body: Column(
@@ -36,10 +38,6 @@ class TargetRoute extends StatelessWidget {
               ),
             ),
             animateDuration: Duration(milliseconds: 400),
-          ),
-          AssassinFormField(
-            icon: Icons.ac_unit,
-            obscureText: true,
           ),
         ],
       ),
