@@ -8,7 +8,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // Project imports:
 import '../colors.dart';
 
+const iconShow = Icons.visibility_off;
+const iconHide = Icons.visibility;
+
 class AssassinFormField extends ConsumerWidget {
+  final focusProvider = ChangeNotifierProvider.autoDispose((_) => FocusNode());
+
+  final hidePwdStateProvider = StateProvider.autoDispose<bool>((_) => true);
+  final showIconProvider = StateProvider.autoDispose<bool>((_) => false);
+
   AssassinFormField({
     Key? key,
     required this.icon,
@@ -20,22 +28,18 @@ class AssassinFormField extends ConsumerWidget {
   }) : super(key: key);
 
   final IconData icon;
-  final bool obscureText;
   final String hintText;
-  final String? Function(String?)? validator;
+
   final bool enabled;
+  final bool obscureText;
+
   final TextEditingController? controller;
-
-  static const iconShow = Icons.ac_unit;
-  static const iconHide = Icons.handyman_outlined;
-
-  final focusNodeProvider = ChangeNotifierProvider((_) => FocusNode());
-  final hidePwdStateProvider = StateProvider<bool>((_) => true);
+  final String? Function(String?)? validator;
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    final focusNode = watch(focusNodeProvider);
     final hidePassword = watch(hidePwdStateProvider).state;
+    final focusNode = watch(focusProvider);
 
     final border = OutlineInputBorder(
       borderRadius: BorderRadius.circular(20),
@@ -73,30 +77,37 @@ class AssassinFormField extends ConsumerWidget {
             ),
           ),
           if (obscureText)
-            Visibility(
-              visible: focusNode.hasFocus,
-              child: Container(
-                padding: EdgeInsets.only(top: 10, right: 10),
-                alignment: Alignment.centerRight,
-                child: IconButton(
-                  icon: Icon(
-                    hidePassword ? iconHide : iconShow,
-                    color: assassinDarkBlue,
-                  ),
-                  // invert hide state
-                  onPressed: () {
-                    context.read(hidePwdStateProvider).state ^= true;
-                  },
-                ),
-              ),
-            ),
+            _buildShowPasswordButton(focusNode.hasFocus, hidePassword, context),
         ],
       ),
     );
   }
 
-  InputDecoration _buildInputDecoration(OutlineInputBorder border,
-      OutlineInputBorder errorBorder, OutlineInputBorder disabledBorder) {
+  Widget _buildShowPasswordButton(
+    bool showIcon,
+    bool hidePassword,
+    BuildContext context,
+  ) {
+    return Visibility(
+      visible: showIcon,
+      child: Container(
+        padding: EdgeInsets.only(top: 10, right: 10),
+        alignment: Alignment.centerRight,
+        child: IconButton(
+          icon: Icon(
+            hidePassword ? iconHide : iconShow,
+            color: assassinDarkBlue,
+          ),
+          onPressed: () {
+            // invert hide state
+            context.read(hidePwdStateProvider).state ^= true;
+          },
+        ),
+      ),
+    );
+  }
+
+  InputDecoration _buildInputDecoration(border, errorBorder, disabledBorder) {
     return InputDecoration(
       prefixIcon: Padding(
         padding: const EdgeInsets.only(left: 20, top: 2),

@@ -10,23 +10,21 @@ class AssassinConfirmButton extends StatelessWidget {
     Key? key,
     required this.text,
     required this.onPressed,
-    this.minWidth = 0,
-    this.minHeight = 0,
   }) : super(key: key);
 
   final String text;
-  final double minWidth, minHeight;
   final Function()? onPressed;
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-          primary: assassinRed,
-          padding: EdgeInsets.all(10),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          minimumSize: Size(minWidth, minHeight)),
+        primary: assassinRed,
+        padding: EdgeInsets.all(10),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
       onPressed: onPressed,
       child: Text(
         text,

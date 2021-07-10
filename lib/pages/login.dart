@@ -1,3 +1,6 @@
+// Dart imports:
+import 'dart:ui';
+
 // Flutter imports:
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -28,44 +31,55 @@ class LoginRoute extends StatelessWidget {
       value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
       ),
-      child: Scaffold(
-        backgroundColor: assassinDarkestBlue,
-        body: Padding(
-          padding: EdgeInsets.only(bottom: 10, right: 20, left: 20),
-          child: LayoutBuilder(
-            builder: (context, constraints) => SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: Form(
-                  key: _formKey,
-                  child: IntrinsicHeight(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const SizedBox(height: 20),
-                        _buildLogo(context),
-                        Column(
-                          children: [
-                            _buildEmailForm(),
-                            const SizedBox(height: 20),
-                            _buildPasswordForm(),
-                            _buildForgotPassword(context),
-                            _buildLoginButton(context, auth),
-                            const SizedBox(height: 20),
-                            _buildSocialLoginButtons(context, auth),
-                          ],
-                        ),
-                        _buildRegisterButton(context),
-                        DebugRoutes(),
-                      ],
+      child: LayoutBuilder(
+        builder: (context, constraints) => Scaffold(
+          backgroundColor: assassinDarkestBlue,
+          body: SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: constraints.copyWith(
+                minHeight: constraints.maxHeight,
+                maxHeight: double.infinity,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(14.0),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Form(
+                      key: _formKey,
+                      child: _buildBody(constraints, context, auth),
                     ),
-                  ),
+                    _buildRegisterButton(context),
+                  ],
                 ),
               ),
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Column _buildBody(constraints, context, auth) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildLogo(constraints.maxWidth),
+            DebugRoutes(),
+          ],
+        ),
+        const SizedBox(height: 60),
+        _buildEmailForm(),
+        const SizedBox(height: 20),
+        _buildPasswordForm(),
+        _buildForgotPassword(context),
+        _buildLoginButton(context, auth, constraints.minWidth),
+        const SizedBox(height: 20),
+        _buildSocialLoginButtons(context, auth),
+        const SizedBox(height: 20),
+      ],
     );
   }
 
@@ -89,12 +103,12 @@ class LoginRoute extends StatelessWidget {
     );
   }
 
-  Widget _buildForgotPassword(BuildContext context) {
+  Widget _buildForgotPassword(context) {
     return TextButton(
       onPressed: () {},
       child: Text(
         'Forgot password?',
-        style: DefaultTextStyle.of(context).style.copyWith(
+        style: Theme.of(context).textTheme.bodyText2!.copyWith(
               color: assassinLightBlue,
               decoration: TextDecoration.underline,
             ),
@@ -102,55 +116,63 @@ class LoginRoute extends StatelessWidget {
     );
   }
 
-  Widget _buildRegisterButton(BuildContext context) {
-    return TextButton(
-      onPressed: () {},
-      child: RichText(
-        text: TextSpan(
-          text: 'Don’t have an account? ',
-          style: DefaultTextStyle.of(context)
-              .style
-              .copyWith(color: assassinLightBlue),
-          children: [
-            TextSpan(
-              text: 'Sign up!',
-              style: TextStyle(
-                color: assassinRed,
-                fontWeight: FontWeight.bold,
-                decoration: TextDecoration.underline,
-              ),
+  Widget _buildRegisterButton(context) {
+    return Positioned(
+      bottom: 10,
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'Don’t have an account? ',
+            style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                  color: assassinLightBlue,
+                ),
+          ),
+          GestureDetector(
+            onTap: () {},
+            child: Text(
+              'Sign up!',
+              style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                    color: assassinRed,
+                    decoration: TextDecoration.underline,
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildLoginButton(BuildContext context, FirebaseAuth auth) {
+  Widget _buildLoginButton(context, auth, width) {
     return AssassinConfirmButton(
       text: 'LOGIN',
-      minWidth: MediaQuery.of(context).size.width / 2,
       onPressed: () async {
-        FocusScope.of(context).unfocus();
+        FocusManager.instance.primaryFocus?.unfocus();
 
-        if (_formKey.currentState!.validate()) {
-          try {
-            final userCredential = await auth.signInWithEmailAndPassword(
-              email: emailController.text,
-              password: passwordController.text,
-            );
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(userCredential.toString())),
-            );
-          } on FirebaseAuthException catch (_) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Login Failed')),
-            );
-          }
-        }
+        await _doLogin(auth, context);
       },
     );
+  }
+
+  Future<void> _doLogin(auth, context) async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        final userCredential = await auth.signInWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text,
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(userCredential.toString())),
+        );
+      } on FirebaseAuthException catch (_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login Failed')),
+        );
+      }
+    }
   }
 
   Widget _buildEmailForm() {
@@ -182,13 +204,11 @@ class LoginRoute extends StatelessWidget {
     );
   }
 
-  Widget _buildLogo(BuildContext context) {
+  Widget _buildLogo(width) {
     return Container(
-      width: MediaQuery.of(context).size.width / 2,
+      width: width / 2,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(
-          MediaQuery.of(context).size.width / 4,
-        ),
+        borderRadius: BorderRadius.circular(width / 4),
         boxShadow: [
           BoxShadow(
             color: Colors.black26,
@@ -236,7 +256,7 @@ class DebugRoutes extends StatelessWidget {
       children: [
         for (final route in routes.keys)
           Container(
-            width: double.infinity,
+            width: 150,
             child: ElevatedButton(
               onPressed: () => Navigator.pushNamed(context, route),
               style: ElevatedButton.styleFrom(primary: Colors.red),

@@ -39,6 +39,7 @@ class AssassinApp extends ConsumerWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+      debugShowCheckedModeBanner: false,
       home: firebase.when(
         loading: () => Center(child: CircularProgressIndicator()),
         error: (err, stack) => Center(child: Text('Error loading Firebase')),
