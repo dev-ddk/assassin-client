@@ -8,6 +8,7 @@ final GoogleSignIn _googleSignIn = GoogleSignIn(
     'https://www.googleapis.com/auth/contacts.readonly',
   ],
 );
+
 Future<UserCredential?> signInWithGoogle(auth) async {
   try {
     final googleAccount = await _googleSignIn.signIn();
