@@ -68,7 +68,7 @@ class LoginRoute extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildLogo(constraints.maxWidth),
+            _buildLogo(context, constraints.maxWidth),
             DebugRoutes(),
           ],
         ),
@@ -111,7 +111,7 @@ class LoginRoute extends StatelessWidget {
       child: Text(
         'Forgot password?',
         style: Theme.of(context).textTheme.bodyText2!.copyWith(
-              color: assassinLightBlue,
+              color: assassinBlue,
               decoration: TextDecoration.underline,
             ),
       ),
@@ -148,21 +148,26 @@ class LoginRoute extends StatelessWidget {
   }
 
   Widget _buildLoginButton(context, auth, width) {
-    return AssassinConfirmButton(
-      text: 'LOGIN',
-      onPressed: () async {
-        FocusManager.instance.primaryFocus?.unfocus();
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: AssassinConfirmButton(
+        text: 'LOGIN',
+        onPressed: () async {
+          FocusManager.instance.primaryFocus?.unfocus();
 
-        final login = await _doLogin(auth, context);
+          final login = await _doLogin(auth, context);
 
-        final displayContent = login?.toString() ?? 'Login Failed';
+          final displayContent = login?.toString() ?? 'Login Failed';
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(displayContent)),
-        );
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(displayContent)),
+          );
 
-        await Navigator.pushNamed(context, '/homepage');
-      },
+          if (login != null) {
+            await Navigator.pushNamed(context, '/homepage');
+          }
+        },
+      ),
     );
   }
 
@@ -208,20 +213,34 @@ class LoginRoute extends StatelessWidget {
     );
   }
 
-  Widget _buildLogo(width) {
-    return Container(
-      width: width / 2,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(width / 4),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 2,
-            offset: Offset(2, 2),
+  Widget _buildLogo(context, width) {
+    return Column(
+      children: [
+        Container(
+          width: width / 2,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(width / 4),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 2,
+                offset: Offset(2, 2),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Image.asset('assets/assassin_logo.png'),
+          child: Image.asset('assets/assassin_logo.png'),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            'by /dev/ddk',
+            style: Theme.of(context)
+                .textTheme
+                .bodyText2!
+                .copyWith(color: assassinBlue),
+          ),
+        )
+      ],
     );
   }
 }
@@ -261,6 +280,7 @@ class DebugRoutes extends StatelessWidget {
         for (final route in routes.keys)
           Container(
             width: 150,
+            height: 24,
             child: ElevatedButton(
               onPressed: () => Navigator.pushNamed(context, route),
               style: ElevatedButton.styleFrom(primary: Colors.red),
