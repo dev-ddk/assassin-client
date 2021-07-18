@@ -54,6 +54,11 @@ class AssassinFormField extends ConsumerWidget {
       borderSide: border.borderSide.copyWith(color: Colors.grey),
     );
 
+    final textStyle = Theme.of(context)
+        .textTheme
+        .bodyText1!
+        .copyWith(color: assassinDarkestBlue);
+
     return DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
@@ -64,6 +69,7 @@ class AssassinFormField extends ConsumerWidget {
       child: Stack(
         children: [
           TextFormField(
+            style: textStyle,
             focusNode: focusNode,
             controller: controller,
             validator: validator,
@@ -72,11 +78,14 @@ class AssassinFormField extends ConsumerWidget {
               obscureText ? AutofillHints.password : AutofillHints.email,
             ],
             obscureText: obscureText && hidePassword,
+            obscuringCharacter: '*',
             enabled: enabled,
             decoration: _buildInputDecoration(
+              context,
               border,
               errorBorder,
               disabledBorder,
+              textStyle,
             ),
           ),
           if (obscureText)
@@ -110,13 +119,25 @@ class AssassinFormField extends ConsumerWidget {
     );
   }
 
-  InputDecoration _buildInputDecoration(border, errorBorder, disabledBorder) {
+  InputDecoration _buildInputDecoration(
+    context,
+    border,
+    errorBorder,
+    disabledBorder,
+    textStyle,
+  ) {
+    final hintStyle = textStyle.copyWith(
+      color: assassinDarkBlue.withAlpha(180),
+    );
+    final errorStyle = textStyle.copyWith(color: assassinRed, fontSize: 14.0);
+
     return InputDecoration(
       prefixIcon: Padding(
         padding: const EdgeInsets.only(left: 20, top: 2),
         child: Icon(icon, color: assassinDarkBlue),
       ),
-      hintStyle: TextStyle(color: assassinDarkBlue, fontSize: 20),
+      errorStyle: errorStyle,
+      hintStyle: hintStyle,
       contentPadding: EdgeInsets.all(24),
       filled: true,
       fillColor: assassinBlue,
