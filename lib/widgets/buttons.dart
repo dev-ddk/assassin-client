@@ -10,28 +10,34 @@ class AssassinConfirmButton extends StatelessWidget {
     Key? key,
     required this.text,
     required this.onPressed,
+    this.backgroundColor = assassinWhite,
+    this.width = double.infinity,
   }) : super(key: key);
 
   final String text;
   final Function()? onPressed;
+  final Color backgroundColor;
+  final double width;
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        primary: assassinRed,
-        padding: EdgeInsets.all(10),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+    return SizedBox(
+      width: width,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          primary: backgroundColor,
+          padding: EdgeInsets.all(10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
-      ),
-      onPressed: onPressed,
-      child: Text(
-        text,
-        style: TextStyle(
-          color: assassinDarkestBlue,
-          fontSize: 24,
-          fontWeight: FontWeight.w900,
+        onPressed: onPressed,
+        child: Text(
+          text,
+          style: Theme.of(context)
+              .textTheme
+              .headline5!
+              .copyWith(color: assassinDarkestBlue),
         ),
       ),
     );
