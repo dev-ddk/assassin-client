@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Project imports:
 import 'package:assassin_client/pages/edit_profile.dart';
+import 'package:assassin_client/pages/game_top.dart';
 import 'package:assassin_client/pages/logged_in.dart';
 import 'package:assassin_client/pages/login.dart';
 import 'package:assassin_client/pages/target.dart';
@@ -26,6 +27,7 @@ final routes = {
   '/homepage/game': (context) => const EditProfileRoute(),
   '/homepage/report': (context) => const TargetRoute(),
   '/homepage/profile': (context) => const EditProfileRoute(),
+  '/game': (context) => GameRoute(),
 };
 
 final firebaseProvider = FutureProvider<FirebaseApp>(
