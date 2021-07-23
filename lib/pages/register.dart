@@ -4,15 +4,16 @@ import 'dart:ui';
 // Flutter imports:
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 // Package imports:
 import 'package:firebase_auth/firebase_auth.dart';
 
 // Project imports:
 import 'package:assassin_client/colors.dart';
+import 'package:assassin_client/utils/api.dart';
 import 'package:assassin_client/widgets/buttons.dart';
 import 'package:assassin_client/widgets/form_fields.dart';
+import 'package:assassin_client/widgets/template_page.dart';
 
 class RegisterRoute extends StatelessWidget {
   RegisterRoute({Key? key}) : super(key: key);
@@ -26,58 +27,27 @@ class RegisterRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     final auth = FirebaseAuth.instance;
 
-    final appbar = AppBar(
-      centerTitle: true,
-      backwardsCompatibility: false,
-      backgroundColor: assassinWhite,
-      foregroundColor: assassinDarkestBlue,
-      title: Text(
-        'NEW ACCOUNT',
-        style: Theme.of(context)
-            .textTheme
-            .headline5!
-            .copyWith(color: assassinDarkestBlue),
-      ),
-    );
-
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-      ),
-      child: LayoutBuilder(
-        builder: (context, constraints) => Scaffold(
-          appBar: appbar,
-          backgroundColor: assassinDarkestBlue,
-          body: SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: constraints.copyWith(
-                minHeight:
-                    constraints.maxHeight - appbar.preferredSize.height - 35,
-                maxHeight: double.infinity,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(14.0),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Form(
-                      key: _formKey,
-                      child: AutofillGroup(
-                        child: _buildBody(constraints, context, auth),
-                      ),
-                    ),
-                    _buildLoginButton(context),
-                  ],
-                ),
+    return TemplatePage(
+      title: 'NEW ACCOUNT',
+      child: Padding(
+        padding: const EdgeInsets.all(14.0),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Form(
+              key: _formKey,
+              child: AutofillGroup(
+                child: _buildBody(context, auth),
               ),
             ),
-          ),
+            _buildLoginButton(context),
+          ],
         ),
       ),
     );
   }
 
-  Column _buildBody(constraints, context, auth) {
+  Widget _buildBody(context, auth) {
     final textStyle =
         Theme.of(context).textTheme.bodyText2!.copyWith(color: assassinWhite);
     return Column(
@@ -95,7 +65,7 @@ class RegisterRoute extends StatelessWidget {
         const SizedBox(height: 4),
         _buildPasswordForm(confirm: true),
         const SizedBox(height: 80),
-        _buildRegisterButton(context, auth, constraints.minWidth),
+        _buildRegisterButton(context, auth),
         const SizedBox(height: 60),
       ],
     );
@@ -130,7 +100,7 @@ class RegisterRoute extends StatelessWidget {
     );
   }
 
-  Widget _buildRegisterButton(context, auth, width) {
+  Widget _buildRegisterButton(context, auth) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: AssassinConfirmButton(
@@ -157,9 +127,9 @@ class RegisterRoute extends StatelessWidget {
   Future<UserCredential?> _doRegister(FirebaseAuth auth, context) async {
     if (_formKey.currentState!.validate()) {
       try {
-        final userCredential = await auth.createUserWithEmailAndPassword(
-          email: emailController.text.trim(),
-          password: passwordController.text,
+        final userCredential = await register(
+          emailController.text.trim(),
+          passwordController.text,
         );
 
         return userCredential;

@@ -7,8 +7,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Project imports:
 import 'package:assassin_client/pages/edit_profile.dart';
+import 'package:assassin_client/pages/game_joining/configure_lobby.dart';
+import 'package:assassin_client/pages/game_joining/game_lobby.dart';
+import 'package:assassin_client/pages/game_joining/join_game.dart';
+import 'package:assassin_client/pages/game_joining/join_lobby.dart';
 import 'package:assassin_client/pages/game_top.dart';
-import 'package:assassin_client/pages/logged_in.dart';
+import 'package:assassin_client/pages/homepage.dart';
 import 'package:assassin_client/pages/login.dart';
 import 'package:assassin_client/pages/register.dart';
 import 'package:assassin_client/pages/target.dart';
@@ -26,10 +30,13 @@ final routes = {
   '/target': (context) => const TargetRoute(),
   '/edit-profile': (context) => const EditProfileRoute(),
   '/homepage/target': (context) => const TargetRoute(),
-  '/homepage/game': (context) => const EditProfileRoute(),
+  '/homepage/game': (context) => GameRoute(),
   '/homepage/report': (context) => const TargetRoute(),
   '/homepage/profile': (context) => const EditProfileRoute(),
-  '/game': (context) => GameRoute(),
+  '/homepage/joingame': (context) => const JoinGameRoute(),
+  '/homepage/joingame/configure-lobby': (context) => ConfigureLobbyRoute(),
+  '/homepage/joingame/join-lobby': (context) => JoinLobbyRoute(),
+  '/homepage/gamelobby': (context) => GameLobbyRoute(),
 };
 
 final firebaseProvider = FutureProvider<FirebaseApp>(

@@ -12,17 +12,20 @@ class AssassinConfirmButton extends StatelessWidget {
     required this.onPressed,
     this.backgroundColor = assassinWhite,
     this.width = double.infinity,
+    this.height,
   }) : super(key: key);
 
   final String text;
   final Function()? onPressed;
   final Color backgroundColor;
   final double width;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: width,
+      height: height,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           primary: backgroundColor,
@@ -34,6 +37,7 @@ class AssassinConfirmButton extends StatelessWidget {
         onPressed: onPressed,
         child: Text(
           text,
+          textAlign: TextAlign.center,
           style: Theme.of(context)
               .textTheme
               .headline5!
