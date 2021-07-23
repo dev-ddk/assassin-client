@@ -9,3 +9,5 @@ class RequestFailure extends Failure {}
 class LobbyNotExistsFailure extends Failure {}
 
 class FileSizeFailure extends Failure {}
+
+class CacheFailure extends Failure {}
