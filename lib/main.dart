@@ -12,6 +12,7 @@ import 'package:assassin_client/pages/logged_in.dart';
 import 'package:assassin_client/pages/login.dart';
 import 'package:assassin_client/pages/register.dart';
 import 'package:assassin_client/pages/target.dart';
+import 'package:assassin_client/pages/test_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,7 +24,7 @@ final routes = {
   '/login': (context) => LoginRoute(),
   '/register': (context) => RegisterRoute(),
   '/homepage': (context) => HomePage(),
-  '/target': (context) => const TargetRoute(),
+  '/target': (context) => TestRoute(),
   '/edit-profile': (context) => const EditProfileRoute(),
   '/homepage/target': (context) => const TargetRoute(),
   '/homepage/game': (context) => const EditProfileRoute(),

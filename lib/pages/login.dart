@@ -259,9 +259,12 @@ class SocialLoginButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: FloatingActionButton(
-        onPressed: onPressed,
-        backgroundColor: assassinBlue,
+      child: RawMaterialButton(
+        onPressed: () {},
+        elevation: 2.0,
+        fillColor: Colors.white,
+        padding: EdgeInsets.all(15.0),
+        shape: CircleBorder(),
         child: FaIcon(icon, color: assassinDarkBlue),
       ),
     );
