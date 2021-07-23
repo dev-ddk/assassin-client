@@ -13,6 +13,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // Project imports:
 import 'package:assassin_client/colors.dart';
 import 'package:assassin_client/main.dart';
+import 'package:assassin_client/utils/api.dart';
 import 'package:assassin_client/widgets/buttons.dart';
 import 'package:assassin_client/widgets/form_fields.dart';
 
@@ -79,13 +80,14 @@ class LoginRoute extends StatelessWidget {
         _buildForgotPassword(context),
         _buildLoginButton(context, auth, constraints.minWidth),
         const SizedBox(height: 20),
-        _buildSocialLoginButtons(context, auth),
-        const SizedBox(height: 20),
+        // _buildSocialLoginButtons(context, auth),
+        // const SizedBox(height: 20),
       ],
     );
   }
 
-  Row _buildSocialLoginButtons(context, auth) {
+  // ignore: unused_element
+  Widget _buildSocialLoginButtons(context, auth) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -174,9 +176,9 @@ class LoginRoute extends StatelessWidget {
   Future<UserCredential?> _doLogin(FirebaseAuth auth, context) async {
     if (_formKey.currentState!.validate()) {
       try {
-        final userCredential = await auth.signInWithEmailAndPassword(
-          email: emailController.text.trim(),
-          password: passwordController.text,
+        final userCredential = await login(
+          emailController.text.trim(),
+          passwordController.text,
         );
 
         return userCredential;
@@ -283,11 +285,15 @@ class DebugRoutes extends StatelessWidget {
         for (final route in routes.keys)
           Container(
             width: 150,
-            height: 24,
+            height: 40,
             child: ElevatedButton(
               onPressed: () => Navigator.pushNamed(context, route),
               style: ElevatedButton.styleFrom(primary: Colors.red),
-              child: Text(route),
+              child: Text(route,
+                  style: Theme.of(context)
+                      .textTheme
+                      .subtitle2!
+                      .copyWith(fontSize: 12)),
             ),
           ),
       ],

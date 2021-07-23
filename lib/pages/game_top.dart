@@ -13,6 +13,7 @@ import 'package:assassin_client/colors.dart';
 
 class GameRoute extends ConsumerWidget {
   /// Used to trigger an event when the widget has been built
+  // ignore: unused_element
   Future<bool> _afterWidgetBuilt() {
     final completer = Completer<bool>();
     // Register callback after the frame is built
@@ -42,35 +43,6 @@ class GameRoute extends ConsumerWidget {
       appBar: AppBar(
         title: Text('PARTITA DEMOCRATICA'),
       ),
-      bottomNavigationBar: FutureBuilder(
-          future: _afterWidgetBuilt(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) return Container();
-            return BottomNavigationBar(
-              showSelectedLabels: false,
-              showUnselectedLabels: false,
-              currentIndex:
-                  pageController.page?.round() ?? pageController.initialPage,
-              items: [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.center_focus_strong),
-                  activeIcon: SizedBox(
-                    height: 24.0,
-                    width: 24.0,
-                    child: CustomPaint(
-                      painter: const FingerPainter(Colors.red),
-                    ),
-                  ),
-                  label: 'target',
-                ),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.perm_identity),
-                    activeIcon: Icon(Icons.water_damage),
-                    label: 'id'),
-              ],
-              onTap: (page) => pageController.jumpToPage(page),
-            );
-          }),
     );
   }
 }

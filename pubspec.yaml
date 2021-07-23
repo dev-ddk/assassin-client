@@ -40,6 +40,7 @@ dependencies:
   dio:
   json_annotation:
   either_dart:
+  page_transition: ^2.0.2
 
 dev_dependencies:
   flutter_test:
@@ -55,7 +56,6 @@ dev_dependencies:
   pedantic:
   build_runner:
   json_serializable:
-
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -105,11 +105,6 @@ flutter:
         - asset: fonts/Open_Sans/OpenSans-ExtraBoldItalic.ttf
           weight: 800
           style: italic
-
-
-
-
-
   # fonts:
   #   - family: Schyler
   #     fonts:
