@@ -3,14 +3,30 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+// Package imports:
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 // Project imports:
 import 'package:assassin_client/colors.dart';
+import 'package:assassin_client/repositories/lobby_repository.dart';
+import 'package:assassin_client/repositories/lobby_storage_mock.dart';
+import 'package:assassin_client/repositories/user_repository.dart';
+import 'package:assassin_client/usecases/lobby_change_notifier.dart';
 import 'package:assassin_client/widgets/buttons.dart';
 import 'package:assassin_client/widgets/template_page.dart';
 
+final userProvider =
+    Provider((ref) => UserRepository(remoteStorage: RemoteUserStorageMock()));
+
+final lobbyProvider =
+    Provider((ref) => LobbyRepository(RemoteLobbyStorageMock()));
+
+final lobbyUpdaterProvider = ChangeNotifierProvider((ref) =>
+    LobbyUpdater(ref.watch(lobbyProvider), ref.watch(userProvider))..start());
+
 class GameLobbyRoute extends StatelessWidget {
   GameLobbyRoute({Key? key}) : super(key: key);
-
+  /*
   final List players = [
     'Blaziken',
     'Charizard',
@@ -25,7 +41,7 @@ class GameLobbyRoute extends StatelessWidget {
     'Ditto',
     'Eevee',
     'Jolteon'
-  ];
+  ];*/
 
   @override
   Widget build(BuildContext context) {
@@ -54,17 +70,27 @@ class GameLobbyRoute extends StatelessWidget {
             if (isOwner) SizedBox(height: 20),
             _buildPlayerInLobbyText(context),
             SizedBox(height: 20),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: players.length,
-              addAutomaticKeepAlives: true,
-              itemBuilder: (context, i) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: AssassinPlayerCard(
-                    username: players[i],
-                    variant: i % 2 == 1,
+            Consumer(
+              // Rebuild only the Text when counterProvider updates
+              builder: (context, ref, child) {
+                // Listens to the value exposed by counterProvider
+                final lobbyResult = ref(lobbyUpdaterProvider).lobby;
+                return lobbyResult.fold(
+                  (failure) => Text('Failed to retrieve the lobby'),
+                  (lobby) => ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: lobby.players.length,
+                    addAutomaticKeepAlives: true,
+                    itemBuilder: (context, i) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: AssassinPlayerCard(
+                          username: lobby.players[i].username,
+                          variant: i % 2 == 1,
+                        ),
+                      );
+                    },
                   ),
                 );
               },

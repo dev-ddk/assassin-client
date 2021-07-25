@@ -5,46 +5,50 @@ import 'package:file_picker/file_picker.dart';
 
 // Project imports:
 import 'package:assassin_client/models/user_model.dart';
+import 'package:assassin_client/repositories/local_storage.dart';
 import 'package:assassin_client/utils/failures.dart';
 import 'package:assassin_client/utils/login_utils.dart';
 
 class UserRepository {
-  final RemoteUserStorage remoteStorage;
-  UserModel? _localUser;
+  final RemoteUserStorage _remoteStorage;
+  final LocalStorage<UserModel> _localStorage;
 
-  UserRepository(this.remoteStorage);
+  UserRepository({required remoteStorage})
+      : _remoteStorage = remoteStorage,
+        _localStorage = LocalStorage();
 
-  Future<Either<Failure, UserModel>> getUser() async {
-    if (_localUser != null) {
+  Future<Either<Failure, UserModel>> userInfo() async {
+    if (!_localStorage.empty) {
       //Cached value
-      return Right(_localUser!);
+      return await _localStorage.getValueSafe();
     } else {
       //
-      final user = await remoteStorage.getUser();
-      _localUser = user.fold((left) => null, (right) => right);
+      final user = await _remoteStorage.userInfo();
+      if (user.isRight) {
+        _localStorage.value = user.right;
+      }
       return user;
     }
   }
 
   Future<Either<Failure, Uri>> updatePropic(PlatformFile propic) async {
-    final req = await remoteStorage.updatePropic(propic);
+    final req = await _remoteStorage.updatePropic(propic);
     if (req.isRight) {
-      _localUser = _localUser?.withPropic(req.right);
+      _localStorage.value = _localStorage.value.withPropic(req.right);
     }
     return req;
   }
-
-  void invalidateCache() {
-    _localUser = null;
-  }
-
-  void fillCache(UserModel value) {
-    _localUser = value;
-  }
 }
 
-class RemoteUserStorage {
-  Future<Either<Failure, UserModel>> getUser() async {
+abstract class RemoteUserStorage {
+  Future<Either<Failure, UserModel>> userInfo();
+
+  Future<Either<Failure, Uri>> updatePropic(PlatformFile photo);
+}
+
+class RemoteUserStorageImpl implements RemoteUserStorage {
+  @override
+  Future<Either<Failure, UserModel>> userInfo() async {
     final dio = Dio(baseOptions());
     return authenticateRequest(dio).thenRight(_getUserRequest);
   }
@@ -62,6 +66,7 @@ class RemoteUserStorage {
     }
   }
 
+  @override
   Future<Either<Failure, Uri>> updatePropic(PlatformFile photo) async {
     final dio = Dio(baseOptions(contentType: 'application/base64'));
     return authenticateRequest(dio)

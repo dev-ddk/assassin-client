@@ -38,7 +38,8 @@ abstract class RemoteLobbyStorage {
   Future<Either<Failure, LobbyModel>> gameInfo(String lobbyCode);
 }
 
-class RemoteLobbyStorageImpl {
+class RemoteLobbyStorageImpl implements RemoteLobbyStorage {
+  @override
   Future<Either<Failure, String>> createGame(String lobbyName) async {
     final dio = Dio(baseOptions());
     return authenticateRequest(dio)
@@ -58,6 +59,7 @@ class RemoteLobbyStorageImpl {
     }
   }
 
+  @override
   Future<Either<Failure, void>> joinGame(String lobbyCode) async {
     final dio = Dio(baseOptions());
     return authenticateRequest(dio)
@@ -79,6 +81,7 @@ class RemoteLobbyStorageImpl {
     }
   }
 
+  @override
   Future<Either<Failure, LobbyModel>> gameInfo(String lobbyCode) async {
     final dio = Dio(baseOptions());
     return authenticateRequest(dio)

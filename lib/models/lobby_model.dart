@@ -13,7 +13,11 @@ class LobbyModel {
   String? admin;
   final List<UserLobbyModel> players;
 
-  LobbyModel({required this.code, required this.name, this.admin, players})
+  LobbyModel(
+      {required this.code,
+      required this.name,
+      this.admin,
+      List<UserLobbyModel>? players})
       : players = players ?? [];
 
   factory LobbyModel.fromJson(Map<String, dynamic> json) =>

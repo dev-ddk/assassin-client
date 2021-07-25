@@ -41,6 +41,7 @@ dependencies:
   json_annotation:
   either_dart:
   page_transition: ^2.0.2
+  pedantic: ^1.11.1
 
 dev_dependencies:
   flutter_test:
@@ -53,7 +54,6 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints:
   import_sorter:
-  pedantic:
   build_runner:
   json_serializable:
 
