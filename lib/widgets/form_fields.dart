@@ -20,15 +20,16 @@ class AssassinFormField extends ConsumerWidget {
 
   AssassinFormField({
     Key? key,
-    required this.icon,
+    this.icon,
     this.obscureText = false,
     this.hintText = '',
     this.validator,
     this.enabled = true,
     this.controller,
+    this.maxLines = 1,
   }) : super(key: key);
 
-  final IconData icon;
+  final IconData? icon;
   final String hintText;
 
   final bool enabled;
@@ -36,6 +37,8 @@ class AssassinFormField extends ConsumerWidget {
 
   final TextEditingController? controller;
   final String? Function(String?)? validator;
+
+  final int maxLines;
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
@@ -74,13 +77,14 @@ class AssassinFormField extends ConsumerWidget {
             focusNode: focusNode,
             controller: controller,
             validator: validator,
-            textAlign: TextAlign.center,
+            textAlign: maxLines == 1 ? TextAlign.center : TextAlign.start,
             autofillHints: [
               obscureText ? AutofillHints.password : AutofillHints.email,
             ],
             obscureText: obscureText && hidePassword,
             obscuringCharacter: '*',
             enabled: enabled,
+            maxLines: maxLines,
             decoration: _buildInputDecoration(
               context,
               border,

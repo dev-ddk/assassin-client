@@ -10,6 +10,7 @@ class AssassinConfirmButton extends StatelessWidget {
     Key? key,
     required this.text,
     required this.onPressed,
+    this.textColor = assassinDarkestBlue,
     this.backgroundColor = assassinWhite,
     this.width = double.infinity,
     this.height,
@@ -17,6 +18,7 @@ class AssassinConfirmButton extends StatelessWidget {
 
   final String text;
   final Function()? onPressed;
+  final Color textColor;
   final Color backgroundColor;
   final double width;
   final double? height;
@@ -38,10 +40,8 @@ class AssassinConfirmButton extends StatelessWidget {
         child: Text(
           text,
           textAlign: TextAlign.center,
-          style: Theme.of(context)
-              .textTheme
-              .headline5!
-              .copyWith(color: assassinDarkestBlue),
+          style:
+              Theme.of(context).textTheme.headline5!.copyWith(color: textColor),
         ),
       ),
     );
