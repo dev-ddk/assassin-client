@@ -17,12 +17,13 @@ class UserRepository {
       : _remoteStorage = remoteStorage,
         _localStorage = LocalStorage();
 
-  Future<Either<Failure, UserModel>> userInfo() async {
-    if (!_localStorage.empty) {
+  Future<Either<Failure, UserModel>> userInfo(
+      {bool forceRemote = false}) async {
+    if (!_localStorage.empty && !forceRemote) {
       //Cached value
       return await _localStorage.getValueSafe();
     } else {
-      //
+      //Request to endpoint
       final user = await _remoteStorage.userInfo();
       if (user.isRight) {
         _localStorage.value = user.right;

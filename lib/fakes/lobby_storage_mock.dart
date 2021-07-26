@@ -1,6 +1,7 @@
 // Package imports:
 import 'package:either_dart/src/either.dart';
 import 'package:file_picker/src/platform_file.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 // Project imports:
 import 'package:assassin_client/models/lobby_model.dart';
@@ -11,15 +12,11 @@ import 'package:assassin_client/utils/failures.dart';
 
 class RemoteLobbyStorageMock implements RemoteLobbyStorage {
   int i = 0;
-  @override
-  Future<Either<Failure, String>> createGame(String lobbyName) {
-    // TODO: implement createGame
-    throw UnimplementedError();
-  }
 
   @override
   Future<Either<Failure, LobbyModel>> gameInfo(String lobbyCode) async {
     i = (i + 1) % 2;
+    await Future.delayed(Duration(seconds: 4));
     if (i == 0) {
       return Right(LobbyModel(
           code: 'AAAAAA',
@@ -43,6 +40,12 @@ class RemoteLobbyStorageMock implements RemoteLobbyStorage {
   }
 
   @override
+  Future<Either<Failure, String>> createGame(String lobbyName) {
+    // TODO: implement createGame
+    throw UnimplementedError();
+  }
+
+  @override
   Future<Either<Failure, void>> joinGame(String lobbyCode) {
     // TODO: implement joinGame
     throw UnimplementedError();
@@ -51,13 +54,8 @@ class RemoteLobbyStorageMock implements RemoteLobbyStorage {
 
 class RemoteUserStorageMock implements RemoteUserStorage {
   @override
-  Future<Either<Failure, Uri>> updatePropic(PlatformFile photo) {
-    // TODO: implement updatePropic
-    throw UnimplementedError();
-  }
-
-  @override
   Future<Either<Failure, UserModel>> userInfo() async {
+    await Future.delayed(Duration(seconds: 2));
     return Right(UserModel(
         email: 'cci@aaa.it',
         username: 'Dario',
@@ -65,5 +63,11 @@ class RemoteUserStorageMock implements RemoteUserStorage {
         active: true,
         currLobbyCode: 'AAAAAAA',
         totalKills: 0));
+  }
+
+  @override
+  Future<Either<Failure, Uri>> updatePropic(PlatformFile photo) {
+    // TODO: implement updatePropic
+    throw UnimplementedError();
   }
 }

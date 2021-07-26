@@ -4,45 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 // Package imports:
+import 'package:either_dart/either.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Project imports:
 import 'package:assassin_client/colors.dart';
-import 'package:assassin_client/repositories/lobby_repository.dart';
-import 'package:assassin_client/repositories/lobby_storage_mock.dart';
-import 'package:assassin_client/repositories/user_repository.dart';
-import 'package:assassin_client/usecases/lobby_change_notifier.dart';
+import 'package:assassin_client/models/lobby_model.dart';
+import 'package:assassin_client/providers/providers.dart';
+import 'package:assassin_client/utils/failures.dart';
 import 'package:assassin_client/widgets/buttons.dart';
 import 'package:assassin_client/widgets/template_page.dart';
 
-final userProvider =
-    Provider((ref) => UserRepository(remoteStorage: RemoteUserStorageMock()));
-
-final lobbyProvider =
-    Provider((ref) => LobbyRepository(RemoteLobbyStorageMock()));
-
-final lobbyUpdaterProvider = ChangeNotifierProvider((ref) =>
-    LobbyUpdater(ref.watch(lobbyProvider), ref.watch(userProvider))..start());
-
 class GameLobbyRoute extends StatelessWidget {
   GameLobbyRoute({Key? key}) : super(key: key);
-  /*
-  final List players = [
-    'Blaziken',
-    'Charizard',
-    'Gengar',
-    'Mewtwo',
-    'Pikachu',
-    'Raichu',
-    'Snorlax',
-    'Venusaur',
-    'Alakazam',
-    'Arcanine',
-    'Ditto',
-    'Eevee',
-    'Jolteon'
-  ];*/
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -74,31 +48,58 @@ class GameLobbyRoute extends StatelessWidget {
               // Rebuild only the Text when counterProvider updates
               builder: (context, ref, child) {
                 // Listens to the value exposed by counterProvider
-                final lobbyResult = ref(lobbyUpdaterProvider).lobby;
-                return lobbyResult.fold(
-                  (failure) => Text('Failed to retrieve the lobby'),
-                  (lobby) => ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: lobby.players.length,
-                    addAutomaticKeepAlives: true,
-                    itemBuilder: (context, i) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4.0),
-                        child: AssassinPlayerCard(
-                          username: lobby.players[i].username,
-                          variant: i % 2 == 1,
-                        ),
-                      );
-                    },
-                  ),
-                );
+                final lobbyFuture = ref(lobbyUpdaterProvider).lobby;
+                //Handle one of the three cases
+                //1. There is a failure in the retrieveral of lobby data (i.e. no internet)
+                //2. Lobby data is received correctly
+                //3. The (first) request is still awaiting a response
+                return FutureBuilder<Either<Failure, LobbyModel>>(
+                    future: lobbyFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        final lobbyResult = snapshot.data!;
+                        return lobbyResult.fold(
+                            (failure) => _buildErrorMessage(context), //Case 1
+                            (lobby) =>
+                                _buildPlayerList(context, lobby)); //Case 2
+                      } else {
+                        return _buildLoadingScreen(context); //Case 3
+                      }
+                    });
               },
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildPlayerList(context, LobbyModel lobby) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: lobby.players.length,
+      addAutomaticKeepAlives: true,
+      itemBuilder: (context, i) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: AssassinPlayerCard(
+            username: lobby.players[i].username,
+            variant: i % 2 == 1,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildErrorMessage(context) {
+    //TODO
+    return Text('Failed to retrieve the lobby');
+  }
+
+  Widget _buildLoadingScreen(context) {
+    //TODO
+    return Text('Loading...');
   }
 
   Widget _buildPlayerInLobbyText(context) {
