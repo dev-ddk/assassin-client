@@ -54,18 +54,21 @@ class GameLobbyRoute extends StatelessWidget {
                 //2. Lobby data is received correctly
                 //3. The (first) request is still awaiting a response
                 return FutureBuilder<Either<Failure, LobbyModel>>(
-                    future: lobbyFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        final lobbyResult = snapshot.data!;
-                        return lobbyResult.fold(
-                            (failure) => _buildErrorMessage(context), //Case 1
-                            (lobby) =>
-                                _buildPlayerList(context, lobby)); //Case 2
-                      } else {
-                        return _buildLoadingScreen(context); //Case 3
-                      }
-                    });
+                  future: lobbyFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      final lobbyResult = snapshot.data!;
+                      return lobbyResult.fold(
+                          //Case 1
+                          (failure) => _buildErrorMessage(context),
+                          //Case 2
+                          (lobby) => _buildPlayerList(context, lobby));
+                    } else {
+                      //Case 3
+                      return _buildLoadingScreen(context);
+                    }
+                  },
+                );
               },
             ),
           ],
