@@ -55,10 +55,10 @@ class TestRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         body: TextButton(
-      child: Text('AAA'),
       onPressed: () async {
         await register('gabi@bo.it', 'giuseppegiuseppe');
       },
+      child: Text('AAA'),
     ));
   }
 }

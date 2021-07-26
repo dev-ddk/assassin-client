@@ -11,11 +11,12 @@ import 'package:assassin_client/pages/game_joining/configure_lobby.dart';
 import 'package:assassin_client/pages/game_joining/game_lobby.dart';
 import 'package:assassin_client/pages/game_joining/join_game.dart';
 import 'package:assassin_client/pages/game_joining/join_lobby.dart';
-import 'package:assassin_client/pages/game_top.dart';
-import 'package:assassin_client/pages/homepage.dart';
+import 'package:assassin_client/pages/homepage/game_top.dart';
+import 'package:assassin_client/pages/homepage/homepage.dart';
+import 'package:assassin_client/pages/homepage/report_bug.dart';
+import 'package:assassin_client/pages/homepage/target.dart';
 import 'package:assassin_client/pages/login.dart';
 import 'package:assassin_client/pages/register.dart';
-import 'package:assassin_client/pages/target.dart';
 import 'package:assassin_client/pages/test_page.dart';
 
 void main() {
@@ -33,6 +34,7 @@ final routes = {
   '/homepage/target': (context) => const TargetRoute(),
   '/homepage/game': (context) => GameRoute(),
   '/homepage/report': (context) => const TargetRoute(),
+  '/homepage/report-bug': (context) => const ReportBugRoute(),
   '/homepage/profile': (context) => const EditProfileRoute(),
   '/homepage/joingame': (context) => const JoinGameRoute(),
   '/homepage/joingame/configure-lobby': (context) => ConfigureLobbyRoute(),

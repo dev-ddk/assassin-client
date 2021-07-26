@@ -9,13 +9,15 @@ class TemplatePage extends StatelessWidget {
   const TemplatePage({
     Key? key,
     required this.title,
-    required this.child,
+    this.child,
     this.appBarActions = const [],
+    this.bottomNavigationBar,
   }) : super(key: key);
 
   final String title;
-  final Widget child;
+  final Widget? child;
   final List<Widget> appBarActions;
+  final Widget? bottomNavigationBar;
 
   @override
   Widget build(BuildContext context) {
@@ -42,11 +44,13 @@ class TemplatePage extends StatelessWidget {
         builder: (context, constraints) => Scaffold(
           appBar: appbar,
           backgroundColor: assassinDarkestBlue,
+          bottomNavigationBar: bottomNavigationBar,
           body: SingleChildScrollView(
             child: ConstrainedBox(
               constraints: constraints.copyWith(
-                minHeight:
-                    constraints.maxHeight - appbar.preferredSize.height - 35,
+                minHeight: constraints.maxHeight -
+                    appbar.preferredSize.height -
+                    (bottomNavigationBar != null ? 110 : 35),
                 maxHeight: double.infinity,
               ),
               child: child,
