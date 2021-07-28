@@ -77,6 +77,7 @@ class LobbyUpdater extends ChangeNotifier {
   void stop() {
     _updater?.cancel();
     _updater = null;
+    _lastLobby = null;
   }
 
   Either<Failure, String> _forceGetLobbyCode(UserModel user) {

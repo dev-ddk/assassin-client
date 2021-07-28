@@ -11,6 +11,7 @@ import 'package:assassin_client/pages/game_joining/configure_lobby.dart';
 import 'package:assassin_client/pages/game_joining/game_lobby.dart';
 import 'package:assassin_client/pages/game_joining/join_game.dart';
 import 'package:assassin_client/pages/game_joining/join_lobby.dart';
+import 'package:assassin_client/pages/game_settings.dart';
 import 'package:assassin_client/pages/homepage/game_top.dart';
 import 'package:assassin_client/pages/homepage/homepage.dart';
 import 'package:assassin_client/pages/homepage/report_bug.dart';
@@ -40,6 +41,7 @@ final routes = {
   '/homepage/joingame/configure-lobby': (context) => ConfigureLobbyRoute(),
   '/homepage/joingame/join-lobby': (context) => JoinLobbyRoute(),
   '/homepage/gamelobby': (context) => GameLobbyRoute(),
+  '/homepage/settings': (context) => GameSettingsRoute(),
 };
 
 final firebaseProvider = FutureProvider<FirebaseApp>(

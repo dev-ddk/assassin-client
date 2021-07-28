@@ -19,7 +19,7 @@ class HomePage extends ConsumerWidget {
     '/homepage/target': FontAwesomeIcons.bullseye,
     '/homepage/game': FontAwesomeIcons.users,
     '/homepage/report': FontAwesomeIcons.skullCrossbones,
-    '/homepage/report-bug': FontAwesomeIcons.bug,
+    '/homepage/settings': FontAwesomeIcons.bug,
   };
 
   final controllerProvider = ChangeNotifierProvider((ref) => PageController());
