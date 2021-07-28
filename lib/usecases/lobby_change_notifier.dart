@@ -33,16 +33,16 @@ class LobbyUpdater extends ChangeNotifier {
     if (_lastLobby == null) {
       //If it is the first time that the getter is called
       return await _user
-          .userInfo(
-              forceRemote:
-                  true) //Get current lobby code (force the refresh of the data)
-          .thenRightSync(
-              _forceGetLobbyCode) //Throw a failure if the lobby code is null
-          .thenRight((lobbyCode) =>
-              _lobby.lobbyInfo(lobbyCode)) //Retrieve lobby information
+          //Get current lobby code (force the refresh of the data)
+          .userInfo(forceRemote: true)
+          //Throw a failure if the lobby code is null
+          .thenRightSync(_forceGetLobbyCode)
+          //Retrieve lobby information
+          .thenRight((lobbyCode) => _lobby.lobbyInfo(lobbyCode))
           .then((lobbyModel) => _lastLobby = lobbyModel);
     } else {
-      return Future.value(_lastLobby); //Return immediately the result
+      //Return immediately the result
+      return Future.value(_lastLobby);
     }
   }
 
@@ -52,12 +52,15 @@ class LobbyUpdater extends ChangeNotifier {
       (timer) {
         unawaited(
           _user
-              .userInfo() //Get user information (cached)
+              //Get user information (cached)
+              .userInfo()
               .thenRightSync(_forceGetLobbyCode)
               .thenRight((lobbyCode) => _lobby.lobbyInfo(lobbyCode))
               .then((lobbyModel) {
-            _lastLobby = lobbyModel; //Set the last lobby value
-            notifyListeners(); //Notify the view that the lobby changed
+            //Set the last lobby value
+            _lastLobby = lobbyModel;
+            //Notify the view that the lobby changed
+            notifyListeners();
           }),
         );
       },
