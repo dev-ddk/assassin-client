@@ -51,9 +51,8 @@ class LobbyUpdater extends ChangeNotifier {
       (timer) {
         unawaited(
           _user
-              //Get user information (already cached)
+              //Get user information (cached)
               .userInfo()
-              //Fail if the lobby code is null
               .thenRightSync(_forceGetLobbyCode)
               //Request Lobby Info
               .thenRight((lobbyCode) => _lobby.lobbyInfo(lobbyCode))
