@@ -15,15 +15,16 @@ class AgentRepository {
       : _remoteStorage = remoteStorage,
         _localStorage = localStorage;
 
-  Future<Either<Failure, AgentModel>> agentInfo() async {
-    if (_localStorage.empty) {
+  Future<Either<Failure, AgentModel>> agentInfo(
+      {bool forceRemote = false}) async {
+    if (_localStorage.empty || forceRemote) {
       final result = await _remoteStorage.agentInfo();
       if (result.isRight) {
         _localStorage.agent = result.right;
       }
       return result;
     } else {
-      return _localStorage.agentInfo();
+      return await _localStorage.agentInfo();
     }
   }
 
