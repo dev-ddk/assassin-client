@@ -40,9 +40,8 @@ class LobbyUpdater extends ChangeNotifier {
   }
 
   ///Retrieves the lobby info
-  Future<Either<Failure, LobbyModel>> get lobby async {
-    return await _requestLobbyIfLastIsEmpty();
-  }
+  Future<Either<Failure, LobbyModel>> get lobby async =>
+      await _requestLobbyIfLastIsEmpty();
 
   ///Starts the autoupdater
   void start() {

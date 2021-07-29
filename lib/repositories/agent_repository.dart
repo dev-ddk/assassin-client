@@ -4,33 +4,38 @@ import 'package:either_dart/either.dart';
 
 // Project imports:
 import 'package:assassin_client/models/agent_model.dart';
+import 'package:assassin_client/repositories/local_storage.dart';
 import 'package:assassin_client/utils/failures.dart';
 import 'package:assassin_client/utils/login_utils.dart';
 
 class AgentRepository {
   final RemoteAgentStorage _remoteStorage;
-  final LocalAgentStorage _localStorage;
+  final LocalStorage<AgentModel> _localStorage;
 
   AgentRepository({required remoteStorage, required localStorage})
       : _remoteStorage = remoteStorage,
         _localStorage = localStorage;
 
-  Future<Either<Failure, AgentModel>> agentInfo(
+  Future<Either<Failure, AgentModel>> agentInfo(String lobbyCode,
       {bool forceRemote = false}) async {
-    if (_localStorage.empty || forceRemote) {
-      final result = await _remoteStorage.agentInfo();
-      if (result.isRight) {
-        _localStorage.agent = result.right;
-      }
-      return result;
+    if (!_localStorage.empty && !forceRemote) {
+      //Cached value
+      return await _localStorage.getValueSafe();
     } else {
-      return await _localStorage.agentInfo();
+      //Request to endpoint
+      final agent = await _remoteStorage.agentInfo(lobbyCode);
+      if (agent.isRight) {
+        _localStorage.value = agent.right;
+      }
+      return agent;
     }
   }
 
-  Future<Either<Failure, AgentModel>> kill() async {
+  Future<Either<Failure, AgentModel>> kill(String lobbyCode) async {
     _localStorage.clearStorage();
-    return await _remoteStorage.agentInfo().thenRight((right) => agentInfo());
+    return await _remoteStorage
+        .agentInfo(lobbyCode)
+        .thenRight((right) => agentInfo(lobbyCode));
   }
 
   void clearStorage() {
@@ -39,14 +44,14 @@ class AgentRepository {
 }
 
 abstract class RemoteAgentStorage {
-  Future<Either<Failure, AgentModel>> agentInfo();
+  Future<Either<Failure, AgentModel>> agentInfo(String lobbyCode);
 
-  Future<Either<Failure, void>> kill();
+  Future<Either<Failure, void>> kill(String lobbyCode);
 }
 
 class RemoteAgentStorageImpl implements RemoteAgentStorage {
   @override
-  Future<Either<Failure, AgentModel>> agentInfo() async {
+  Future<Either<Failure, AgentModel>> agentInfo(String lobbyCode) async {
     final dio = Dio(baseOptions());
     return await authenticateRequest(dio).thenRight(_agentInfoRequest);
   }
@@ -63,13 +68,13 @@ class RemoteAgentStorageImpl implements RemoteAgentStorage {
   }
 
   @override
-  Future<Either<Failure, AgentModel>> kill() async {
+  Future<Either<Failure, AgentModel>> kill(String lobbyCode) async {
     final dio = Dio(baseOptions());
     return await authenticateRequest(dio).thenRight(_killRequest);
   }
 
   Future<Either<Failure, AgentModel>> _killRequest(Dio dio) async {
-    final response = await dio.post('agent_info');
+    final response = await dio.post('agent_info', data: {'api'});
     if (response.statusCode == 200) {
       return Right(AgentModel.fromJson(response.data));
     } else if (response.statusCode != null) {
@@ -78,18 +83,4 @@ class RemoteAgentStorageImpl implements RemoteAgentStorage {
       return Left(NetworkFailure());
     }
   }
-}
-
-class LocalAgentStorage {
-  AgentModel? _agent;
-
-  Future<Either<Failure, AgentModel>> agentInfo() => _agent != null
-      ? Future.value(Right(_agent!))
-      : Future.value(Left(CacheFailure()));
-
-  set agent(AgentModel agent) => _agent = agent;
-
-  void clearStorage() => _agent = null;
-
-  bool get empty => _agent == null;
 }
