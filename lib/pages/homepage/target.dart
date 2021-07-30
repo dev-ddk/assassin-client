@@ -52,10 +52,6 @@ We trust that you will not fail us again.
               animateDuration: Duration(milliseconds: 400),
             ),
             AssassinConfirmButton(
-              text: 'HIDE FILE',
-              onPressed: () {},
-            ),
-            AssassinConfirmButton(
               text: 'REPORT KILL!',
               textColor: assassinRed,
               onPressed: () {},
