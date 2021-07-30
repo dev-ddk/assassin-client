@@ -11,7 +11,9 @@ LobbyModel _$LobbyModelFromJson(Map<String, dynamic> json) {
     code: json['lobby_code'] as String,
     name: json['lobby_name'] as String,
     admin: json['admin_name'] as String?,
-    players: json['players'],
+    players: (json['players'] as List<dynamic>?)
+        ?.map((e) => UserLobbyModel.fromJson(e as Map<String, dynamic>))
+        .toList(),
   );
 }
 
