@@ -56,7 +56,7 @@ class GameLobbyRoute extends StatelessWidget {
                 return FutureBuilder<Either<Failure, LobbyModel>>(
                   future: lobbyFuture,
                   builder: (context, snapshot) {
-                    if (snapshot.hasData) {
+                    if (snapshot.connectionState == ConnectionState.done) {
                       final lobbyResult = snapshot.data!;
                       return lobbyResult.fold(
                           //Case 1
@@ -101,8 +101,13 @@ class GameLobbyRoute extends StatelessWidget {
   }
 
   Widget _buildLoadingScreen(context) {
-    //TODO
-    return Text('Loading...');
+    return Container(
+      alignment: Alignment.center,
+      child: CircularProgressIndicator(
+        backgroundColor: assassinRed,
+        color: assassinWhite,
+      ),
+    );
   }
 
   Widget _buildPlayerInLobbyText(context) {
