@@ -11,13 +11,15 @@ class AgentModel {
   bool alive;
   int kills;
 
-  AgentModel(
-      {this.target,
-      this.targetPropic,
-      required this.alive,
-      required this.kills});
+  AgentModel({
+    this.target,
+    this.targetPropic,
+    required this.alive,
+    required this.kills,
+  });
 
   factory AgentModel.fromJson(Map<String, dynamic> json) =>
       _$AgentModelFromJson(json);
+
   Map<String, dynamic> toJson() => _$AgentModelToJson(this);
 }

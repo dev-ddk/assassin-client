@@ -12,8 +12,10 @@ class AgentRepository {
   final RemoteAgentStorage _remoteStorage;
   final LocalStorage<AgentModel> _localStorage;
 
-  AgentRepository({required remoteStorage, required localStorage})
-      : _remoteStorage = remoteStorage,
+  AgentRepository({
+    required remoteStorage,
+    required localStorage,
+  })  : _remoteStorage = remoteStorage,
         _localStorage = localStorage;
 
   Future<Either<Failure, AgentModel>> agentInfo(String lobbyCode,

@@ -23,9 +23,11 @@ class LobbyUpdater extends ChangeNotifier {
   Either<Failure, LobbyModel>? _lastLobby;
   final Duration updatePeriod;
 
-  LobbyUpdater(lobbyRepository, userRepository,
-      {this.updatePeriod = const Duration(seconds: 10)})
-      : _lobby = lobbyRepository,
+  LobbyUpdater(
+    lobbyRepository,
+    userRepository, {
+    this.updatePeriod = const Duration(seconds: 10),
+  })  : _lobby = lobbyRepository,
         _user = userRepository,
         _lastLobby = null;
 
@@ -56,12 +58,14 @@ class LobbyUpdater extends ChangeNotifier {
               //Request Lobby Info
               .thenRight((lobbyCode) => _lobby.lobbyInfo(lobbyCode))
               //When request completes notify the view
-              .then((lobbyModel) {
-            //Set the last lobby value
-            _lastLobby = lobbyModel;
-            //Notify the view that the lobby changed
-            notifyListeners();
-          }),
+              .then(
+            (lobbyModel) {
+              //Set the last lobby value
+              _lastLobby = lobbyModel;
+              //Notify the view that the lobby changed
+              notifyListeners();
+            },
+          ),
         );
       },
     );

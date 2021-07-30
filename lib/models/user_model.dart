@@ -12,24 +12,27 @@ class UserModel {
   final String? currLobbyCode;
   final int totalKills;
 
-  UserModel(
-      {required this.email,
-      required this.username,
-      required this.propic,
-      required this.active,
-      this.currLobbyCode,
-      required this.totalKills});
+  UserModel({
+    required this.email,
+    required this.username,
+    required this.propic,
+    required this.active,
+    this.currLobbyCode,
+    required this.totalKills,
+  });
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
+
   Map<String, dynamic> toJson() => _$UserModelToJson(this);
 
   UserModel withPropic(Uri newPropic) {
     return UserModel(
-        email: email,
-        username: username,
-        propic: newPropic,
-        active: active,
-        totalKills: totalKills);
+      email: email,
+      username: username,
+      propic: newPropic,
+      active: active,
+      totalKills: totalKills,
+    );
   }
 }

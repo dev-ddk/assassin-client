@@ -13,15 +13,16 @@ class LobbyModel {
   String? admin;
   final List<UserLobbyModel> players;
 
-  LobbyModel(
-      {required this.code,
-      required this.name,
-      this.admin,
-      List<UserLobbyModel>? players})
-      : players = players ?? [];
+  LobbyModel({
+    required this.code,
+    required this.name,
+    this.admin,
+    List<UserLobbyModel>? players,
+  }) : players = players ?? [];
 
   factory LobbyModel.fromJson(Map<String, dynamic> json) =>
       _$LobbyModelFromJson(json);
+
   Map<String, dynamic> toJson() => _$LobbyModelToJson(this);
 
   bool isAdmin(String username) => admin != null && username == admin;
@@ -36,5 +37,6 @@ class UserLobbyModel {
 
   factory UserLobbyModel.fromJson(Map<String, dynamic> json) =>
       _$UserLobbyModelFromJson(json);
+
   Map<String, dynamic> toJson() => _$UserLobbyModelToJson(this);
 }

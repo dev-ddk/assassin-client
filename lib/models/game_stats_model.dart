@@ -12,6 +12,7 @@ class GameStatsModel {
 
   factory GameStatsModel.fromJson(Map<String, dynamic> json) =>
       _$GameStatsModelFromJson(json);
+
   Map<String, dynamic> toJson() => _$GameStatsModelToJson(this);
 }
 
@@ -24,10 +25,17 @@ class UserStatsModel {
   int deaths;
   int score;
 
-  UserStatsModel(this.username, this.codename, this.propic, this.kills,
-      this.deaths, this.score);
+  UserStatsModel(
+    this.username,
+    this.codename,
+    this.propic,
+    this.kills,
+    this.deaths,
+    this.score,
+  );
 
   factory UserStatsModel.fromJson(Map<String, dynamic> json) =>
       _$UserStatsModelFromJson(json);
+
   Map<String, dynamic> toJson() => _$UserStatsModelToJson(this);
 }

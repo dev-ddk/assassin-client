@@ -22,11 +22,11 @@ class AgentUpdater extends ChangeNotifier {
   Either<Failure, AgentModel>? _lastAgent;
   final Duration updatePeriod;
 
-  AgentUpdater(
-      {required AgentRepository agentRepository,
-      required UserRepository userRepository,
-      this.updatePeriod = const Duration(seconds: 10)})
-      : _agent = agentRepository,
+  AgentUpdater({
+    required AgentRepository agentRepository,
+    required UserRepository userRepository,
+    this.updatePeriod = const Duration(seconds: 10),
+  })  : _agent = agentRepository,
         _user = userRepository;
 
   Future<Either<Failure, AgentModel>> get agent => _requestAgentIfLastIsEmpty();
