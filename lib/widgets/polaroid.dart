@@ -9,15 +9,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Project imports:
 import 'package:assassin_client/colors.dart';
+import 'package:assassin_client/utils/step_curve.dart';
 
 final rotationProvider = StateProvider<bool>((ref) => false);
 
 /// We use a step function as a curve to hide the front of the polaroid
 /// without resorting to a complex implementation with an AnimationController
-class _StepCurve extends Curve {
-  @override
-  double transformInternal(double t) => t > 0.5 ? 1 : 0;
-}
 
 class Polaroid extends ConsumerWidget {
   const Polaroid({
@@ -60,7 +57,7 @@ class Polaroid extends ConsumerWidget {
                   targetPicture == null &&
                   description != null)
                 AnimatedOpacity(
-                  curve: _StepCurve(),
+                  curve: StepCurve(),
                   duration: animateDuration,
                   opacity: rotationState ? 1 : 0,
                   child: Container(
@@ -83,7 +80,7 @@ class Polaroid extends ConsumerWidget {
   AnimatedOpacity _buildTarget(
       bool rotationState, Size size, BuildContext context) {
     return AnimatedOpacity(
-      curve: _StepCurve(),
+      curve: StepCurve(),
       duration: animateDuration,
       opacity: rotationState ? 1 : 0,
       child: Padding(
@@ -120,7 +117,7 @@ class Polaroid extends ConsumerWidget {
 
   AnimatedOpacity _buildSheet(bool rotationState) {
     return AnimatedOpacity(
-      curve: _StepCurve(),
+      curve: StepCurve(),
       duration: animateDuration,
       opacity: rotationState ? 1 : 0,
       child: Padding(

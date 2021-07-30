@@ -23,6 +23,8 @@ class LobbyModel {
   factory LobbyModel.fromJson(Map<String, dynamic> json) =>
       _$LobbyModelFromJson(json);
   Map<String, dynamic> toJson() => _$LobbyModelToJson(this);
+
+  bool isAdmin(String username) => admin != null && username == admin;
 }
 
 @JsonSerializable(explicitToJson: true)

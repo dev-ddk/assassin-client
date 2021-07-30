@@ -21,41 +21,41 @@ class LobbyUpdater extends ChangeNotifier {
   final LobbyRepository _lobby;
   final UserRepository _user;
   Either<Failure, LobbyModel>? _lastLobby;
+  final Duration updatePeriod;
 
-  LobbyUpdater(lobbyRepository, userRepository)
+  LobbyUpdater(lobbyRepository, userRepository,
+      {this.updatePeriod = const Duration(seconds: 10)})
       : _lobby = lobbyRepository,
         _user = userRepository,
         _lastLobby = null;
 
   bool get started => _updater != null;
 
-  Future<Either<Failure, LobbyModel>> get lobby async {
-    if (_lastLobby == null) {
-      //If it is the first time that the getter is called
-      return await _user
-          //Get current lobby code (force the refresh of the data)
-          .userInfo(forceRemote: true)
-          //Throw a failure if the lobby code is null
-          .thenRightSync(_forceGetLobbyCode)
-          //Retrieve lobby information
-          .thenRight((lobbyCode) => _lobby.lobbyInfo(lobbyCode))
-          .then((lobbyModel) => _lastLobby = lobbyModel);
-    } else {
-      //Return immediately the result
-      return Future.value(_lastLobby);
-    }
+  ///Retrieves the lobby info
+  Future<Either<Failure, bool>> get admin async {
+    return await _requestLobbyIfLastIsEmpty()
+        //Use the last lobby value for checking if the user is the admin of the lobby
+        .thenRight((lobby) =>
+            _user.userInfo().mapRight((user) => lobby.isAdmin(user.username)));
   }
 
+  ///Retrieves the lobby info
+  Future<Either<Failure, LobbyModel>> get lobby async =>
+      await _requestLobbyIfLastIsEmpty();
+
+  ///Starts the autoupdater
   void start() {
     _updater = Timer.periodic(
-      Duration(seconds: 10),
+      updatePeriod,
       (timer) {
         unawaited(
           _user
               //Get user information (cached)
               .userInfo()
               .thenRightSync(_forceGetLobbyCode)
+              //Request Lobby Info
               .thenRight((lobbyCode) => _lobby.lobbyInfo(lobbyCode))
+              //When request completes notify the view
               .then((lobbyModel) {
             //Set the last lobby value
             _lastLobby = lobbyModel;
@@ -67,9 +67,26 @@ class LobbyUpdater extends ChangeNotifier {
     );
   }
 
+  ///Halts the autoupdater
   void stop() {
     _updater?.cancel();
     _updater = null;
+    _lastLobby = null;
+  }
+
+  Future<Either<Failure, LobbyModel>> _requestLobbyIfLastIsEmpty() async {
+    if (_lastLobby == null) {
+      return await _user
+          //Get current lobby code (force the refresh of the data)
+          .userInfo(forceRemote: true)
+          //Fail if the lobby code is null
+          .thenRightSync(_forceGetLobbyCode)
+          //Retrieve lobby information
+          .thenRight((lobbyCode) => _lobby.lobbyInfo(lobbyCode))
+          .then((lobbyModel) => _lastLobby = lobbyModel);
+    } else {
+      return Future.value(_lastLobby);
+    }
   }
 
   Either<Failure, String> _forceGetLobbyCode(UserModel user) {
