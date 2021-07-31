@@ -4,22 +4,25 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:either_dart/either.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // Project imports:
 import 'package:assassin_client/colors.dart';
 import 'package:assassin_client/main.dart';
+import 'package:assassin_client/models/lobby_model.dart';
+import 'package:assassin_client/providers/providers.dart';
+import 'package:assassin_client/utils/failures.dart';
 import 'package:assassin_client/widgets/template_page.dart';
 
 class HomePage extends ConsumerWidget {
   HomePage({Key? key}) : super(key: key);
 
   static const Map<String, IconData> pages = {
-    '/homepage/target': FontAwesomeIcons.bullseye,
+    '/homepage/target': FontAwesomeIcons.skullCrossbones,
     '/homepage/game': FontAwesomeIcons.users,
-    '/homepage/report': FontAwesomeIcons.skullCrossbones,
-    '/homepage/settings': FontAwesomeIcons.bug,
+    '/homepage/settings': Icons.settings,
   };
 
   final controllerProvider = ChangeNotifierProvider((ref) => PageController());
@@ -28,33 +31,47 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final controller = watch(controllerProvider);
+    final lobbyUpdater = watch(lobbyUpdaterProvider);
 
-    return TemplatePage(
-      title: 'PARTITA DEMOCRATICA',
-      bottomNavigationBar: CurvedNavigationBar(
-        animationDuration: duration,
-        backgroundColor: Colors.transparent,
-        color: assassinWhite,
-        items: pages.values.map((i) => FaIcon(i)).toList(),
-        onTap: (index) {
-          controller.animateToPage(
-            index,
-            duration: duration,
-            curve: Curves.ease,
-          );
-        },
-      ),
-      child: Container(
-        height: 0, // needed only to give the pageview a vertical size
-        child: PageView.builder(
-          physics: NeverScrollableScrollPhysics(),
-          controller: controller,
-          itemBuilder: (context, index) {
-            return routes[pages.keys.elementAt(index)]!.call(context);
-          },
-        ),
-      ),
-      // child: routes[pages.keys.elementAt(0)]!.call(context),
+    return FutureBuilder<Either<Failure, LobbyModel>>(
+      future: lobbyUpdater.lobby,
+      builder: (context, snapshot) {
+        var lobbyName = '... LOADING ...';
+
+        if (snapshot.connectionState == ConnectionState.done) {
+          snapshot.data!.fold(
+              (failure) => lobbyName = 'failed to retrieve lobby',
+              (lobby) => lobbyName = lobby.name.toUpperCase());
+        }
+
+        return TemplatePage(
+          title: lobbyName,
+          bottomNavigationBar: CurvedNavigationBar(
+            animationDuration: duration,
+            backgroundColor: Colors.transparent,
+            color: assassinWhite,
+            items: pages.values.map((i) => FaIcon(i)).toList(),
+            onTap: (index) {
+              controller.animateToPage(
+                index,
+                duration: duration,
+                curve: Curves.ease,
+              );
+            },
+          ),
+          child: Container(
+            height: 0, // needed only to give the pageview a vertical size
+            child: PageView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              controller: controller,
+              itemBuilder: (context, index) {
+                return routes[pages.keys.elementAt(index)]!.call(context);
+              },
+            ),
+          ),
+          // child: routes[pages.keys.elementAt(0)]!.call(context),
+        );
+      },
     );
   }
 }

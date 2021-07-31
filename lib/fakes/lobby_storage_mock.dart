@@ -18,24 +18,36 @@ class RemoteLobbyStorageMock implements RemoteLobbyStorage {
     i = (i + 1) % 2;
     await Future.delayed(Duration(seconds: 4));
     if (i == 0) {
-      return Right(LobbyModel(
+      return Right(
+        LobbyModel(
           code: 'AAAAAA',
           name: 'casa cesaroni',
           admin: 'luigi',
           players: [
             UserLobbyModel('mario', Uri.dataFromString('aaaa')),
             UserLobbyModel('luigi', Uri.dataFromString('aaaa'))
-          ]));
+          ],
+        ),
+      );
     } else {
-      return Right(LobbyModel(
+      return Right(
+        LobbyModel(
           code: 'AAAAAA',
           name: 'casa cesaroni',
-          admin: 'luigi',
+          admin: 'Dario',
           players: [
             UserLobbyModel('mario', Uri.dataFromString('wario')),
             UserLobbyModel('antonio', Uri.dataFromString('aaaa')),
-            UserLobbyModel('eeee', Uri.dataFromString('aaaa'))
-          ]));
+            UserLobbyModel('a', Uri.dataFromString('aaaa')),
+            UserLobbyModel('b', Uri.dataFromString('bbbb')),
+            UserLobbyModel('c', Uri.dataFromString('cccc')),
+            UserLobbyModel('d', Uri.dataFromString('dddd')),
+            UserLobbyModel('e', Uri.dataFromString('eeee')),
+            UserLobbyModel('f', Uri.dataFromString('ffff')),
+            UserLobbyModel('g', Uri.dataFromString('gggg')),
+          ],
+        ),
+      );
     }
   }
 
@@ -56,13 +68,16 @@ class RemoteUserStorageMock implements RemoteUserStorage {
   @override
   Future<Either<Failure, UserModel>> userInfo() async {
     await Future.delayed(Duration(seconds: 2));
-    return Right(UserModel(
+    return Right(
+      UserModel(
         email: 'cci@aaa.it',
         username: 'Dario',
         propic: Uri.dataFromString('aaaaa'),
         active: true,
         currLobbyCode: 'AAAAAAA',
-        totalKills: 0));
+        totalKills: 0,
+      ),
+    );
   }
 
   @override

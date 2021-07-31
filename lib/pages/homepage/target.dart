@@ -28,27 +28,23 @@ class TargetRoute extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
+            //TODO make named constructors
             Polaroid(
-              description: """
-Dear Agent,
-unfortunately you've been recently killed.
+//               description: """
+// Dear Agent,
+// unfortunately you've been recently killed.
 
+// Wait until you are re-deployed.
 
-Wait until you are re-deployed.
+// We trust that you will not fail us again.
 
-
-We trust that you will not fail us again.
-
-
-
-
-                  ~ The Assassin Master
-                  """,
-              // targetLabel: 'ENRICO LETTA',
-              // targetPicture: Image(
-              //   image: AssetImage('assets/enricone.jpg'),
-              //   fit: BoxFit.fitWidth,
-              // ),
+//                   ~ The Assassin Master
+//                   """,
+              targetLabel: 'ENRICO LETTA',
+              targetPicture: Image(
+                image: AssetImage('assets/enricone.jpg'),
+                fit: BoxFit.fitWidth,
+              ),
               animateDuration: Duration(milliseconds: 400),
             ),
             AssassinConfirmButton(
