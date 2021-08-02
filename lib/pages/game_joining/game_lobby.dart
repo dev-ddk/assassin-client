@@ -9,18 +9,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Project imports:
 import 'package:assassin_client/colors.dart';
+import 'package:assassin_client/controllers/lobby_change_notifier.dart';
 import 'package:assassin_client/models/lobby_model.dart';
 import 'package:assassin_client/providers/providers.dart';
 import 'package:assassin_client/utils/failures.dart';
 import 'package:assassin_client/widgets/buttons.dart';
 import 'package:assassin_client/widgets/template_page.dart';
 
-class GameLobbyRoute extends StatelessWidget {
+class GameLobbyRoute extends ConsumerWidget {
   GameLobbyRoute({Key? key}) : super(key: key);
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ScopedReader watch) {
+    final lobbyUpdater = watch(lobbyUpdaterProvider);
     final size = MediaQuery.of(context).size;
-    final isOwner = true; //TODO: Add owner check
 
     return TemplatePage(
       title: 'GAME LOBBY',
@@ -34,46 +35,70 @@ class GameLobbyRoute extends StatelessWidget {
             _buildTapText(context),
             _buildLobbyCode(context, 'C4F3B4B3'),
             SizedBox(height: 20),
-            if (isOwner)
-              AssassinConfirmButton(
-                width: size.width / 2,
-                height: size.width / 4,
-                text: 'Start Game!',
-                onPressed: () {},
-              ),
-            if (isOwner) SizedBox(height: 20),
+            _buildStartGameButton(size, lobbyUpdater),
             _buildPlayerInLobbyText(context),
             SizedBox(height: 20),
-            Consumer(
-              // Rebuild only the Text when counterProvider updates
-              builder: (context, ref, child) {
-                // Listens to the value exposed by counterProvider
-                final lobbyFuture = ref(lobbyUpdaterProvider).lobby;
-                //Handle one of the three cases
-                //1. There is a failure in the retrieveral of lobby data (i.e. no internet)
-                //2. Lobby data is received correctly
-                //3. The (first) request is still awaiting a response
-                return FutureBuilder<Either<Failure, LobbyModel>>(
-                  future: lobbyFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      final lobbyResult = snapshot.data!;
-                      return lobbyResult.fold(
-                          //Case 1
-                          (failure) => _buildErrorMessage(context),
-                          //Case 2
-                          (lobby) => _buildPlayerList(context, lobby));
-                    } else {
-                      //Case 3
-                      return _buildLoadingScreen(context);
-                    }
-                  },
-                );
-              },
-            ),
+            _buildLobbyPlayers(lobbyUpdater),
           ],
         ),
       ),
+    );
+  }
+
+  FutureBuilder<Either<Failure, LobbyModel>> _buildLobbyPlayers(
+      LobbyUpdater lobbyUpdater) {
+    //Handle one of the three cases
+    //1. There is a failure in the retrieveral of lobby data (i.e. no internet)
+    //2. Lobby data is received correctly
+    //3. The (first) request is still awaiting a response
+    return FutureBuilder<Either<Failure, LobbyModel>>(
+      future: lobbyUpdater.lobby,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          final lobbyResult = snapshot.data!;
+          return lobbyResult.fold(
+              //Case 1
+              (failure) => _buildErrorMessage(context),
+              //Case 2
+              (lobby) => _buildPlayerList(context, lobby));
+        } else {
+          //Case 3
+          return _buildLoadingScreen(context);
+        }
+      },
+    );
+  }
+
+  Widget _buildStartGameButton(Size size, LobbyUpdater lobby) {
+    return FutureBuilder<Either<Failure, bool>>(
+      future: lobby.admin,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          final adminResult = snapshot.data!;
+
+          return adminResult.fold(
+            //Case 1
+            (failure) => _buildErrorMessage(context),
+            //Case 2
+            (isLobbyAdmin) {
+              if (isLobbyAdmin) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 20.0),
+                  child: AssassinConfirmButton(
+                    width: size.width / 2,
+                    height: size.width / 4,
+                    text: 'Start Game!',
+                    onPressed: () {},
+                  ),
+                );
+              } else {
+                return Container();
+              }
+            },
+          );
+        }
+        return Container();
+      },
     );
   }
 
@@ -96,8 +121,7 @@ class GameLobbyRoute extends StatelessWidget {
   }
 
   Widget _buildErrorMessage(context) {
-    //TODO
-    return Text('Failed to retrieve the lobby');
+    return Text('Failed to retrieve information');
   }
 
   Widget _buildLoadingScreen(context) {

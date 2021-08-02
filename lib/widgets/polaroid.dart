@@ -67,6 +67,9 @@ class Polaroid extends ConsumerWidget {
                     child: Text(
                       description!,
                       softWrap: true,
+                      style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                            fontFamily: 'Special Elite',
+                          ),
                     ),
                   ),
                 ),
