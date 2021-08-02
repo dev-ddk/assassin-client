@@ -15,6 +15,7 @@ class JoinLobbyRoute extends StatelessWidget {
   JoinLobbyRoute({Key? key}) : super(key: key);
 
   final lobbynameController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -24,19 +25,22 @@ class JoinLobbyRoute extends StatelessWidget {
       title: 'JOIN LOBBY',
       child: Padding(
         padding: EdgeInsets.all(12.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Insert the code\nof the lobby',
-              style: textStyle,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 60),
-            _buildLobbyNameField(),
-            const SizedBox(height: 60),
-            _buildConfirmButton(),
-          ],
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Insert the code\nof the lobby',
+                style: textStyle,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 60),
+              _buildLobbyNameField(),
+              const SizedBox(height: 60),
+              _buildConfirmButton(),
+            ],
+          ),
         ),
       ),
     );
@@ -53,10 +57,19 @@ class JoinLobbyRoute extends StatelessWidget {
   }
 
   Widget _buildLobbyNameField() {
+    // alphanumeric characters (only uppercase)
+    final regex = RegExp(r'/^[A-Z0-9]+$/');
+
     return AssassinFormField(
       icon: FontAwesomeIcons.gamepad,
       controller: lobbynameController,
       hintText: 'Casa Surace',
+      validator: (value) {
+        if (!regex.hasMatch(value ?? '')) {
+          return 'Invalid lobby code';
+        }
+        return null;
+      },
     );
   }
 }
