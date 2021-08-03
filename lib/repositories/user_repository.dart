@@ -56,7 +56,7 @@ class RemoteUserStorageImpl implements RemoteUserStorage {
 
   Future<Either<Failure, UserModel>> _getUserRequest(Dio dio) async {
     try {
-      final response = await dio.get('ENDPOINT');
+      final response = await dio.get('user_info');
       if (response.statusCode == 200) {
         return Right(UserModel.fromJson(response.data));
       } else {

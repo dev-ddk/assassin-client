@@ -48,14 +48,18 @@ class RemoteLobbyStorageImpl implements RemoteLobbyStorage {
 
   Future<Either<Failure, String>> _createGameRequest(
       Dio dio, String lobbyName) async {
-    final response =
-        await dio.get('create_game', queryParameters: {'game_name': lobbyName});
-    if (response.statusCode == 201) {
+    try {
+      final response = await dio
+          .get('create_game', queryParameters: {'game_name': lobbyName});
       return Right(response.data['game_id']);
-    } else if (response.statusCode != null) {
-      return Left(RequestFailure());
-    } else {
-      return Left(NetworkFailure());
+    } on DioError catch (e) {
+      final response = e.response;
+      print(response?.requestOptions.path);
+      if (response != null) {
+        return Left(RequestFailure(statusCode: response.statusCode));
+      } else {
+        return Left(NetworkFailure());
+      }
     }
   }
 
@@ -68,16 +72,21 @@ class RemoteLobbyStorageImpl implements RemoteLobbyStorage {
 
   Future<Either<Failure, void>> _joinGameRequest(
       Dio dio, String lobbyCode) async {
-    final response =
-        await dio.get('join_game', queryParameters: {'game_id': lobbyCode});
-    if (response.statusCode == 201) {
+    try {
+      await dio.get('join_game', queryParameters: {'game_id': lobbyCode});
       return Right(null);
-    } else if (response.statusCode == 404) {
-      return Left(LobbyNotExistsFailure());
-    } else if (response.statusCode != null) {
-      return Left(RequestFailure());
-    } else {
-      return Left(NetworkFailure());
+    } on DioError catch (e) {
+      final response = e.response;
+      print(response);
+      if (response != null) {
+        if (response.statusCode == 404) {
+          return Left(LobbyNotExistsFailure());
+        } else {
+          return Left(RequestFailure(statusCode: response.statusCode));
+        }
+      } else {
+        return Left(NetworkFailure());
+      }
     }
   }
 
@@ -90,16 +99,22 @@ class RemoteLobbyStorageImpl implements RemoteLobbyStorage {
 
   Future<Either<Failure, LobbyModel>> _gameInfoRequest(
       Dio dio, String lobbyName) async {
-    final response =
-        await dio.get('game_info', queryParameters: {'game_id': lobbyName});
-    if (response.statusCode == 201) {
+    try {
+      final response =
+          await dio.get('join_game', queryParameters: {'game_id': lobbyName});
       return Right(LobbyModel.fromJson(response.data));
-    } else if (response.statusCode == 404) {
-      return Left(LobbyNotExistsFailure());
-    } else if (response.statusCode != null) {
-      return Left(RequestFailure());
-    } else {
-      return Left(NetworkFailure());
+    } on DioError catch (e) {
+      final response = e.response;
+      print(response);
+      if (response != null) {
+        if (response.statusCode == 404) {
+          return Left(LobbyNotExistsFailure());
+        } else {
+          return Left(RequestFailure(statusCode: response.statusCode));
+        }
+      } else {
+        return Left(NetworkFailure());
+      }
     }
   }
 }

@@ -30,6 +30,7 @@ Future<Either<Failure, Dio>> authenticateRequest(Dio dio) async {
     return Left(AuthFailure());
   }
   dio.options.headers['authorization'] = 'Bearer ' + token;
+  print(token);
   return Right(dio);
 }
 
