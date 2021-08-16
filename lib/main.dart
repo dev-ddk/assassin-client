@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 // Package imports:
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:page_transition/page_transition.dart';
 
 // Project imports:
 import 'package:assassin_client/pages/edit_profile.dart';
@@ -19,12 +20,12 @@ void main() async {
   runApp(const ProviderScope(child: AssassinApp()));
 }
 
-final routes = {
-  '/': (context) => const LoginRoute(),
-  '/register': (context) => RegisterRoute(),
-  '/homepage': (context) => HomePage(),
-  '/target': (context) => TestRoute(),
-  '/edit-profile': (context) => const EditProfileRoute(),
+final Map<String, Widget> routes = {
+  '/': const LoginRoute(),
+  '/register': RegisterRoute(),
+  '/homepage': HomePage(),
+  '/target': TestRoute(),
+  '/edit-profile': const EditProfileRoute(),
 };
 
 final firebaseProvider = FutureProvider<FirebaseApp>(
@@ -41,7 +42,15 @@ class AssassinApp extends ConsumerWidget {
       theme: _buildTheme(),
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
-      routes: routes,
+      onGenerateRoute: (settings) => PageTransition(
+        //TODO: error handling
+        child: routes[settings.name]!,
+        type: PageTransitionType.fade,
+        reverseDuration: const Duration(milliseconds: 200),
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.ease,
+        settings: settings,
+      ),
     );
   }
 

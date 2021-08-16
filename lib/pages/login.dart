@@ -105,7 +105,7 @@ class LoginRoute extends StatelessWidget {
         children: [
           Text('Don’t have an account? ', style: style1),
           GestureDetector(
-            onTap: () {}, //TODO
+            onTap: () => Navigator.pushNamed(context, '/register'),
             child: Text('Sign up!', style: style2),
           ),
         ],
@@ -177,6 +177,8 @@ class _LoginFormState extends State<LoginForm> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
+  bool _attemptingLogin = false;
+
   final String? Function(dynamic) _emailValidator = (value) {
     if (value?.isEmpty) {
       return 'email must not be empty';
@@ -206,6 +208,8 @@ class _LoginFormState extends State<LoginForm> {
 
   Future<void> _doLogin() async {
     if (_formKey.currentState!.validate()) {
+      setState(() => _attemptingLogin = true);
+
       try {
         FocusManager.instance.primaryFocus?.unfocus();
 
@@ -228,12 +232,18 @@ class _LoginFormState extends State<LoginForm> {
         );
       }
     }
+
+    setState(() => _attemptingLogin = false);
   }
 
   Widget _buildLoginButton(context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: AssassinConfirmButton(text: 'LOGIN', onPressed: _doLogin),
+      child: AssassinConfirmButton(
+        text: 'LOGIN',
+        backgroundColor: _attemptingLogin ? assassinDarkBlue : assassinWhite,
+        onPressed: _doLogin,
+      ),
     );
   }
 
