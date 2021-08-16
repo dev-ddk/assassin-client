@@ -10,19 +10,22 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // Project imports:
 import 'package:assassin_client/colors.dart';
-import 'package:assassin_client/main.dart';
 import 'package:assassin_client/models/lobby_model.dart';
+import 'package:assassin_client/pages/homepage/game_settings.dart';
+import 'package:assassin_client/pages/homepage/game_top.dart';
+import 'package:assassin_client/pages/homepage/target.dart';
 import 'package:assassin_client/providers/providers.dart';
 import 'package:assassin_client/utils/failures.dart';
 import 'package:assassin_client/widgets/template_page.dart';
 
+// ignore: must_be_immutable
 class HomePage extends ConsumerWidget {
   HomePage({Key? key}) : super(key: key);
 
-  static const Map<String, IconData> pages = {
-    '/homepage/target': FontAwesomeIcons.skullCrossbones,
-    '/homepage/game': FontAwesomeIcons.users,
-    '/homepage/settings': Icons.settings,
+  Map<Widget, IconData> pages = {
+    const TargetRoute(): FontAwesomeIcons.skullCrossbones,
+    GameRoute(): FontAwesomeIcons.users,
+    GameSettingsRoute(): Icons.settings,
   };
 
   final controllerProvider = ChangeNotifierProvider((ref) => PageController());
@@ -65,7 +68,7 @@ class HomePage extends ConsumerWidget {
               physics: NeverScrollableScrollPhysics(),
               controller: controller,
               itemBuilder: (context, index) {
-                return routes[pages.keys.elementAt(index)]!.call(context);
+                return pages.keys.elementAt(index);
               },
             ),
           ),

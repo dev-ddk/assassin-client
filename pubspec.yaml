@@ -29,34 +29,36 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  curved_navigation_bar:
-  file_picker:
-  firebase_auth:
-  firebase_core:
-  flutter_riverpod:
-  font_awesome_flutter:
-  google_sign_in:
-  firebase_messaging:
-  dio:
-  json_annotation:
-  either_dart:
+
+  curved_navigation_bar: null
+  dio: null
+  either_dart: null
+  email_validator: null
+  file_picker: null
+  firebase_auth: null
+  firebase_core: null
+  firebase_messaging: null
+  flutter_riverpod: null
+  font_awesome_flutter: null
+  google_sign_in: null
+  json_annotation: null
   page_transition: ^2.0.2
   pedantic: ^1.11.1
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
+  build_runner: null
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints:
-  import_sorter:
-  build_runner:
-  json_serializable:
-  mockito:
+  flutter_lints: null
+  flutter_test:
+    sdk: flutter
+  import_sorter: null
+  json_serializable: null
+  mockito: null
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -106,7 +108,6 @@ flutter:
         - asset: fonts/Open_Sans/OpenSans-ExtraBoldItalic.ttf
           weight: 800
           style: italic
-
 
     - family: Special Elite
       fonts:
