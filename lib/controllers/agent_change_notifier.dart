@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 
 // Package imports:
 import 'package:either_dart/either.dart';
+import 'package:logger/logger.dart';
 import 'package:pedantic/pedantic.dart';
 
 // Project imports:
@@ -14,6 +15,8 @@ import 'package:assassin_client/models/user_model.dart';
 import 'package:assassin_client/repositories/agent_repository.dart';
 import 'package:assassin_client/repositories/user_repository.dart';
 import 'package:assassin_client/utils/failures.dart';
+
+var logger = Logger(printer: PrettyPrinter());
 
 class AgentUpdater extends ChangeNotifier {
   Timer? _updater;
@@ -60,7 +63,14 @@ class AgentUpdater extends ChangeNotifier {
     if (lobbyCode != null) {
       return Right(lobbyCode);
     } else {
-      return Left(CacheFailure());
+      return Left(
+        CacheFailure.log(
+          code: 'CAC-001',
+          message: 'agent change notifier: Cache failure',
+          logger: logger,
+          level: Level.wtf,
+        ),
+      );
     }
   }
 

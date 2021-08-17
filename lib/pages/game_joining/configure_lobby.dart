@@ -94,10 +94,10 @@ class ConfigureLobbyRoute extends ConsumerWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-              'We had problem to process your request (${failure.statusCode})! Please try again'),
+              'We had problem to process your request (${failure.response.statusCode})! Please try again'),
         ),
       );
-    } else if (failure is NetworkFailure) {
+    } else if (failure is DioNetworkFailure) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Network Error!'),

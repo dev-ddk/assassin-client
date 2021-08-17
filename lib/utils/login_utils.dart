@@ -3,11 +3,14 @@ import 'package:dio/dio.dart';
 import 'package:either_dart/either.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:logger/logger.dart';
 
 // Project imports:
 import 'failures.dart';
 
 final _auth = FirebaseAuth.instance;
+
+var logger = Logger(printer: PrettyPrinter());
 
 final _googleSignIn = GoogleSignIn(
   scopes: [
@@ -27,10 +30,17 @@ BaseOptions baseOptions({contentType = 'application/json'}) {
 Future<Either<Failure, Dio>> authenticateRequest(Dio dio) async {
   final token = await _auth.currentUser?.getIdToken();
   if (token == null) {
-    return Left(AuthFailure());
+    return Left(
+      AuthFailure.log(
+        code: 'AUT-001',
+        message: 'auth: login token is null',
+        logger: logger,
+        level: Level.error,
+      ),
+    );
   }
   dio.options.headers['authorization'] = 'Bearer ' + token;
-  print(token);
+  logger.i(token);
   return Right(dio);
 }
 
@@ -43,8 +53,15 @@ Future<Either<Failure, UserCredential>> login(
     );
 
     return Right(userCredential);
-  } on FirebaseAuthException {
-    return Left(AuthFailure());
+  } on FirebaseAuthException catch (e) {
+    return Left(
+      AuthFailure.log(
+        code: 'AUT-002',
+        message: 'firebase: ${e.message}',
+        logger: logger,
+        level: Level.warning,
+      ),
+    );
   }
 }
 
@@ -62,9 +79,23 @@ Future<Either<Failure, UserCredential>> signInWithGoogle(auth) async {
 
       return Right(await auth.signInWithCredential(credential));
     } else {
-      return Left(AuthFailure());
+      return Left(
+        AuthFailure.log(
+          code: 'AUT-003',
+          message: 'google: account is null',
+          logger: logger,
+          level: Level.error,
+        ),
+      );
     }
   } catch (error) {
-    return Left(AuthFailure());
+    return Left(
+      AuthFailure.log(
+        code: 'AUT-004',
+        message: 'google: unknown error',
+        logger: logger,
+        level: Level.error,
+      ),
+    );
   }
 }

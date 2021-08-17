@@ -1,11 +1,14 @@
 // Package imports:
 import 'package:dio/dio.dart';
 import 'package:either_dart/either.dart';
+import 'package:logger/logger.dart';
 
 // Project imports:
 import 'package:assassin_client/repositories/local_storage.dart';
 import 'package:assassin_client/utils/failures.dart';
 import 'package:assassin_client/utils/login_utils.dart';
+
+var logger = Logger(printer: PrettyPrinter());
 
 class EndTimeRepository {
   final EndTimeRemoteStorage _remoteStorage;
@@ -43,17 +46,33 @@ class EndTimeRemoteStorageImpl implements EndTimeRemoteStorage {
 
   Future<Either<Failure, DateTime>> _getEndTimeRequest(
       Dio dio, String lobbyCode) async {
-    final response =
-        await dio.get('end_game', queryParameters: {'game_id': lobbyCode});
-    if (response.statusCode == 200) {
+    try {
+      final response =
+          await dio.get('end_game', queryParameters: {'game_id': lobbyCode});
       return Right(
           DateTime.fromMillisecondsSinceEpoch(response.data['end_time']));
-    } else if (response.statusCode == 401) {
-      return Left(AuthFailure());
-    } else if (response.statusCode != null) {
-      return Left(RequestFailure());
-    } else {
-      return Left(NetworkFailure());
+    } on DioError catch (e) {
+      final response = e.response;
+      if (response != null) {
+        return Left(
+          RequestFailure.log(
+            code: 'REQ-001',
+            message: '/end_game request failure',
+            response: response,
+            logger: logger,
+          ),
+        );
+      } else {
+        return Left(
+          DioNetworkFailure.log(
+            code: 'NET-000',
+            message: '/end_game network failure',
+            errorType: e.type,
+            logger: logger,
+            level: Level.error,
+          ),
+        );
+      }
     }
   }
 }

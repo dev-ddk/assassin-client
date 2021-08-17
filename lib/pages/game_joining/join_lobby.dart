@@ -84,7 +84,7 @@ class JoinLobbyRoute extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-              'We had problem to process your request (${failure.statusCode})! Please try again'),
+              'We had problem to process your request (${failure.response.statusCode})! Please try again'),
         ),
       );
     } else if (failure is LobbyNotExistsFailure) {
@@ -93,7 +93,7 @@ class JoinLobbyRoute extends StatelessWidget {
           content: Text('This lobby does not exists'),
         ),
       );
-    } else if (failure is NetworkFailure) {
+    } else if (failure is DioNetworkFailure) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Network Error!'),
@@ -110,7 +110,7 @@ class JoinLobbyRoute extends StatelessWidget {
 
   Widget _buildLobbyNameField(BuildContext context) {
     // alphanumeric characters (only uppercase)
-    final regex = RegExp(r'[0-9]+');
+    final regex = RegExp(r'([0-9]|[A-Z])+');
 
     return AssassinFormField(
       icon: FontAwesomeIcons.gamepad,

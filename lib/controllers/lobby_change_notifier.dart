@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 // Package imports:
 import 'package:either_dart/either.dart';
 import 'package:either_dart/src/future_extension.dart';
+import 'package:logger/logger.dart';
 import 'package:pedantic/pedantic.dart';
 
 // Project imports:
@@ -15,6 +16,8 @@ import 'package:assassin_client/models/user_model.dart';
 import 'package:assassin_client/repositories/lobby_repository.dart';
 import 'package:assassin_client/repositories/user_repository.dart';
 import 'package:assassin_client/utils/failures.dart';
+
+var logger = Logger(printer: PrettyPrinter());
 
 class LobbyUpdater extends ChangeNotifier {
   Timer? _updater;
@@ -98,7 +101,14 @@ class LobbyUpdater extends ChangeNotifier {
     if (lobbyCode != null) {
       return Right(lobbyCode);
     } else {
-      return Left(CacheFailure());
+      return Left(
+        CacheFailure.log(
+          code: 'CAC-002',
+          message: 'lobby change notifier: Cache failure',
+          logger: logger,
+          level: Level.wtf,
+        ),
+      );
     }
   }
 }
