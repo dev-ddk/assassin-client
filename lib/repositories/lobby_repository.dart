@@ -52,13 +52,16 @@ class RemoteLobbyStorageImpl implements RemoteLobbyStorage {
   Future<Either<Failure, String>> _createGameRequest(
       Dio dio, String lobbyName) async {
     try {
-      final response = await dio
-          .get('create_game', queryParameters: {'game_name': lobbyName});
-      logger.d('/create_game success\nResponse: ${response.data}');
+      final response =
+          await dio.post('create_game', data: {'game_name': lobbyName});
+
+      logger.i('/create_game success\nResponse: ${response.data}');
       return Right(response.data['game_id']);
     } on DioError catch (e) {
       final response = e.response;
+
       if (response != null) {
+        logger.i(response.requestOptions.uri);
         return Left(
           RequestFailure.log(
             code: 'REQ-001',

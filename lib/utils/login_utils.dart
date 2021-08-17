@@ -40,7 +40,6 @@ Future<Either<Failure, Dio>> authenticateRequest(Dio dio) async {
     );
   }
   dio.options.headers['authorization'] = 'Bearer ' + token;
-  logger.i(token);
   return Right(dio);
 }
 
