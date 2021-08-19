@@ -5,16 +5,13 @@ part 'lobby_model.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class LobbyModel {
-  @JsonKey(name: 'lobby_code')
-  final String code;
-  @JsonKey(name: 'lobby_name')
+  @JsonKey(name: 'game_name')
   final String name;
-  @JsonKey(name: 'admin_name')
+  @JsonKey(name: 'admin_nickame')
   String? admin;
   final List<UserLobbyModel> players;
 
   LobbyModel({
-    required this.code,
     required this.name,
     this.admin,
     List<UserLobbyModel>? players,
@@ -30,8 +27,9 @@ class LobbyModel {
 
 @JsonSerializable(explicitToJson: true)
 class UserLobbyModel {
+  @JsonKey(name: 'nickname')
   final String username;
-  final Uri propic;
+  final Uri? propic;
 
   UserLobbyModel(this.username, this.propic);
 

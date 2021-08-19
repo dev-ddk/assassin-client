@@ -1,11 +1,14 @@
 // Package imports:
 import 'package:dio/dio.dart';
 import 'package:either_dart/either.dart';
+import 'package:logger/logger.dart';
 
 // Project imports:
 import 'package:assassin_client/models/lobby_model.dart';
 import 'package:assassin_client/utils/failures.dart';
 import 'package:assassin_client/utils/login_utils.dart';
+
+var logger = Logger(printer: PrettyPrinter());
 
 class LobbyRepository {
   final RemoteLobbyStorage _remoteLobbyStorage;
@@ -16,7 +19,7 @@ class LobbyRepository {
       String lobbyName) async {
     return await _remoteLobbyStorage
         .createGame(lobbyName)
-        .thenRight((lobbyCode) => joinLobby(lobbyCode));
+        .thenRight((lobbyCode) => lobbyInfo(lobbyCode));
   }
 
   Future<Either<Failure, LobbyModel>> joinLobby(String lobbyCode) async {
@@ -48,14 +51,38 @@ class RemoteLobbyStorageImpl implements RemoteLobbyStorage {
 
   Future<Either<Failure, String>> _createGameRequest(
       Dio dio, String lobbyName) async {
-    final response =
-        await dio.get('create_game', queryParameters: {'game_name': lobbyName});
-    if (response.statusCode == 201) {
-      return Right(response.data['game_id']);
-    } else if (response.statusCode != null) {
-      return Left(RequestFailure());
-    } else {
-      return Left(NetworkFailure());
+    try {
+      final response = await dio.post(
+        'create_game',
+        data: {'game_name': lobbyName},
+      );
+
+      logger.i('/create_game success\nResponse: ${response.data}');
+      return Right(response.data['gameCode']);
+    } on DioError catch (e) {
+      final response = e.response;
+
+      if (response != null) {
+        logger.i(response.requestOptions.uri);
+        return Left(
+          RequestFailure.log(
+            code: 'REQ-001',
+            message: '/create_game request failure',
+            response: response,
+            logger: logger,
+          ),
+        );
+      } else {
+        return Left(
+          DioNetworkFailure.log(
+            code: 'NET-000',
+            message: '/create_game network failure',
+            errorType: e.type,
+            logger: logger,
+            level: Level.error,
+          ),
+        );
+      }
     }
   }
 
@@ -68,16 +95,48 @@ class RemoteLobbyStorageImpl implements RemoteLobbyStorage {
 
   Future<Either<Failure, void>> _joinGameRequest(
       Dio dio, String lobbyCode) async {
-    final response =
-        await dio.get('join_game', queryParameters: {'game_id': lobbyCode});
-    if (response.statusCode == 201) {
+    try {
+      final response = await dio.get(
+        'join_game',
+        queryParameters: {'gameCode': lobbyCode},
+      );
+
+      logger.i(response);
+
       return Right(null);
-    } else if (response.statusCode == 404) {
-      return Left(LobbyNotExistsFailure());
-    } else if (response.statusCode != null) {
-      return Left(RequestFailure());
-    } else {
-      return Left(NetworkFailure());
+    } on DioError catch (e) {
+      final response = e.response;
+      print(response);
+      if (response != null) {
+        if (response.statusCode == 404) {
+          return Left(
+            LobbyNotExistsFailure.log(
+              code: 'REQ-002',
+              message: '/join_game: Lobby does not exists',
+              logger: logger,
+            ),
+          );
+        } else {
+          return Left(
+            RequestFailure.log(
+              code: 'REQ-001',
+              message: '/join_game request failure',
+              response: response,
+              logger: logger,
+            ),
+          );
+        }
+      } else {
+        return Left(
+          DioNetworkFailure.log(
+            code: 'NET-000',
+            message: '/join_game network_failure',
+            errorType: e.type,
+            logger: logger,
+            level: Level.error,
+          ),
+        );
+      }
     }
   }
 
@@ -90,16 +149,50 @@ class RemoteLobbyStorageImpl implements RemoteLobbyStorage {
 
   Future<Either<Failure, LobbyModel>> _gameInfoRequest(
       Dio dio, String lobbyName) async {
-    final response =
-        await dio.get('game_info', queryParameters: {'game_id': lobbyName});
-    if (response.statusCode == 201) {
+    print(lobbyName);
+
+    try {
+      final response = await dio.get(
+        'game_info',
+        queryParameters: {'gameCode': lobbyName},
+      );
+      logger.i('/join_game: response code ${response.statusCode}');
+      logger.d(response.data);
+
       return Right(LobbyModel.fromJson(response.data));
-    } else if (response.statusCode == 404) {
-      return Left(LobbyNotExistsFailure());
-    } else if (response.statusCode != null) {
-      return Left(RequestFailure());
-    } else {
-      return Left(NetworkFailure());
+    } on DioError catch (e) {
+      final response = e.response;
+      print(response);
+      if (response != null) {
+        if (response.statusCode == 404) {
+          return Left(
+            LobbyNotExistsFailure.log(
+              code: 'REQ-002',
+              message: '/game_info: Lobby does not exists',
+              logger: logger,
+            ),
+          );
+        } else {
+          return Left(
+            RequestFailure.log(
+              code: 'REQ-001',
+              message: '/game_info request failure',
+              response: response,
+              logger: logger,
+            ),
+          );
+        }
+      } else {
+        return Left(
+          DioNetworkFailure.log(
+            code: 'NET-000',
+            message: '/game_info network_failure',
+            errorType: e.type,
+            logger: logger,
+            level: Level.error,
+          ),
+        );
+      }
     }
   }
 }

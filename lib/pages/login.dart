@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 // Package imports:
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -215,7 +216,10 @@ class _LoginFormState extends State<LoginForm> {
             const SnackBar(content: Text('Login Failed')),
           );
         },
-        (loginData) => Navigator.popAndPushNamed(context, '/homepage'),
+        (loginData) async {
+          Navigator.popAndPushNamed(context, '/homepage');
+          print(await FirebaseAuth.instance.currentUser!.getIdToken());
+        },
       );
     }
 

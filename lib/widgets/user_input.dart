@@ -19,16 +19,17 @@ class AssassinFormField extends ConsumerWidget {
   final hidePwdStateProvider = StateProvider.autoDispose<bool>((_) => true);
   final showIconProvider = StateProvider.autoDispose<bool>((_) => false);
 
-  AssassinFormField({
-    Key? key,
-    this.icon,
-    this.obscureText = false,
-    this.hintText = '',
-    this.validator,
-    this.enabled = true,
-    this.controller,
-    this.maxLines = 1,
-  }) : super(key: key);
+  AssassinFormField(
+      {Key? key,
+      this.icon,
+      this.obscureText = false,
+      this.hintText = '',
+      this.validator,
+      this.enabled = true,
+      this.controller,
+      this.maxLines = 1,
+      this.onFieldSubmitted})
+      : super(key: key);
 
   final IconData? icon;
   final String hintText;
@@ -40,6 +41,7 @@ class AssassinFormField extends ConsumerWidget {
   final String? Function(String?)? validator;
 
   final int maxLines;
+  final void Function(String)? onFieldSubmitted;
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {

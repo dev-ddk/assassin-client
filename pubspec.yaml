@@ -30,19 +30,20 @@ dependencies:
   flutter:
     sdk: flutter
 
-  curved_navigation_bar: null
-  dio: null
-  either_dart: null
-  email_validator: null
-  file_picker: null
-  firebase_auth: null
-  firebase_core: null
-  firebase_messaging: null
-  flutter_riverpod: null
-  font_awesome_flutter: null
-  google_sign_in: null
-  json_annotation: null
+  email_validator:
   flutter_svg: ^0.22.0
+  curved_navigation_bar:
+  file_picker:
+  firebase_auth:
+  firebase_core:
+  flutter_riverpod:
+  font_awesome_flutter:
+  google_sign_in:
+  firebase_messaging:
+  dio:
+  json_annotation:
+  logger: ^1.0.0
+  either_dart:
   page_transition: ^2.0.2
 
 dev_dependencies:
@@ -68,6 +69,7 @@ flutter_icons:
   image_path: "assets/icon/icon512.png"
   adaptive_icon_background: "#A6E9F2"
   adaptive_icon_foreground: "assets/icon/icon512.png"
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

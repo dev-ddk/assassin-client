@@ -1,12 +1,15 @@
 // Package imports:
 import 'package:dio/dio.dart';
 import 'package:either_dart/either.dart';
+import 'package:logger/logger.dart';
 
 // Project imports:
 import 'package:assassin_client/models/game_stats_model.dart';
 import 'package:assassin_client/utils/failures.dart';
 import 'package:assassin_client/utils/login_utils.dart';
 import 'local_storage.dart';
+
+var logger = Logger(printer: PrettyPrinter());
 
 class GameStatsRepository {
   final GameStatsRemoteStorage _remoteStorage;
@@ -44,16 +47,32 @@ class EndTimeRemoteStorageImpl implements GameStatsRemoteStorage {
 
   Future<Either<Failure, GameStatsModel>> _getEndTimeRequest(
       Dio dio, String lobbyCode) async {
-    final response =
-        await dio.get('game_stats', queryParameters: {'game_id': lobbyCode});
-    if (response.statusCode == 200) {
+    try {
+      final response = await dio.get(
+        'game_stats',
+        queryParameters: {'gameCode': lobbyCode},
+      );
       return Right(GameStatsModel.fromJson(response.data));
-    } else if (response.statusCode == 401) {
-      return Left(AuthFailure());
-    } else if (response.statusCode != null) {
-      return Left(RequestFailure());
-    } else {
-      return Left(NetworkFailure());
+    } on DioError catch (e) {
+      final response = e.response;
+      if (response != null) {
+        return Left(
+          RequestFailure.log(
+            code: 'REQ-001',
+            message: '/game_stats request failure',
+            response: response,
+            logger: logger,
+          ),
+        );
+      } else {
+        return Left(DioNetworkFailure.log(
+          code: 'NET-000',
+          message: '/game_stats network failure',
+          errorType: e.type,
+          logger: logger,
+          level: Level.error,
+        ));
+      }
     }
   }
 }

@@ -31,22 +31,18 @@ class GameSettingsRoute extends StatelessWidget {
             child: Column(
               children: [
                 //Show/Hide Button
-                Consumer(
-                  builder: (context, watch, _) {
-                    final rotationState = watch(rotationProvider).state;
-                    return AssassinConfirmButton(
-                      text: rotationState ? 'SHOW ID CARD' : 'HIDE ID CARD',
-                      onPressed: () =>
-                          context.read(rotationProvider).state ^= true,
-                    );
-                  },
-                ),
-                SizedBox(height: 40),
+                Consumer(builder: (context, watch, _) {
+                  final rotationState = watch(rotationProvider).state;
+                  return AssassinConfirmButton(
+                    text: rotationState ? 'SHOW ID CARD' : 'HIDE ID CARD',
+                    onPressed: () =>
+                        context.read(rotationProvider).state ^= true,
+                  );
+                }),
+                SizedBox(height: 20),
                 AssassinConfirmButton(
                   text: 'REPORT BUG',
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/homepage/report-bug');
-                  },
+                  onPressed: () {},
                 ),
               ],
             ),
@@ -68,16 +64,14 @@ class AgentCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final rotationState = watch(rotationProvider).state;
-    final size = MediaQuery.of(context).size;
 
     final labelStyle =
-        Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 12.0);
+        Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 7.0);
 
-    final valueStyle = Theme.of(context).textTheme.bodyText1!.copyWith(
-          fontFamily: 'Special Elite',
-          fontSize: 16.0,
-          height: 1.3,
-        );
+    final valueStyle = Theme.of(context)
+        .textTheme
+        .bodyText1!
+        .copyWith(fontFamily: 'Roboto Mono', fontSize: 12.0);
 
     return AnimatedContainer(
       duration: duration,
@@ -87,11 +81,9 @@ class AgentCard extends ConsumerWidget {
         onTap: () => context.read(rotationProvider).state ^= true,
         child: Stack(children: [
           Container(
-            height: size.width / 2,
+            height: 200,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: assassinGray,
-            ),
+                borderRadius: BorderRadius.circular(10), color: assassinGray),
           ),
           AnimatedOpacity(
             opacity: rotationState ? 1.0 : 0.0,
@@ -101,43 +93,74 @@ class AgentCard extends ConsumerWidget {
               children: [
                 Container(
                   padding: const EdgeInsets.all(12.0),
-                  width: size.width / 3,
+                  width: 100,
                   child: Column(
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: Image(
-                          image: AssetImage('assets/matteo.jpg'),
-                          fit: BoxFit.fitWidth,
-                        ),
-                      ),
-                      SizedBox(height: 10),
+                      Container(
+                          width: 100,
+                          height: 90,
+                          decoration: BoxDecoration(color: assassinBlue),
+                          child: Image(
+                              image: AssetImage('assets/logo.jpg'),
+                              fit: BoxFit.fitWidth)),
                       SizedBox(
-                        width: size.width / 8,
-                        child: Image.asset('assets/assassin_logo.png'),
+                        height: 10,
                       ),
+                      Image.asset('assets/assassin_logo.png'),
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Name', style: labelStyle),
-                      SizedBox(height: 3),
-                      Text('Matteo Renzi', style: valueStyle),
-                      SizedBox(height: 6),
-                      Text('Codename', style: labelStyle),
-                      SizedBox(height: 3),
-                      Text('Bischero Fiorentino', style: valueStyle),
-                      SizedBox(height: 6),
-                      Text('Identifier', style: labelStyle),
-                      SizedBox(height: 3),
-                      Text('M4JS124', style: valueStyle),
-                      SizedBox(height: 8),
-                      _buildStats(labelStyle, valueStyle),
-                    ],
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Name',
+                          style: labelStyle,
+                        ),
+                        SizedBox(height: 3),
+                        Text(
+                          'Matteo Renzi',
+                          style: valueStyle,
+                        ),
+                        SizedBox(height: 6),
+                        Text(
+                          'Codename',
+                          style: labelStyle,
+                        ),
+                        SizedBox(height: 3),
+                        Text(
+                          'Bischero Fiorentino',
+                          style: valueStyle,
+                        ),
+                        SizedBox(height: 6),
+                        Text(
+                          'Identifier',
+                          style: labelStyle,
+                        ),
+                        SizedBox(height: 3),
+                        Text('M4JS124', style: valueStyle),
+                        SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Text(
+                              'Game Kills: ',
+                              style: labelStyle,
+                            ),
+                            SizedBox(width: 4),
+                            Text('5',
+                                style: valueStyle.copyWith(color: assassinRed)),
+                            SizedBox(width: 15),
+                            Text('Total Kills', style: labelStyle),
+                            SizedBox(width: 4),
+                            Text('11',
+                                style: valueStyle.copyWith(color: assassinRed))
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 )
               ],
@@ -145,20 +168,6 @@ class AgentCard extends ConsumerWidget {
           ),
         ]),
       ),
-    );
-  }
-
-  Row _buildStats(TextStyle labelStyle, TextStyle valueStyle) {
-    return Row(
-      children: [
-        Text('Game Kills: ', style: labelStyle),
-        SizedBox(width: 4),
-        Text('5', style: valueStyle.copyWith(color: assassinRed)),
-        SizedBox(width: 15),
-        Text('Total Kills:', style: labelStyle),
-        SizedBox(width: 4),
-        Text('11', style: valueStyle.copyWith(color: assassinRed))
-      ],
     );
   }
 }

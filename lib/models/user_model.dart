@@ -6,10 +6,14 @@ part 'user_model.g.dart';
 @JsonSerializable()
 class UserModel {
   final String email;
+  @JsonKey(name: 'nickname')
   final String username;
-  final Uri propic;
+  @JsonKey(name: 'picture')
+  final Uri? propic;
   final bool active;
+  @JsonKey(name: 'curr_lobby_code')
   final String? currLobbyCode;
+  @JsonKey(name: 'total_kills')
   final int totalKills;
 
   UserModel({

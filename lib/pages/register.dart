@@ -123,19 +123,21 @@ class _RegisterFormState extends State<RegisterForm> {
       // Unfocus the keyboard when we start the login process
       FocusManager.instance.primaryFocus?.unfocus();
 
-      final userCredential = await registerr(
-        _emailController.text.trim(),
-        _passwordController.text,
-      );
+      throw UnimplementedError();
 
-      await userCredential.fold(
-        (error) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('sos')),
-          );
-        },
-        (loginData) => Navigator.pushNamed(context, '/homepage'),
-      );
+      // final userCredential = await registerr(
+      //   _emailController.text.trim(),
+      //   _passwordController.text,
+      // );
+
+      // await userCredential.fold(
+      //   (error) {
+      //     ScaffoldMessenger.of(context).showSnackBar(
+      //       const SnackBar(content: Text('sos')),
+      //     );
+      //   },
+      //   (loginData) => Navigator.pushNamed(context, '/homepage'),
+      // );
     }
 
     setState(() => _attemptingLogin = false);

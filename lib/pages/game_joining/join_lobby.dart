@@ -60,13 +60,13 @@ class _LobbyCodeFormState extends State<LobbyCodeForm> {
           const SizedBox(height: 10),
           _buildLobbyNameField(),
           const SizedBox(height: 40),
-          _buildConfirmButton(),
+          _buildConfirmButton(context),
         ],
       ),
     );
   }
 
-  Widget _buildConfirmButton() {
+  Widget _buildConfirmButton(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: AssassinConfirmButton(

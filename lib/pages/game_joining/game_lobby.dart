@@ -22,30 +22,52 @@ class GameLobbyRoute extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final lobbyUpdater = watch(lobbyUpdaterProvider);
-    final size = MediaQuery.of(context).size;
+    // final size = MediaQuery.of(context).size;
 
-    return TemplatePage(
-      title: 'GAME LOBBY',
-      child: Padding(
-        padding: EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            SizedBox(height: 30),
-            _buildTopText(context),
-            SizedBox(height: 20),
-            _buildTapText(context),
-            _buildLobbyCode(context, 'C4F3B4B3'),
-            SizedBox(height: 20),
-            _buildStartGameButton(size, lobbyUpdater),
-            _buildPlayerInLobbyText(context),
-            SizedBox(height: 20),
-            _buildLobbyPlayers(lobbyUpdater),
-          ],
-        ),
-      ),
+    return FutureBuilder<Either<Failure, LobbyModel>>(
+      future: lobbyUpdater.lobby,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return CircularProgressIndicator();
+        }
+
+        final lobby = snapshot.data!;
+
+        return lobby.fold(
+          (error) => TemplatePage(
+            title: 'ERROR',
+            child: Text(error.toString()),
+          ),
+          (lobby) => CircularProgressIndicator(),
+        );
+
+        // return TemplatePage(
+        //   title: 'GAME LOBBY',
+        //   child: Padding(
+        //     padding: EdgeInsets.all(10.0),
+        //     child: Column(
+        //       children: [
+        //         SizedBox(height: 30),
+        //         _buildTopText(context),
+        //         SizedBox(height: 20),
+        //         _buildTapText(context),
+        //         _buildLobbyCode(
+        //           context,
+        //         ),
+        //         SizedBox(height: 20),
+        //         _buildStartGameButton(size, lobbyUpdater),
+        //         _buildPlayerInLobbyText(context),
+        //         SizedBox(height: 20),
+        //         _buildLobbyPlayers(lobbyUpdater),
+        //       ],
+        //     ),
+        //   ),
+        // );
+      },
     );
   }
 
+  // ignore: unused_element
   FutureBuilder<Either<Failure, LobbyModel>> _buildLobbyPlayers(
       LobbyUpdater lobbyUpdater) {
     //Handle one of the three cases
@@ -70,6 +92,7 @@ class GameLobbyRoute extends ConsumerWidget {
     );
   }
 
+  // ignore: unused_element
   Widget _buildStartGameButton(Size size, LobbyUpdater lobby) {
     return FutureBuilder<Either<Failure, bool>>(
       future: lobby.admin,
@@ -135,6 +158,7 @@ class GameLobbyRoute extends ConsumerWidget {
     );
   }
 
+  // ignore: unused_element
   Widget _buildPlayerInLobbyText(context) {
     return Text(
       'Players in the Lobby',
@@ -145,6 +169,7 @@ class GameLobbyRoute extends ConsumerWidget {
     );
   }
 
+  // ignore: unused_element
   Widget _buildLobbyCode(context, code) {
     return GestureDetector(
       onTap: () => Clipboard.setData(ClipboardData(text: code)),
@@ -174,6 +199,7 @@ class GameLobbyRoute extends ConsumerWidget {
     );
   }
 
+  // ignore: unused_element
   Widget _buildTapText(context) {
     return Text(
       'Tap to copy to clipboard',
@@ -183,6 +209,7 @@ class GameLobbyRoute extends ConsumerWidget {
     );
   }
 
+  // ignore: unused_element
   Widget _buildTopText(context) {
     return Text(
       'Send this code to your friends!',
