@@ -8,16 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 // Package imports:
-import 'package:email_validator/email_validator.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // Project imports:
 import 'package:assassin_client/colors.dart';
 import 'package:assassin_client/main.dart';
-import 'package:assassin_client/utils/api.dart';
-import 'package:assassin_client/widgets/buttons.dart';
-import 'package:assassin_client/widgets/form_fields.dart';
+import 'package:assassin_client/utils/login_utils.dart';
+import 'package:assassin_client/widgets/user_input.dart';
 
 class LoginRoute extends StatelessWidget {
   const LoginRoute({Key? key}) : super(key: key);
@@ -40,7 +38,7 @@ class LoginRoute extends StatelessWidget {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    _buildBody(constraints, context),
+                    _buildBody(constraints),
                     _buildRegisterButton(context),
                   ],
                 ),
@@ -52,11 +50,11 @@ class LoginRoute extends StatelessWidget {
     );
   }
 
-  Widget _buildBody(constraints, context) {
+  Widget _buildBody(constraints) {
     return Column(
       children: [
         const Logo(),
-        const SizedBox(height: 60),
+        const SizedBox(height: 40),
         const LoginForm(),
         const SizedBox(height: 20),
         // _buildSocialLoginButtons(context),
@@ -128,8 +126,6 @@ class _LogoState extends State<Logo> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
     final style =
         Theme.of(context).textTheme.bodyText2!.copyWith(color: assassinBlue);
 
@@ -139,28 +135,32 @@ class _LogoState extends State<Logo> {
           onLongPress: () {
             setState(() => _showRoutes = !_showRoutes && kDebugMode);
           },
-          child: Container(
-            width: size.width / 2,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(size.width / 4),
-              boxShadow: [
-                const BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 10,
-                  offset: Offset(3, 3),
-                ),
-              ],
-            ),
-            child: !_showRoutes
-                ? Image.asset('assets/assassin_logo.png')
-                : const DebugRoutes(),
-          ),
+          child: !_showRoutes ? _buildLogo() : const DebugRoutes(),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text('by /dev/ddk', style: style),
         )
       ],
+    );
+  }
+
+  Widget _buildLogo() {
+    final size = MediaQuery.of(context).size;
+    final borderRadius = BorderRadius.circular(size.width / 4);
+
+    return Material(
+      elevation: 10,
+      borderRadius: borderRadius,
+      child: Container(
+        width: size.width / 2,
+        height: size.width / 2,
+        decoration: BoxDecoration(
+          borderRadius: borderRadius,
+          color: assassinBlue,
+        ),
+        child: SvgPicture.asset('assets/assassin_logo.svg'),
+      ),
     );
   }
 }
@@ -178,16 +178,6 @@ class _LoginFormState extends State<LoginForm> {
   final _passwordController = TextEditingController();
 
   bool _attemptingLogin = false;
-
-  final String? Function(dynamic) _emailValidator = (value) {
-    if (value?.isEmpty) {
-      return 'email must not be empty';
-    }
-    return EmailValidator.validate(value) ? null : 'invalid email';
-  };
-
-  final _passwordValidator =
-      (value) => value?.isEmpty ? 'password must not be empty' : null;
 
   @override
   Widget build(BuildContext context) {
@@ -210,27 +200,23 @@ class _LoginFormState extends State<LoginForm> {
     if (_formKey.currentState!.validate()) {
       setState(() => _attemptingLogin = true);
 
-      try {
-        FocusManager.instance.primaryFocus?.unfocus();
+      // Unfocus the keyboard when we start the login process
+      FocusManager.instance.primaryFocus?.unfocus();
 
-        final userCredential = await login(
-          _emailController.text.trim(),
-          _passwordController.text,
-        );
+      final userCredential = await login(
+        _emailController.text.trim(),
+        _passwordController.text,
+      );
 
-        if (userCredential != null) {
-          await Navigator.pushNamed(context, '/homepage');
-        } else {
+      await userCredential.fold(
+        (error) {
           ScaffoldMessenger.of(context).showSnackBar(
+            //TODO: differentiate with network problem vs invalid credentials
             const SnackBar(content: Text('Login Failed')),
           );
-        }
-        //TODO: discuss how to deal with exception and UI
-      } on FirebaseAuthException catch (ex) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(ex.toString())),
-        );
-      }
+        },
+        (loginData) => Navigator.popAndPushNamed(context, '/homepage'),
+      );
     }
 
     setState(() => _attemptingLogin = false);
@@ -241,6 +227,7 @@ class _LoginFormState extends State<LoginForm> {
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: AssassinConfirmButton(
         text: 'LOGIN',
+        heroTag: 'ASSASSIN',
         backgroundColor: _attemptingLogin ? assassinDarkBlue : assassinWhite,
         onPressed: _doLogin,
       ),
@@ -253,7 +240,7 @@ class _LoginFormState extends State<LoginForm> {
       child: AssassinFormField(
         icon: Icons.mail,
         controller: _emailController,
-        validator: _emailValidator,
+        validator: emailValidator,
         hintText: 'mario.rossi@example.com',
       ),
     );
@@ -265,7 +252,7 @@ class _LoginFormState extends State<LoginForm> {
       child: AssassinFormField(
         icon: Icons.password,
         controller: _passwordController,
-        validator: _passwordValidator,
+        validator: passwordValidator,
         hintText: 'password',
         obscureText: true,
       ),

@@ -7,9 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // Project imports:
-import 'package:assassin_client/widgets/buttons.dart';
-import 'package:assassin_client/widgets/form_fields.dart';
 import 'package:assassin_client/widgets/template_page.dart';
+import 'package:assassin_client/widgets/user_input.dart';
 import '../../colors.dart';
 
 class ConfigureLobbyRoute extends ConsumerWidget {

@@ -5,28 +5,17 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-// Package imports:
-import 'package:firebase_auth/firebase_auth.dart';
-
 // Project imports:
 import 'package:assassin_client/colors.dart';
-import 'package:assassin_client/utils/api.dart';
-import 'package:assassin_client/widgets/buttons.dart';
-import 'package:assassin_client/widgets/form_fields.dart';
+import 'package:assassin_client/utils/login_utils.dart';
 import 'package:assassin_client/widgets/template_page.dart';
+import 'package:assassin_client/widgets/user_input.dart';
 
 class RegisterRoute extends StatelessWidget {
-  RegisterRoute({Key? key}) : super(key: key);
-
-  final _formKey = GlobalKey<FormState>();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  final confirmPassController = TextEditingController();
+  const RegisterRoute({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final auth = FirebaseAuth.instance;
-
     return TemplatePage(
       title: 'NEW ACCOUNT',
       child: Padding(
@@ -34,138 +23,152 @@ class RegisterRoute extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            Form(
-              key: _formKey,
-              child: AutofillGroup(
-                child: _buildBody(context, auth),
-              ),
-            ),
-            _buildLoginButton(context),
+            const RegisterForm(),
+            _buildGoToLoginButton(context),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildBody(context, auth) {
-    final textStyle =
-        Theme.of(context).textTheme.bodyText2!.copyWith(color: assassinWhite);
-    return Column(
-      children: [
-        const SizedBox(height: 60),
-        Text('E-mail', style: textStyle),
-        const SizedBox(height: 4),
-        _buildEmailForm(),
-        const SizedBox(height: 20),
-        Text('Password', style: textStyle),
-        const SizedBox(height: 4),
-        _buildPasswordForm(),
-        const SizedBox(height: 20),
-        Text('Repeat Password', style: textStyle),
-        const SizedBox(height: 4),
-        _buildPasswordForm(confirm: true),
-        const SizedBox(height: 80),
-        _buildRegisterButton(context, auth),
-        const SizedBox(height: 60),
-      ],
-    );
-  }
+  Widget _buildGoToLoginButton(context) {
+    final style1 = Theme.of(context)
+        .textTheme
+        .bodyText2!
+        .copyWith(color: assassinLightBlue);
 
-  Widget _buildLoginButton(context) {
+    final style2 = Theme.of(context).textTheme.bodyText2!.copyWith(
+          color: assassinRed,
+          decoration: TextDecoration.underline,
+          fontWeight: FontWeight.bold,
+        );
+
     return Positioned(
       bottom: 10,
       child: Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            'Already have an account? ',
-            style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                  color: assassinLightBlue,
-                ),
-          ),
+          Text('Already have an account? ', style: style1),
           GestureDetector(
-            onTap: () {},
-            child: Text(
-              'Sign in!',
-              style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                    color: assassinRed,
-                    decoration: TextDecoration.underline,
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
+            onTap: () => Navigator.popAndPushNamed(context, '/'),
+            child: Text('Sign in!', style: style2),
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildRegisterButton(context, auth) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: AssassinConfirmButton(
-        text: 'REGISTER',
-        onPressed: () async {
-          FocusManager.instance.primaryFocus?.unfocus();
+class RegisterForm extends StatefulWidget {
+  const RegisterForm({Key? key}) : super(key: key);
 
-          final register = await _doRegister(auth, context);
+  @override
+  _RegisterFormState createState() => _RegisterFormState();
+}
 
-          final displayContent = register?.toString() ?? 'Register Failed';
+class _RegisterFormState extends State<RegisterForm> {
+  final _formKey = GlobalKey<FormState>();
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(displayContent)),
-          );
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPassController = TextEditingController();
 
-          if (register != null) {
-            await Navigator.pushNamed(context, '/homepage');
-          }
-        },
+  bool _attemptingLogin = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final style =
+        Theme.of(context).textTheme.bodyText2!.copyWith(color: assassinWhite);
+
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          const SizedBox(height: 60),
+          Text('E-mail', style: style),
+          const SizedBox(height: 4),
+          _buildEmailForm(),
+          const SizedBox(height: 20),
+          Text('Password', style: style),
+          const SizedBox(height: 4),
+          _buildPasswordForm(),
+          const SizedBox(height: 20),
+          Text('Repeat Password', style: style),
+          const SizedBox(height: 4),
+          _buildPasswordForm(confirm: true),
+          const SizedBox(height: 80),
+          _buildRegisterButton(context),
+          const SizedBox(height: 60),
+        ],
       ),
     );
   }
 
-  Future<UserCredential?> _doRegister(FirebaseAuth auth, context) async {
-    if (_formKey.currentState!.validate()) {
-      try {
-        final userCredential = await register(
-          emailController.text.trim(),
-          passwordController.text,
-        );
+  Widget _buildRegisterButton(context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: AssassinConfirmButton(
+        text: 'REGISTER',
+        backgroundColor: _attemptingLogin ? assassinDarkBlue : assassinWhite,
+        onPressed: _doRegister,
+      ),
+    );
+  }
 
-        return userCredential;
-      } on FirebaseAuthException catch (_) {}
+  Future<void> _doRegister() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() => _attemptingLogin = true);
+
+      // Unfocus the keyboard when we start the login process
+      FocusManager.instance.primaryFocus?.unfocus();
+
+      final userCredential = await registerr(
+        _emailController.text.trim(),
+        _passwordController.text,
+      );
+
+      await userCredential.fold(
+        (error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('sos')),
+          );
+        },
+        (loginData) => Navigator.pushNamed(context, '/homepage'),
+      );
     }
+
+    setState(() => _attemptingLogin = false);
   }
 
   Widget _buildEmailForm() {
     return AssassinFormField(
       icon: Icons.mail,
-      controller: emailController,
+      controller: _emailController,
       hintText: 'mario.rossi@example.com',
-      validator: (value) {
-        if (value?.isEmpty ?? false) {
-          return 'email should contain stuff';
-        }
-        return null;
-      },
+      validator: emailValidator,
     );
   }
 
   Widget _buildPasswordForm({confirm = false}) {
     return AssassinFormField(
       icon: Icons.password,
-      controller: confirm ? confirmPassController : passwordController,
+      controller: confirm ? _confirmPassController : _passwordController,
       hintText: 'password',
       obscureText: true,
-      validator: (value) {
-        if (confirm && passwordController.text != confirmPassController.text) {
-          return 'passwords do not match';
-        } else if (value?.isEmpty ?? false) {
-          return 'passwords should contain stuff';
-        }
-
-        return null;
-      },
+      validator: confirm
+          ? _confirmPwdValidator(_passwordController, _confirmPassController)
+          : passwordValidator,
     );
+  }
+
+  String? Function(String?)? _confirmPwdValidator(controller1, controller2) {
+    return (value) {
+      if (_passwordController.text != _confirmPassController.text) {
+        return 'passwords do not match';
+      }
+
+      return null;
+    };
   }
 }

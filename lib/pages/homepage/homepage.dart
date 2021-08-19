@@ -11,12 +11,52 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // Project imports:
 import 'package:assassin_client/colors.dart';
 import 'package:assassin_client/models/lobby_model.dart';
+import 'package:assassin_client/pages/game_joining/join_game.dart';
 import 'package:assassin_client/pages/homepage/game_settings.dart';
 import 'package:assassin_client/pages/homepage/game_top.dart';
 import 'package:assassin_client/pages/homepage/target.dart';
 import 'package:assassin_client/providers/providers.dart';
 import 'package:assassin_client/utils/failures.dart';
 import 'package:assassin_client/widgets/template_page.dart';
+
+class HomePageRoute extends ConsumerWidget {
+  const HomePageRoute({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, ScopedReader watch) {
+    final lobbyUpdater = watch(lobbyUpdaterProvider);
+
+    return FutureBuilder<Either<Failure, LobbyModel>>(
+      future: lobbyUpdater.lobby,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const TemplatePage(
+            title: 'ASSASSIN',
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        final lobby = snapshot.data!;
+
+        return lobby.fold(
+          (error) {
+            switch (error.runtimeType) {
+              case CacheFailure:
+                return const JoinGameRoute();
+              default:
+                return TemplatePage(
+                  title: error.runtimeType.toString(),
+                );
+            }
+          },
+          (lobby) => TemplatePage(
+            title: lobby.name.toUpperCase(),
+          ),
+        );
+      },
+    );
+  }
+}
 
 // ignore: must_be_immutable
 class HomePage extends ConsumerWidget {
@@ -65,14 +105,13 @@ class HomePage extends ConsumerWidget {
           child: Container(
             height: 0, // needed only to give the pageview a vertical size
             child: PageView.builder(
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               controller: controller,
               itemBuilder: (context, index) {
                 return pages.keys.elementAt(index);
               },
             ),
           ),
-          // child: routes[pages.keys.elementAt(0)]!.call(context),
         );
       },
     );

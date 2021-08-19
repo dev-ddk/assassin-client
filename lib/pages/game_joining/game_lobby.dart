@@ -13,11 +13,12 @@ import 'package:assassin_client/controllers/lobby_change_notifier.dart';
 import 'package:assassin_client/models/lobby_model.dart';
 import 'package:assassin_client/providers/providers.dart';
 import 'package:assassin_client/utils/failures.dart';
-import 'package:assassin_client/widgets/buttons.dart';
 import 'package:assassin_client/widgets/template_page.dart';
+import 'package:assassin_client/widgets/user_input.dart';
 
 class GameLobbyRoute extends ConsumerWidget {
-  GameLobbyRoute({Key? key}) : super(key: key);
+  const GameLobbyRoute({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final lobbyUpdater = watch(lobbyUpdaterProvider);

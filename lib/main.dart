@@ -8,23 +8,29 @@ import 'package:page_transition/page_transition.dart';
 
 // Project imports:
 import 'package:assassin_client/pages/edit_profile.dart';
+import 'package:assassin_client/pages/game_joining/configure_lobby.dart';
+import 'package:assassin_client/pages/game_joining/game_lobby.dart';
+import 'package:assassin_client/pages/game_joining/join_game.dart';
+import 'package:assassin_client/pages/game_joining/join_lobby.dart';
 import 'package:assassin_client/pages/homepage/homepage.dart';
 import 'package:assassin_client/pages/login.dart';
 import 'package:assassin_client/pages/register.dart';
-import 'package:assassin_client/pages/test_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(); //TODO: check without internet
 
   runApp(const ProviderScope(child: AssassinApp()));
 }
 
 final Map<String, Widget> routes = {
   '/': const LoginRoute(),
-  '/register': RegisterRoute(),
-  '/homepage': HomePage(),
-  '/target': TestRoute(),
+  '/register': const RegisterRoute(),
+  '/homepage': const HomePageRoute(),
+  '/homepage/join-game': const JoinGameRoute(),
+  '/homepage/join-game/join-lobby': JoinLobbyRoute(),
+  '/homepage/join-game/configure-lobby': ConfigureLobbyRoute(),
+  '/homepage/join-game/lobby': const GameLobbyRoute(),
   '/edit-profile': const EditProfileRoute(),
 };
 
@@ -45,10 +51,12 @@ class AssassinApp extends ConsumerWidget {
       onGenerateRoute: (settings) => PageTransition(
         //TODO: error handling
         child: routes[settings.name]!,
-        type: PageTransitionType.fade,
-        reverseDuration: const Duration(milliseconds: 200),
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.ease,
+
+        type: PageTransitionType.bottomToTop,
+        alignment: Alignment.center,
+        reverseDuration: const Duration(milliseconds: 400),
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeIn,
         settings: settings,
       ),
     );

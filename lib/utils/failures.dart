@@ -4,6 +4,8 @@ class NetworkFailure extends Failure {}
 
 class AuthFailure extends Failure {}
 
+class RegisterFailure extends Failure {}
+
 class RequestFailure extends Failure {}
 
 class LobbyNotExistsFailure extends Failure {}

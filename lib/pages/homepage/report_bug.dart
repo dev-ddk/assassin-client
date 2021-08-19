@@ -4,9 +4,8 @@ import 'package:flutter/material.dart';
 
 // Project imports:
 import 'package:assassin_client/colors.dart';
-import 'package:assassin_client/widgets/buttons.dart';
-import 'package:assassin_client/widgets/form_fields.dart';
 import 'package:assassin_client/widgets/template_page.dart';
+import 'package:assassin_client/widgets/user_input.dart';
 
 class ReportBugRoute extends StatelessWidget {
   ReportBugRoute({Key? key}) : super(key: key);
@@ -27,11 +26,11 @@ class ReportBugRoute extends StatelessWidget {
           child: Column(
             children: [
               _buildTopText(textTheme),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               _buildFormField(),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               _buildBottomText(textTheme),
-              SizedBox(height: 50),
+              const SizedBox(height: 50),
               AssassinConfirmButton(text: 'SEND REPORT', onPressed: () {}),
             ],
           ),

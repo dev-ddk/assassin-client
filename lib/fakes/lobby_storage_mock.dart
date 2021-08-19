@@ -9,6 +9,7 @@ import 'package:assassin_client/models/user_model.dart';
 import 'package:assassin_client/repositories/lobby_repository.dart';
 import 'package:assassin_client/repositories/user_repository.dart';
 import 'package:assassin_client/utils/failures.dart';
+import 'package:assassin_client/utils/login_utils.dart';
 
 class RemoteLobbyStorageMock implements RemoteLobbyStorage {
   int i = 0;
@@ -21,7 +22,7 @@ class RemoteLobbyStorageMock implements RemoteLobbyStorage {
       return Right(
         LobbyModel(
           code: 'AAAAAA',
-          name: 'casa cesaroni',
+          name: 'casa cesaroni1',
           admin: 'luigi',
           players: [
             UserLobbyModel('mario', Uri.dataFromString('aaaa')),
@@ -33,7 +34,7 @@ class RemoteLobbyStorageMock implements RemoteLobbyStorage {
       return Right(
         LobbyModel(
           code: 'AAAAAA',
-          name: 'casa cesaroni',
+          name: 'casa cesaroni2',
           admin: 'Dario',
           players: [
             UserLobbyModel('mario', Uri.dataFromString('wario')),
@@ -68,14 +69,20 @@ class RemoteUserStorageMock implements RemoteUserStorage {
   @override
   Future<Either<Failure, UserModel>> userInfo() async {
     await Future.delayed(Duration(seconds: 2));
-    return Right(
-      UserModel(
-        email: 'cci@aaa.it',
-        username: 'Dario',
-        propic: Uri.dataFromString('aaaaa'),
-        active: true,
-        currLobbyCode: 'AAAAAAA',
-        totalKills: 0,
+
+    final loltest = await login('testo@testo.com', 'testotesto');
+
+    return loltest.fold(
+      (left) => Left(NetworkFailure()),
+      (right) => Right(
+        UserModel(
+          email: 'cci@aaa.it',
+          username: 'Dario',
+          propic: Uri.dataFromString('AAAAAA'),
+          active: true,
+          currLobbyCode: null,
+          totalKills: 0,
+        ),
       ),
     );
   }

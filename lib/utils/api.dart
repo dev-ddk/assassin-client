@@ -2,6 +2,9 @@
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+// Project imports:
+import 'package:assassin_client/utils/login_utils.dart';
+
 const api_url = 'https://dev.devddk.it/v1/';
 
 String? bearerToken;
@@ -10,18 +13,18 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
 
 // final _dio = Dio();
 
-Future<UserCredential?> login(String email, String password) async {
-  try {
-    final userCredential = await _auth.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+// Future<UserCredential?> login(String email, String password) async {
+//   try {
+//     final userCredential = await _auth.signInWithEmailAndPassword(
+//       email: email,
+//       password: password,
+//     );
 
-    return userCredential;
-  } on FirebaseAuthException catch (_) {}
+//     return userCredential;
+//   } on FirebaseAuthException catch (_) {}
 
-  return null;
-}
+//   return null;
+// }
 
 //owo.owi@test.com
 Future<UserCredential?> register(String email, String password) async {

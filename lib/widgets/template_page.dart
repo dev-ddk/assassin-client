@@ -21,40 +21,63 @@ class TemplatePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appbar = AppBar(
-      centerTitle: true,
-      backwardsCompatibility: false,
-      backgroundColor: assassinWhite,
-      foregroundColor: assassinDarkestBlue,
-      actions: appBarActions,
-      title: Text(
-        title,
-        style: Theme.of(context)
-            .textTheme
-            .headline5!
-            .copyWith(color: assassinDarkestBlue),
-      ),
+    final iconTheme = IconTheme.of(context).copyWith(
+      color: assassinDarkestBlue,
     );
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-      ),
+      value: const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
       child: LayoutBuilder(
         builder: (context, constraints) => Scaffold(
-          appBar: appbar,
           backgroundColor: assassinDarkestBlue,
           bottomNavigationBar: bottomNavigationBar,
-          body: SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: constraints.copyWith(
-                minHeight: constraints.maxHeight -
-                    appbar.preferredSize.height -
-                    (bottomNavigationBar != null ? 110 : 35),
-                maxHeight: double.infinity,
+          body: CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                actionsIconTheme: iconTheme,
+                iconTheme: iconTheme,
+                pinned: true,
+                snap: true,
+                floating: true,
+                backgroundColor: Colors.transparent,
+                foregroundColor: assassinDarkestBlue,
+                brightness: Brightness.light,
+                actions: appBarActions,
+                flexibleSpace: Hero(
+                  tag: title,
+                  child: Container(
+                    alignment: Alignment.bottomCenter,
+                    padding: const EdgeInsets.only(bottom: 16),
+                    width: constraints.maxWidth,
+                    height: double.infinity,
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.vertical(
+                        bottom: Radius.circular(24),
+                      ),
+                      color: assassinWhite,
+                    ),
+                    child: Text(
+                      title,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline5!
+                          .copyWith(color: assassinDarkestBlue),
+                    ),
+                  ),
+                ),
               ),
-              child: child,
-            ),
+              SliverToBoxAdapter(
+                child: ConstrainedBox(
+                  constraints: constraints.copyWith(
+                    minHeight: constraints.maxHeight -
+                        (bottomNavigationBar != null ? 170 : 95),
+                    maxHeight: double.infinity,
+                  ),
+                  child: child,
+                ),
+              ),
+            ],
           ),
         ),
       ),
