@@ -39,4 +39,15 @@ class UserModel {
       totalKills: totalKills,
     );
   }
+
+  UserModel newLobby(String lobby) {
+    return UserModel(
+      email: email,
+      username: username,
+      propic: propic,
+      active: active,
+      currLobbyCode: lobby,
+      totalKills: totalKills,
+    );
+  }
 }

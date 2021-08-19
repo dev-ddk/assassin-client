@@ -39,7 +39,22 @@ class UserRepository {
     }
   }
 
-  Future<Either<Failure, Uri>> updatePropic(PlatformFile propic) async {
+  //AAAAAAAAAA
+  Future<Either<Failure, UserModel>> updateLobbyCode(
+    String lobbyCode,
+  ) async {
+    final model = await _localStorage.getValueSafe();
+
+    if (model.isRight) {
+      _localStorage.value = _localStorage.value.newLobby(lobbyCode);
+    }
+
+    return model;
+  }
+
+  Future<Either<Failure, Uri>> updatePropic(
+    PlatformFile propic,
+  ) async {
     final req = await _remoteStorage.updatePropic(propic);
 
     if (req.isRight) {
@@ -64,7 +79,9 @@ class RemoteUserStorageImpl implements RemoteUserStorage {
     return authenticateRequest(dio).thenRight(_getUserRequest);
   }
 
-  Future<Either<Failure, UserModel>> _getUserRequest(Dio dio) async {
+  Future<Either<Failure, UserModel>> _getUserRequest(
+    Dio dio,
+  ) async {
     try {
       final response = await dio.get('user_info');
       logger.i(response);
@@ -72,6 +89,7 @@ class RemoteUserStorageImpl implements RemoteUserStorage {
       return Right(UserModel.fromJson(response.data));
     } on DioError catch (e) {
       final response = e.response;
+
       if (response != null) {
         return Left(
           RequestFailure.log(
@@ -107,9 +125,11 @@ class RemoteUserStorageImpl implements RemoteUserStorage {
       PlatformFile photo, Dio dio) async {
     try {
       final response = await dio.post('ENDPOINT');
+
       return Right(response.data['link']);
     } on DioError catch (e) {
       final response = e.response;
+
       if (response != null) {
         return Left(
           RequestFailure.log(

@@ -15,31 +15,41 @@ class GameStatusRepository {
   final RemoteGameStatusStorage _remoteStorage;
   final LocalStorage<GameStatus> _localStorage;
 
-  GameStatusRepository({required RemoteGameStatusStorage remoteStorage})
-      : _remoteStorage = remoteStorage,
+  GameStatusRepository({
+    required RemoteGameStatusStorage remoteStorage,
+  })  : _remoteStorage = remoteStorage,
         _localStorage = LocalStorage();
 
-  Future<Either<Failure, GameStatus>> getGameStatus(String gameCode,
-      {bool forceRemote = false}) async {
+  Future<Either<Failure, GameStatus>> getGameStatus(
+    String gameCode, {
+    bool forceRemote = false,
+  }) async {
     if (_localStorage.empty || forceRemote) {
       final status = await _remoteStorage.getGameStatus(gameCode);
+
       if (status.isRight) {
         _localStorage.value = status.right;
       }
+
       return status;
     } else {
       return _localStorage.getValueSafe();
     }
   }
 
-  Future<Either<Failure, GameStatus>> startGame(String gameCode) =>
+  Future<Either<Failure, GameStatus>> startGame(
+    String gameCode,
+  ) =>
       _remoteStorage
           .startGame(gameCode)
           .thenRight((_) => getGameStatus(gameCode, forceRemote: true));
 
-  Future<Either<Failure, GameStatus>> endGame(String gameCode) => _remoteStorage
-      .endGame(gameCode)
-      .thenRight((_) => getGameStatus(gameCode, forceRemote: true));
+  Future<Either<Failure, GameStatus>> endGame(
+    String gameCode,
+  ) =>
+      _remoteStorage
+          .endGame(gameCode)
+          .thenRight((_) => getGameStatus(gameCode, forceRemote: true));
 }
 
 abstract class RemoteGameStatusStorage {
@@ -52,19 +62,25 @@ abstract class RemoteGameStatusStorage {
 
 class RemoteGameStatusStorageImpl implements RemoteGameStatusStorage {
   @override
-  Future<Either<Failure, void>> endGame(String gameCode) async {
+  Future<Either<Failure, void>> endGame(
+    String gameCode,
+  ) async {
     final dio = Dio();
     return await authenticateRequest(dio)
         .thenRight((dio) => _endGameRequest(dio, gameCode));
   }
 
   Future<Either<Failure, void>> _endGameRequest(
-      Dio dio, String gameCode) async {
+    Dio dio,
+    String gameCode,
+  ) async {
     try {
       await dio.post('end_game', queryParameters: {'gameCode': gameCode});
+
       return Right(null);
     } on DioError catch (e) {
       final response = e.response;
+
       if (response != null) {
         return Left(
           RequestFailure.log(
@@ -96,13 +112,17 @@ class RemoteGameStatusStorageImpl implements RemoteGameStatusStorage {
   }
 
   Future<Either<Failure, GameStatus>> _getGameStatusRequest(
-      Dio dio, String gameCode) async {
+    Dio dio,
+    String gameCode,
+  ) async {
     try {
       final response = await dio.get(
         'game_status',
         queryParameters: {'gameCode': gameCode},
       );
+
       final status = GameStatusGettersAndSetters.fromString(response.data);
+
       return status != null
           ? Right(status)
           : Left(
@@ -113,6 +133,7 @@ class RemoteGameStatusStorageImpl implements RemoteGameStatusStorage {
             );
     } on DioError catch (e) {
       final response = e.response;
+
       if (response != null) {
         return Left(
           RequestFailure.log(
@@ -138,12 +159,15 @@ class RemoteGameStatusStorageImpl implements RemoteGameStatusStorage {
   @override
   Future<Either<Failure, void>> startGame(String gameCode) async {
     final dio = Dio();
+
     return await authenticateRequest(dio)
         .thenRight((dio) => _startGameRequest(dio, gameCode));
   }
 
   Future<Either<Failure, void>> _startGameRequest(
-      Dio dio, String gameCode) async {
+    Dio dio,
+    String gameCode,
+  ) async {
     try {
       await dio.post(
         'start_game',
@@ -153,6 +177,7 @@ class RemoteGameStatusStorageImpl implements RemoteGameStatusStorage {
       return Right(null);
     } on DioError catch (e) {
       final response = e.response;
+
       if (response != null) {
         return Left(
           RequestFailure.log(

@@ -21,8 +21,10 @@ class AgentRepository {
   })  : _remoteStorage = remoteStorage,
         _localStorage = localStorage;
 
-  Future<Either<Failure, AgentModel>> agentInfo(String lobbyCode,
-      {bool forceRemote = false}) async {
+  Future<Either<Failure, AgentModel>> agentInfo(
+    String lobbyCode, {
+    bool forceRemote = false,
+  }) async {
     if (!_localStorage.empty && !forceRemote) {
       //Cached value
       return await _localStorage.getValueSafe();
@@ -36,7 +38,9 @@ class AgentRepository {
     }
   }
 
-  Future<Either<Failure, AgentModel>> kill(String lobbyCode) async {
+  Future<Either<Failure, AgentModel>> kill(
+    String lobbyCode,
+  ) async {
     _localStorage.clearStorage();
     return await _remoteStorage
         .agentInfo(lobbyCode)
@@ -56,24 +60,30 @@ abstract class RemoteAgentStorage {
 
 class RemoteAgentStorageImpl implements RemoteAgentStorage {
   @override
-  Future<Either<Failure, AgentModel>> agentInfo(String lobbyCode) async {
+  Future<Either<Failure, AgentModel>> agentInfo(
+    String lobbyCode,
+  ) async {
     final dio = Dio(baseOptions());
+
     return await authenticateRequest(dio).thenRight(_agentInfoRequest);
   }
 
   Future<Either<Failure, AgentModel>> _agentInfoRequest(Dio dio) async {
     try {
       final response = await dio.get('agent_info');
+
       return Right(AgentModel.fromJson(response.data));
     } on DioError catch (e) {
       final response = e.response;
+
       if (response != null) {
         return Left(
           RequestFailure.log(
-              code: 'REQ-001',
-              message: '/agent_info request failure',
-              response: response,
-              logger: logger),
+            code: 'REQ-001',
+            message: '/agent_info request failure',
+            response: response,
+            logger: logger,
+          ),
         );
       } else {
         return Left(
@@ -92,15 +102,18 @@ class RemoteAgentStorageImpl implements RemoteAgentStorage {
   @override
   Future<Either<Failure, AgentModel>> kill(String lobbyCode) async {
     final dio = Dio(baseOptions());
+
     return await authenticateRequest(dio).thenRight(_killRequest);
   }
 
   Future<Either<Failure, AgentModel>> _killRequest(Dio dio) async {
     try {
       final response = await dio.post('agent_info', data: {'api'});
+
       return Right(AgentModel.fromJson(response.data));
     } on DioError catch (e) {
       final response = e.response;
+
       if (response != null) {
         return Left(
           RequestFailure.log(

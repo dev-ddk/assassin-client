@@ -22,7 +22,7 @@ class GameLobbyRoute extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final lobbyUpdater = watch(lobbyUpdaterProvider);
-    // final size = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
 
     return FutureBuilder<Either<Failure, LobbyModel>>(
       future: lobbyUpdater.lobby,
@@ -38,31 +38,27 @@ class GameLobbyRoute extends ConsumerWidget {
             title: 'ERROR',
             child: Text(error.toString()),
           ),
-          (lobby) => CircularProgressIndicator(),
+          (lobby) => TemplatePage(
+            title: 'GAME LOBBY',
+            child: Padding(
+              padding: EdgeInsets.all(10.0),
+              child: Column(
+                children: [
+                  SizedBox(height: 30),
+                  _buildTopText(context),
+                  SizedBox(height: 20),
+                  _buildTapText(context),
+                  _buildLobbyCode(context, 'OWO'),
+                  SizedBox(height: 20),
+                  _buildStartGameButton(size, lobbyUpdater),
+                  _buildPlayerInLobbyText(context),
+                  SizedBox(height: 20),
+                  _buildLobbyPlayers(lobbyUpdater),
+                ],
+              ),
+            ),
+          ),
         );
-
-        // return TemplatePage(
-        //   title: 'GAME LOBBY',
-        //   child: Padding(
-        //     padding: EdgeInsets.all(10.0),
-        //     child: Column(
-        //       children: [
-        //         SizedBox(height: 30),
-        //         _buildTopText(context),
-        //         SizedBox(height: 20),
-        //         _buildTapText(context),
-        //         _buildLobbyCode(
-        //           context,
-        //         ),
-        //         SizedBox(height: 20),
-        //         _buildStartGameButton(size, lobbyUpdater),
-        //         _buildPlayerInLobbyText(context),
-        //         SizedBox(height: 20),
-        //         _buildLobbyPlayers(lobbyUpdater),
-        //       ],
-        //     ),
-        //   ),
-        // );
       },
     );
   }

@@ -15,17 +15,22 @@ class GameStatsRepository {
   final GameStatsRemoteStorage _remoteStorage;
   final LocalStorage<GameStatsModel> _localStorage;
 
-  GameStatsRepository(GameStatsRemoteStorage remoteStorage)
-      : _remoteStorage = remoteStorage,
+  GameStatsRepository(
+    GameStatsRemoteStorage remoteStorage,
+  )   : _remoteStorage = remoteStorage,
         _localStorage = LocalStorage<GameStatsModel>();
 
-  Future<Either<Failure, GameStatsModel>> getEndTime(String lobbyCode,
-      {bool forceRemote = false}) async {
+  Future<Either<Failure, GameStatsModel>> getEndTime(
+    String lobbyCode, {
+    bool forceRemote = false,
+  }) async {
     if (_localStorage.empty || forceRemote) {
       final result = await _remoteStorage.getEndTime(lobbyCode);
+
       if (result.isRight) {
         _localStorage.value = result.right;
       }
+
       return result;
     } else {
       return _localStorage.getValueSafe();
@@ -39,8 +44,11 @@ abstract class GameStatsRemoteStorage {
 
 class EndTimeRemoteStorageImpl implements GameStatsRemoteStorage {
   @override
-  Future<Either<Failure, GameStatsModel>> getEndTime(String lobbyCode) async {
+  Future<Either<Failure, GameStatsModel>> getEndTime(
+    String lobbyCode,
+  ) async {
     final dio = Dio();
+
     return await authenticateRequest(dio)
         .thenRight((dio) => _getEndTimeRequest(dio, lobbyCode));
   }
@@ -52,9 +60,11 @@ class EndTimeRemoteStorageImpl implements GameStatsRemoteStorage {
         'game_stats',
         queryParameters: {'gameCode': lobbyCode},
       );
+
       return Right(GameStatsModel.fromJson(response.data));
     } on DioError catch (e) {
       final response = e.response;
+
       if (response != null) {
         return Left(
           RequestFailure.log(
@@ -65,13 +75,15 @@ class EndTimeRemoteStorageImpl implements GameStatsRemoteStorage {
           ),
         );
       } else {
-        return Left(DioNetworkFailure.log(
-          code: 'NET-000',
-          message: '/game_stats network failure',
-          errorType: e.type,
-          logger: logger,
-          level: Level.error,
-        ));
+        return Left(
+          DioNetworkFailure.log(
+            code: 'NET-000',
+            message: '/game_stats network failure',
+            errorType: e.type,
+            logger: logger,
+            level: Level.error,
+          ),
+        );
       }
     }
   }
