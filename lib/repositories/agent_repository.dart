@@ -1,12 +1,15 @@
 // Package imports:
 import 'package:dio/dio.dart';
 import 'package:either_dart/either.dart';
+import 'package:logger/logger.dart';
 
 // Project imports:
 import 'package:assassin_client/models/agent_model.dart';
 import 'package:assassin_client/repositories/local_storage.dart';
 import 'package:assassin_client/utils/failures.dart';
 import 'package:assassin_client/utils/login_utils.dart';
+
+var logger = Logger(printer: PrettyPrinter());
 
 class AgentRepository {
   final RemoteAgentStorage _remoteStorage;
@@ -59,13 +62,30 @@ class RemoteAgentStorageImpl implements RemoteAgentStorage {
   }
 
   Future<Either<Failure, AgentModel>> _agentInfoRequest(Dio dio) async {
-    final response = await dio.get('agent_info');
-    if (response.statusCode == 200) {
+    try {
+      final response = await dio.get('agent_info');
       return Right(AgentModel.fromJson(response.data));
-    } else if (response.statusCode != null) {
-      return Left(RequestFailure());
-    } else {
-      return Left(NetworkFailure());
+    } on DioError catch (e) {
+      final response = e.response;
+      if (response != null) {
+        return Left(
+          RequestFailure.log(
+              code: 'REQ-001',
+              message: '/agent_info request failure',
+              response: response,
+              logger: logger),
+        );
+      } else {
+        return Left(
+          DioNetworkFailure.log(
+            code: 'NET-000',
+            message: '/kill network failure',
+            errorType: e.type,
+            logger: logger,
+            level: Level.error,
+          ),
+        );
+      }
     }
   }
 
@@ -76,13 +96,31 @@ class RemoteAgentStorageImpl implements RemoteAgentStorage {
   }
 
   Future<Either<Failure, AgentModel>> _killRequest(Dio dio) async {
-    final response = await dio.post('agent_info', data: {'api'});
-    if (response.statusCode == 200) {
+    try {
+      final response = await dio.post('agent_info', data: {'api'});
       return Right(AgentModel.fromJson(response.data));
-    } else if (response.statusCode != null) {
-      return Left(RequestFailure());
-    } else {
-      return Left(NetworkFailure());
+    } on DioError catch (e) {
+      final response = e.response;
+      if (response != null) {
+        return Left(
+          RequestFailure.log(
+            code: 'REQ-001',
+            message: '/kill request failure',
+            response: response,
+            logger: logger,
+          ),
+        );
+      } else {
+        return Left(
+          DioNetworkFailure.log(
+            code: 'NET-000',
+            message: '/kill network failure',
+            errorType: e.type,
+            logger: logger,
+            level: Level.error,
+          ),
+        );
+      }
     }
   }
 }

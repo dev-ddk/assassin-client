@@ -3,10 +3,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
+import 'package:either_dart/src/future_extension.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // Project imports:
+import 'package:assassin_client/providers/providers.dart';
+import 'package:assassin_client/utils/failures.dart';
 import 'package:assassin_client/widgets/buttons.dart';
 import 'package:assassin_client/widgets/form_fields.dart';
 import 'package:assassin_client/widgets/template_page.dart';
@@ -64,25 +67,49 @@ class ConfigureLobbyRoute extends ConsumerWidget {
     );
   }
 
-  Widget _buildConfirmButton(context, maxPlayers) {
+  Widget _buildConfirmButton(BuildContext context, maxPlayers) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40.0),
       child: AssassinConfirmButton(
         text: 'CREATE LOBBY',
-        onPressed: () {
+        onPressed: () async {
           if (_formKey.currentState!.validate()) {
             final lobbyname = lobbynameController.text;
+            final lobbyRepo = context.read(lobbyProvider);
 
-            print(playerNumbers[maxPlayers]);
-            print(lobbyname);
-
-            Navigator.pushNamed(context, '/homepage/gamelobby');
-
-            //TODO: api call to create lobby
+            await lobbyRepo.createAndJoinLobby(lobbyname).fold(
+                  (failure) => _handleError(context, failure),
+                  (_) => Navigator.pushNamed(context, '/homepage/'),
+                );
           }
         },
       ),
     );
+  }
+
+  void _handleError(BuildContext context, Failure failure) {
+    if (failure is AuthFailure) {
+      Navigator.of(context).popUntil((route) => route.isFirst);
+    } else if (failure is RequestFailure) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              'We had problem to process your request (${failure.response.statusCode})! Please try again'),
+        ),
+      );
+    } else if (failure is DioNetworkFailure) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Network Error!'),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error!'),
+        ),
+      );
+    }
   }
 
   Widget _buildLobbyNameField() {

@@ -39,6 +39,7 @@ dependencies:
   firebase_messaging:
   dio:
   json_annotation:
+  logger: ^1.0.0
   either_dart:
   page_transition: ^2.0.2
   pedantic: ^1.11.1
@@ -57,6 +58,7 @@ dev_dependencies:
   build_runner:
   json_serializable:
   mockito:
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

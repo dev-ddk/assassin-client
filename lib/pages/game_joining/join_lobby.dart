@@ -3,9 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
+import 'package:either_dart/src/future_extension.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/src/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // Project imports:
+import 'package:assassin_client/providers/providers.dart';
+import 'package:assassin_client/utils/failures.dart';
 import 'package:assassin_client/widgets/buttons.dart';
 import 'package:assassin_client/widgets/form_fields.dart';
 import 'package:assassin_client/widgets/template_page.dart';
@@ -36,9 +41,9 @@ class JoinLobbyRoute extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 60),
-              _buildLobbyNameField(),
+              _buildLobbyNameField(context),
               const SizedBox(height: 60),
-              _buildConfirmButton(),
+              _buildConfirmButton(context),
             ],
           ),
         ),
@@ -46,19 +51,66 @@ class JoinLobbyRoute extends StatelessWidget {
     );
   }
 
-  Widget _buildConfirmButton() {
+  Widget _buildConfirmButton(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40.0),
       child: AssassinConfirmButton(
         text: 'JOIN GAME',
-        onPressed: () {},
+        onPressed: () async {
+          final formState = _formKey.currentState!;
+          final lobbyCode = lobbynameController.text;
+          print('premuto');
+          if (formState.validate()) {
+            await context.read(lobbyProvider).joinLobby(lobbyCode).fold(
+                (failure) => _handleError(context, failure),
+                (_) => Navigator.pushNamed(
+                    context, '/homepage/joingame/game-lobby'));
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('LobbyCode null!'),
+              ),
+            );
+          }
+        },
       ),
     );
   }
 
-  Widget _buildLobbyNameField() {
+  void _handleError(BuildContext context, Failure failure) {
+    if (failure is AuthFailure) {
+      Navigator.of(context).popUntil((route) => route.isFirst);
+    } else if (failure is RequestFailure) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              'We had problem to process your request (${failure.response.statusCode})! Please try again'),
+        ),
+      );
+    } else if (failure is LobbyNotExistsFailure) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('This lobby does not exists'),
+        ),
+      );
+    } else if (failure is DioNetworkFailure) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Network Error!'),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error!'),
+        ),
+      );
+    }
+  }
+
+  Widget _buildLobbyNameField(BuildContext context) {
     // alphanumeric characters (only uppercase)
-    final regex = RegExp(r'/^[A-Z0-9]+$/');
+    final regex = RegExp(r'([0-9]|[A-Z])+');
 
     return AssassinFormField(
       icon: FontAwesomeIcons.gamepad,
