@@ -181,7 +181,7 @@ class RemoteLobbyStorageImpl implements RemoteLobbyStorage {
       logger.i('/game_info: response code ${response.statusCode}');
       logger.d(response.data);
 
-      return Right(LobbyModel.fromJson(response.data));
+      return Right(LobbyModel.fromJson(lobbyCode, response.data));
     } on DioError catch (e) {
       final response = e.response;
 

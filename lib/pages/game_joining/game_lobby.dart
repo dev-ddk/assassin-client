@@ -48,7 +48,7 @@ class GameLobbyRoute extends ConsumerWidget {
                   _buildTopText(context),
                   SizedBox(height: 20),
                   _buildTapText(context),
-                  _buildLobbyCode(context, 'OWO'),
+                  _buildLobbyCode(context, lobby.lobbyCode),
                   SizedBox(height: 20),
                   _buildStartGameButton(size, lobbyUpdater),
                   _buildPlayerInLobbyText(context),

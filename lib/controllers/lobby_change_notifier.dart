@@ -40,8 +40,9 @@ class LobbyUpdater extends ChangeNotifier {
   Future<Either<Failure, bool>> get admin async {
     return await _requestLobbyIfLastIsEmpty()
         //Use the last lobby value for checking if the user is the admin of the lobby
-        .thenRight((lobby) =>
-            _user.userInfo().mapRight((user) => lobby.isAdmin(user.username)));
+        .thenRight((lobby) => _user
+            .userInfo(forceRemote: true)
+            .mapRight((user) => lobby.isAdmin(user.username)));
   }
 
   ///Retrieves the lobby info
@@ -56,7 +57,7 @@ class LobbyUpdater extends ChangeNotifier {
         unawaited(
           _user
               //Get user information (cached)
-              .userInfo()
+              .userInfo(forceRemote: true)
               .thenRightSync(_forceGetLobbyCode)
               //Request Lobby Info
               .thenRight((lobbyCode) => _lobby.lobbyInfo(lobbyCode))

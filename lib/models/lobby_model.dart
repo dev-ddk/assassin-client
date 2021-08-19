@@ -7,6 +7,8 @@ part 'lobby_model.g.dart';
 class LobbyModel {
   @JsonKey(name: 'game_name')
   final String name;
+  @JsonKey(ignore: true)
+  late final String lobbyCode;
   @JsonKey(name: 'admin_nickame')
   String? admin;
   final List<UserLobbyModel> players;
@@ -17,8 +19,9 @@ class LobbyModel {
     List<UserLobbyModel>? players,
   }) : players = players ?? [];
 
-  factory LobbyModel.fromJson(Map<String, dynamic> json) =>
-      _$LobbyModelFromJson(json);
+  factory LobbyModel.fromJson(String lobbyCode, Map<String, dynamic> json) {
+    return _$LobbyModelFromJson(json)..lobbyCode = lobbyCode;
+  }
 
   Map<String, dynamic> toJson() => _$LobbyModelToJson(this);
 
