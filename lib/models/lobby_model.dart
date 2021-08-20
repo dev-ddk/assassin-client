@@ -9,7 +9,7 @@ class LobbyModel {
   final String name;
   @JsonKey(ignore: true)
   late final String lobbyCode;
-  @JsonKey(name: 'admin_nickame')
+  @JsonKey(name: 'admin_nickname')
   String? admin;
   final List<UserLobbyModel> players;
 
