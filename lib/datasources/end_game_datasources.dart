@@ -4,44 +4,16 @@ import 'package:either_dart/either.dart';
 import 'package:logger/logger.dart';
 
 // Project imports:
-import 'package:assassin_client/repositories/local_storage.dart';
 import 'package:assassin_client/utils/failures.dart';
 import 'package:assassin_client/utils/login_utils.dart';
 
 var logger = Logger(printer: PrettyPrinter());
 
-class EndTimeRepository {
-  final EndTimeRemoteStorage _remoteStorage;
-  final LocalStorage<DateTime> _localStorage;
-
-  EndTimeRepository(
-    EndTimeRemoteStorage remoteStorage,
-  )   : _remoteStorage = remoteStorage,
-        _localStorage = LocalStorage();
-
-  Future<Either<Failure, DateTime>> getEndTime(
-    String lobbyCode, {
-    bool forceRemote = false,
-  }) async {
-    if (_localStorage.empty || forceRemote) {
-      final result = await _remoteStorage.getEndTime(lobbyCode);
-
-      if (result.isRight) {
-        _localStorage.value = result.right;
-      }
-
-      return result;
-    } else {
-      return _localStorage.getValueSafe();
-    }
-  }
-}
-
-abstract class EndTimeRemoteStorage {
+abstract class EndTimeDataSource {
   Future<Either<Failure, DateTime>> getEndTime(String lobbyCode);
 }
 
-class EndTimeRemoteStorageImpl implements EndTimeRemoteStorage {
+class EndTimeRemoteStorage implements EndTimeDataSource {
   @override
   Future<Either<Failure, DateTime>> getEndTime(
     String lobbyCode,

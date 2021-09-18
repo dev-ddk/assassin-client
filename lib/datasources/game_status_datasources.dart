@@ -5,54 +5,12 @@ import 'package:logger/logger.dart';
 
 // Project imports:
 import 'package:assassin_client/models/game_status_model.dart';
-import 'package:assassin_client/repositories/local_storage.dart';
 import 'package:assassin_client/utils/failures.dart';
 import 'package:assassin_client/utils/login_utils.dart';
 
 var logger = Logger(printer: PrettyPrinter());
 
-class GameStatusRepository {
-  final RemoteGameStatusStorage _remoteStorage;
-  final LocalStorage<GameStatus> _localStorage;
-
-  GameStatusRepository({
-    required RemoteGameStatusStorage remoteStorage,
-  })  : _remoteStorage = remoteStorage,
-        _localStorage = LocalStorage();
-
-  Future<Either<Failure, GameStatus>> getGameStatus(
-    String gameCode, {
-    bool forceRemote = false,
-  }) async {
-    if (_localStorage.empty || forceRemote) {
-      final status = await _remoteStorage.getGameStatus(gameCode);
-
-      if (status.isRight) {
-        _localStorage.value = status.right;
-      }
-
-      return status;
-    } else {
-      return _localStorage.getValueSafe();
-    }
-  }
-
-  Future<Either<Failure, GameStatus>> startGame(
-    String gameCode,
-  ) =>
-      _remoteStorage
-          .startGame(gameCode)
-          .thenRight((_) => getGameStatus(gameCode, forceRemote: true));
-
-  Future<Either<Failure, GameStatus>> endGame(
-    String gameCode,
-  ) =>
-      _remoteStorage
-          .endGame(gameCode)
-          .thenRight((_) => getGameStatus(gameCode, forceRemote: true));
-}
-
-abstract class RemoteGameStatusStorage {
+abstract class GameStatusDataSource {
   Future<Either<Failure, GameStatus>> getGameStatus(String gameCode);
 
   Future<Either<Failure, void>> startGame(String gameCode);
@@ -60,7 +18,7 @@ abstract class RemoteGameStatusStorage {
   Future<Either<Failure, void>> endGame(String gameCode);
 }
 
-class RemoteGameStatusStorageImpl implements RemoteGameStatusStorage {
+class GameStatusRemoteStorage implements GameStatusDataSource {
   @override
   Future<Either<Failure, void>> endGame(
     String gameCode,

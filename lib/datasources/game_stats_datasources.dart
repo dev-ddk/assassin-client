@@ -7,42 +7,14 @@ import 'package:logger/logger.dart';
 import 'package:assassin_client/models/game_stats_model.dart';
 import 'package:assassin_client/utils/failures.dart';
 import 'package:assassin_client/utils/login_utils.dart';
-import 'local_storage.dart';
 
 var logger = Logger(printer: PrettyPrinter());
 
-class GameStatsRepository {
-  final GameStatsRemoteStorage _remoteStorage;
-  final LocalStorage<GameStatsModel> _localStorage;
-
-  GameStatsRepository(
-    GameStatsRemoteStorage remoteStorage,
-  )   : _remoteStorage = remoteStorage,
-        _localStorage = LocalStorage<GameStatsModel>();
-
-  Future<Either<Failure, GameStatsModel>> getEndTime(
-    String lobbyCode, {
-    bool forceRemote = false,
-  }) async {
-    if (_localStorage.empty || forceRemote) {
-      final result = await _remoteStorage.getEndTime(lobbyCode);
-
-      if (result.isRight) {
-        _localStorage.value = result.right;
-      }
-
-      return result;
-    } else {
-      return _localStorage.getValueSafe();
-    }
-  }
-}
-
-abstract class GameStatsRemoteStorage {
+abstract class GameStatsDatasource {
   Future<Either<Failure, GameStatsModel>> getEndTime(String lobbyCode);
 }
 
-class EndTimeRemoteStorageImpl implements GameStatsRemoteStorage {
+class GameStatsRemoteStorage implements GameStatsDatasource {
   @override
   Future<Either<Failure, GameStatsModel>> getEndTime(
     String lobbyCode,

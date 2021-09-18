@@ -10,35 +10,7 @@ import 'package:assassin_client/utils/login_utils.dart';
 
 var logger = Logger(printer: PrettyPrinter());
 
-class LobbyRepository {
-  final RemoteLobbyStorage _remoteLobbyStorage;
-
-  LobbyRepository(this._remoteLobbyStorage);
-
-  Future<Either<Failure, LobbyModel>> createAndJoinLobby(
-    String lobbyName,
-  ) async {
-    return await _remoteLobbyStorage
-        .createGame(lobbyName)
-        .thenRight((lobbyCode) => lobbyInfo(lobbyCode));
-  }
-
-  Future<Either<Failure, LobbyModel>> joinLobby(
-    String lobbyCode,
-  ) async {
-    return await _remoteLobbyStorage
-        .joinGame(lobbyCode)
-        .thenRight((_) => lobbyInfo(lobbyCode));
-  }
-
-  Future<Either<Failure, LobbyModel>> lobbyInfo(
-    String lobbyCode,
-  ) async {
-    return await _remoteLobbyStorage.gameInfo(lobbyCode);
-  }
-}
-
-abstract class RemoteLobbyStorage {
+abstract class LobbyDataSource {
   Future<Either<Failure, String>> createGame(String lobbyName);
 
   Future<Either<Failure, void>> joinGame(String lobbyCode);
@@ -46,7 +18,7 @@ abstract class RemoteLobbyStorage {
   Future<Either<Failure, LobbyModel>> gameInfo(String lobbyCode);
 }
 
-class RemoteLobbyStorageImpl implements RemoteLobbyStorage {
+class LobbyRemoteStorage implements LobbyDataSource {
   @override
   Future<Either<Failure, String>> createGame(
     String lobbyName,
@@ -181,7 +153,7 @@ class RemoteLobbyStorageImpl implements RemoteLobbyStorage {
       logger.i('/game_info: response code ${response.statusCode}');
       logger.d(response.data);
 
-      return Right(LobbyModel.fromJson(lobbyCode, response.data));
+      return Right(LobbyModel.fromJson(response.data));
     } on DioError catch (e) {
       final response = e.response;
 

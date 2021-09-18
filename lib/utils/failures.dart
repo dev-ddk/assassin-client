@@ -44,6 +44,18 @@ class AuthFailure extends Failure {
       : super.log(code, message, logger, level);
 }
 
+class StatusFailure extends Failure {
+  StatusFailure({required String code, required String message})
+      : super(code, message);
+
+  StatusFailure.log(
+      {required String code,
+      required String message,
+      required Logger logger,
+      level = Level.info})
+      : super.log(code, message, logger, level);
+}
+
 class RequestFailure extends Failure {
   final Response response;
 

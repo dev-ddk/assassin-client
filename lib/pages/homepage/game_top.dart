@@ -3,22 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 // Package imports:
-import 'package:either_dart/either.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Project imports:
 import 'package:assassin_client/colors.dart';
-import 'package:assassin_client/controllers/lobby_change_notifier.dart';
-import 'package:assassin_client/models/lobby_model.dart';
+import 'package:assassin_client/controllers/game_view_controller.dart';
+import 'package:assassin_client/entities/entities.dart';
 import 'package:assassin_client/pages/game_joining/game_lobby.dart';
-import 'package:assassin_client/providers/providers.dart';
+import 'package:assassin_client/utils/cached_state.dart';
 import 'package:assassin_client/utils/failures.dart';
 
 class GameRoute extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     //TODO: build this with future builder and provide a time scope
-    final lobbyUpdater = watch(lobbyUpdaterProvider);
+    final game = watch(gameState).state;
     final size = MediaQuery.of(context).size;
 
     final textStyle =
@@ -37,34 +36,23 @@ class GameRoute extends ConsumerWidget {
         Container(
           alignment: Alignment.center,
           height: size.width,
-          child: _buildLobbyPlayers(lobbyUpdater),
+          child: _buildLobbyPlayers(context, game),
         )
       ],
     );
   }
 
-  FutureBuilder<Either<Failure, LobbyModel>> _buildLobbyPlayers(
-      LobbyUpdater lobbyUpdater) {
+  Widget _buildLobbyPlayers(
+      BuildContext context, CachedState<Failure, GameEntity> gameCState) {
     //Handle one of the three cases
     //1. There is a failure in the retrieveral of lobby data (i.e. no internet)
     //2. Lobby data is received correctly
     //3. The (first) request is still awaiting a response
-    return FutureBuilder<Either<Failure, LobbyModel>>(
-      future: lobbyUpdater.lobby,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          final lobbyResult = snapshot.data!;
-          return lobbyResult.fold(
-              //Case 1
-              (failure) => _buildErrorMessage(context),
-              //Case 2
-              (lobby) => _buildPlayerList(context, lobby));
-        } else {
-          //Case 3
-          return _buildLoadingScreen(context);
-        }
-      },
-    );
+
+    return gameCState.fold(
+        () => _buildLoadingScreen(context),
+        (failure, [_]) => _buildErrorMessage(context),
+        (lobby) => _buildPlayerList(context, lobby));
   }
 
   Widget _buildLoadingScreen(context) {
@@ -81,16 +69,16 @@ class GameRoute extends ConsumerWidget {
     return Text('Failed to retrieve information');
   }
 
-  Widget _buildPlayerList(context, LobbyModel lobby) {
+  Widget _buildPlayerList(context, GameEntity lobby) {
     return ListView.builder(
       shrinkWrap: true,
-      itemCount: lobby.players.length,
+      itemCount: lobby.users.length,
       addAutomaticKeepAlives: true,
       itemBuilder: (context, i) {
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 4.0),
           child: AssassinPlayerCard(
-            username: lobby.players[i].username,
+            username: lobby.users[i].username,
             variant: i % 2 == 1,
           ),
         );

@@ -8,7 +8,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // Project imports:
 import 'package:assassin_client/providers/providers.dart';
-import 'package:assassin_client/repositories/lobby_repository.dart';
 import 'package:assassin_client/utils/regex.dart';
 import 'package:assassin_client/widgets/template_page.dart';
 import 'package:assassin_client/widgets/user_input.dart';
@@ -19,13 +18,11 @@ class JoinLobbyRoute extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    final lobby = watch(lobbyProvider);
-
     return TemplatePage(
       title: 'JOIN LOBBY',
       child: Padding(
         padding: const EdgeInsets.all(24.0),
-        child: Center(child: LobbyCodeForm(lobby: lobby)),
+        child: Center(child: LobbyCodeForm()),
       ),
     );
   }
@@ -34,10 +31,7 @@ class JoinLobbyRoute extends ConsumerWidget {
 class LobbyCodeForm extends StatefulWidget {
   const LobbyCodeForm({
     Key? key,
-    required this.lobby,
   }) : super(key: key);
-
-  final LobbyRepository lobby;
 
   @override
   _LobbyCodeFormState createState() => _LobbyCodeFormState();
@@ -74,8 +68,9 @@ class _LobbyCodeFormState extends State<LobbyCodeForm> {
         onPressed: () async {
           if (_formKey.currentState!.validate()) {
             //TODO: finish
-            final result =
-                await widget.lobby.joinLobby(_lobbyNameController.text);
+            final result = await context
+                .read(gameViewCntrl)
+                .joinGame(_lobbyNameController.text);
 
             result.fold(
               (error) => ScaffoldMessenger.of(context).showSnackBar(

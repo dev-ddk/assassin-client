@@ -2,15 +2,45 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Project imports:
-import 'package:assassin_client/controllers/lobby_change_notifier.dart';
-import 'package:assassin_client/repositories/lobby_repository.dart';
-import 'package:assassin_client/repositories/user_repository.dart';
+import 'package:assassin_client/controllers/agent_view_controller.dart';
+import 'package:assassin_client/controllers/game_view_controller.dart';
+import 'package:assassin_client/controllers/user_view_controller.dart';
+import 'package:assassin_client/datasources/agent_datasources.dart';
+import 'package:assassin_client/datasources/codenames_datasources.dart';
+import 'package:assassin_client/datasources/end_game_datasources.dart';
+import 'package:assassin_client/datasources/game_stats_datasources.dart';
+import 'package:assassin_client/datasources/game_status_datasources.dart';
+import 'package:assassin_client/datasources/lobby_datasources.dart';
+import 'package:assassin_client/datasources/user_datasource.dart';
 
-final userProvider =
-    Provider((ref) => UserRepository(remoteStorage: RemoteUserStorageImpl()));
+final agentDataSource = Provider((ref) => AgentRemoteStorage());
 
-final lobbyProvider =
-    Provider((ref) => LobbyRepository(RemoteLobbyStorageImpl()));
+final codenamesDataSource = Provider((ref) => CodenamesRemoteStorage());
 
-final lobbyUpdaterProvider = ChangeNotifierProvider((ref) =>
-    LobbyUpdater(ref.watch(lobbyProvider), ref.watch(userProvider))..start());
+final endGameDataSource = Provider((ref) => EndTimeRemoteStorage());
+
+final gameStatusDataSource = Provider((ref) => GameStatusRemoteStorage());
+
+final gameStatsDataSource = Provider((ref) => GameStatsRemoteStorage());
+
+final lobbyDataSource = Provider((ref) => LobbyRemoteStorage());
+
+final userDataSource = Provider((ref) => UserRemoteStorage());
+
+final userViewCntrl =
+    Provider((ref) => UserViewController(ref.watch, ref.watch(userDataSource)));
+
+final gameViewCntrl = Provider((ref) => GameViewController(
+      ref.watch,
+      ref.watch(lobbyDataSource),
+      ref.watch(gameStatusDataSource),
+      ref.watch(endGameDataSource),
+    ));
+
+final agentViewCntrl = Provider(
+  (ref) => AgentViewController(
+    ref.watch,
+    ref.watch(agentDataSource),
+    ref.watch(codenamesDataSource),
+  ),
+);

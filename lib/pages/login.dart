@@ -9,12 +9,16 @@ import 'package:flutter/services.dart';
 
 // Package imports:
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/src/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:pedantic/pedantic.dart';
 
 // Project imports:
 import 'package:assassin_client/colors.dart';
+import 'package:assassin_client/controllers/user_view_controller.dart';
 import 'package:assassin_client/main.dart';
+import 'package:assassin_client/providers/providers.dart';
 import 'package:assassin_client/utils/login_utils.dart';
 import 'package:assassin_client/widgets/user_input.dart';
 
@@ -217,7 +221,9 @@ class _LoginFormState extends State<LoginForm> {
           );
         },
         (loginData) async {
-          Navigator.popAndPushNamed(context, '/homepage');
+          unawaited(Navigator.popAndPushNamed(context, '/homepage/join-game'));
+          unawaited(context.read(userViewCntrl).updateState());
+          context.read(userUpdater).state.start();
           print(await FirebaseAuth.instance.currentUser!.getIdToken());
         },
       );

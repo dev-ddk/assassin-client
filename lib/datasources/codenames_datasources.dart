@@ -4,44 +4,16 @@ import 'package:either_dart/either.dart';
 import 'package:logger/logger.dart';
 
 // Project imports:
-import 'package:assassin_client/repositories/local_storage.dart';
 import 'package:assassin_client/utils/failures.dart';
 import 'package:assassin_client/utils/login_utils.dart';
 
 var logger = Logger(printer: PrettyPrinter());
 
-class CodenamesRepository {
-  final CodenamesRemoteStorage _remoteStorage;
-  final LocalStorage<List<String>> _localStorage;
-
-  CodenamesRepository({
-    required remoteStorage,
-  })  : _remoteStorage = remoteStorage,
-        _localStorage = LocalStorage();
-
-  Future<Either<Failure, List<String>>> getCodenames(
-    String lobbyCode, {
-    bool forceRemote = false,
-  }) async {
-    if (forceRemote || _localStorage.empty) {
-      final result = await _remoteStorage.getCodenames(lobbyCode);
-
-      if (result.isRight) {
-        _localStorage.value = result.right;
-      }
-
-      return result;
-    } else {
-      return _localStorage.getValueSafe();
-    }
-  }
-}
-
-abstract class CodenamesRemoteStorage {
+abstract class CodenamesDataSource {
   Future<Either<Failure, List<String>>> getCodenames(String lobbyCode);
 }
 
-class CodenamesRemoteStorageImpl implements CodenamesRemoteStorage {
+class CodenamesRemoteStorage implements CodenamesDataSource {
   @override
   Future<Either<Failure, List<String>>> getCodenames(
     String lobbyCode,

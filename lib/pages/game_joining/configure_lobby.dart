@@ -9,7 +9,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // Project imports:
 import 'package:assassin_client/providers/providers.dart';
-import 'package:assassin_client/repositories/user_repository.dart';
 import 'package:assassin_client/utils/failures.dart';
 import 'package:assassin_client/widgets/template_page.dart';
 import 'package:assassin_client/widgets/user_input.dart';
@@ -27,7 +26,6 @@ class ConfigureLobbyRoute extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    final user = watch(userProvider);
     // final maxPlayers = watch(maxPlayersProvider).state;
 
     final textStyle =
@@ -61,7 +59,7 @@ class ConfigureLobbyRoute extends ConsumerWidget {
               const SizedBox(height: 4),
               dropdownButton,
               const SizedBox(height: 60),
-              _buildConfirmButton(context, user),
+              _buildConfirmButton(context),
             ],
           ),
         ),
@@ -69,7 +67,7 @@ class ConfigureLobbyRoute extends ConsumerWidget {
     );
   }
 
-  Widget _buildConfirmButton(BuildContext context, UserRepository user) {
+  Widget _buildConfirmButton(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40.0),
       child: AssassinConfirmButton(
@@ -77,9 +75,9 @@ class ConfigureLobbyRoute extends ConsumerWidget {
         onPressed: () async {
           if (_formKey.currentState!.validate()) {
             final lobbyname = lobbynameController.text;
-            final lobbyRepo = context.read(lobbyProvider);
+            final lobbyVC = context.read(gameViewCntrl);
 
-            await lobbyRepo.createAndJoinLobby(lobbyname).fold(
+            await lobbyVC.createGame(lobbyname).fold(
               (failure) => _handleError(context, failure),
               (lobby) {
                 Navigator.popUntil(context, (route) => false);
