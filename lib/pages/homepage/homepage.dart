@@ -39,6 +39,7 @@ class HomePageRoute extends ConsumerWidget {
             );
         }
       },
+      //TODO: detect status and the show LOBBY or HOMEPAGE
       (game) => HomePage(lobbyName: game.gameName.toUpperCase()),
     );
   }

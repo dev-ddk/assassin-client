@@ -9,16 +9,12 @@ import 'package:flutter/services.dart';
 
 // Package imports:
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_riverpod/src/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:pedantic/pedantic.dart';
 
 // Project imports:
 import 'package:assassin_client/colors.dart';
-import 'package:assassin_client/controllers/game_view_controller.dart';
 import 'package:assassin_client/main.dart';
-import 'package:assassin_client/providers/providers.dart';
 import 'package:assassin_client/utils/login_utils.dart';
 import 'package:assassin_client/widgets/user_input.dart';
 
@@ -221,13 +217,11 @@ class _LoginFormState extends State<LoginForm> {
           );
         },
         (loginData) async {
-          unawaited(Navigator.popAndPushNamed(context, '/homepage'));
-          unawaited(context.read(userViewCntrl).updateState());
+          Navigator.popAndPushNamed(context, '/homepage');
 
-          // starts polling for game updates
-          context.read(gameUpdater).state.start();
-
-          print(await FirebaseAuth.instance.currentUser!.getIdToken());
+          logger.d(
+            'FirebaseAuth token ${await FirebaseAuth.instance.currentUser!.getIdToken()}',
+          );
         },
       );
     }

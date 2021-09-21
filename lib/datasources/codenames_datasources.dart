@@ -18,7 +18,7 @@ class CodenamesRemoteStorage implements CodenamesDataSource {
   Future<Either<Failure, List<String>>> getCodenames(
     String lobbyCode,
   ) {
-    final dio = Dio();
+    final dio = Dio(baseOptions());
 
     return authenticateRequest(dio)
         .thenRight((dio) => _getCodenamesRequest(dio, lobbyCode));

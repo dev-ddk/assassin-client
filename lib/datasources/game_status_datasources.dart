@@ -23,7 +23,7 @@ class GameStatusRemoteStorage implements GameStatusDataSource {
   Future<Either<Failure, void>> endGame(
     String gameCode,
   ) async {
-    final dio = Dio();
+    final dio = Dio(baseOptions());
     return await authenticateRequest(dio)
         .thenRight((dio) => _endGameRequest(dio, gameCode));
   }
@@ -64,7 +64,7 @@ class GameStatusRemoteStorage implements GameStatusDataSource {
 
   @override
   Future<Either<Failure, GameStatus>> getGameStatus(String gameCode) async {
-    final dio = Dio();
+    final dio = Dio(baseOptions());
     return await authenticateRequest(dio)
         .thenRight((dio) => _getGameStatusRequest(dio, gameCode));
   }
@@ -79,7 +79,8 @@ class GameStatusRemoteStorage implements GameStatusDataSource {
         queryParameters: {'gameCode': gameCode},
       );
 
-      final status = GameStatusGettersAndSetters.fromString(response.data);
+      final statusString = response.data['game_status'];
+      final status = GameStatusGettersAndSetters.fromString(statusString);
 
       return status != null
           ? Right(status)
@@ -116,7 +117,7 @@ class GameStatusRemoteStorage implements GameStatusDataSource {
 
   @override
   Future<Either<Failure, void>> startGame(String gameCode) async {
-    final dio = Dio();
+    final dio = Dio(baseOptions());
 
     return await authenticateRequest(dio)
         .thenRight((dio) => _startGameRequest(dio, gameCode));

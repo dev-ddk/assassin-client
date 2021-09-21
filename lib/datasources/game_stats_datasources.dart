@@ -19,7 +19,7 @@ class GameStatsRemoteStorage implements GameStatsDatasource {
   Future<Either<Failure, GameStatsModel>> getEndTime(
     String lobbyCode,
   ) async {
-    final dio = Dio();
+    final dio = Dio(baseOptions());
 
     return await authenticateRequest(dio)
         .thenRight((dio) => _getEndTimeRequest(dio, lobbyCode));
