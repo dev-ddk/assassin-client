@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:pedantic/pedantic.dart';
 
 // Project imports:
 import 'package:assassin_client/colors.dart';
@@ -217,7 +218,7 @@ class _LoginFormState extends State<LoginForm> {
           );
         },
         (loginData) async {
-          Navigator.popAndPushNamed(context, '/homepage');
+          unawaited(Navigator.popAndPushNamed(context, '/homepage'));
 
           logger.d(
             'FirebaseAuth token ${await FirebaseAuth.instance.currentUser!.getIdToken()}',

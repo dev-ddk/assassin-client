@@ -106,5 +106,8 @@ class GameViewController {
         gameCode: gameCode,
         admin: model.admin!,
         gameStatus: status,
+        users: model.players
+            .map((e) => OtherUserEntity(username: e.username))
+            .toList(),
       );
 }
