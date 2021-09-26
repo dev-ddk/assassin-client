@@ -1,7 +1,8 @@
 // Package imports:
 import 'package:either_dart/either.dart';
+import 'package:flutter/foundation.dart';
 
-class CachedState<L, R> {
+class CachedState<L, R> extends ChangeNotifier {
   Either<L, R?> _state;
   R? _cache;
 
@@ -10,9 +11,13 @@ class CachedState<L, R> {
   CachedState<L, R> set(Either<L, R> x) {
     print('State set $x');
     _state = x;
+
     if (x.isRight) {
       _cache = x.right;
     }
+
+    notifyListeners();
+
     return this;
   }
 
@@ -68,6 +73,7 @@ class CachedState<L, R> {
   R? get cache => _cache;
 
   Either<L, R?> get state => _state;
+
   void clearCache() {
     _cache = null;
     _state = Right(null);

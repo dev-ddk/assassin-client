@@ -15,6 +15,8 @@ import 'package:assassin_client/widgets/user_input.dart';
 final rotationProvider = StateProvider<bool>((ref) => true);
 
 class GameSettingsRoute extends StatelessWidget {
+  const GameSettingsRoute({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -97,15 +99,15 @@ class AgentCard extends ConsumerWidget {
                   child: Column(
                     children: [
                       Container(
-                          width: 100,
-                          height: 90,
-                          decoration: BoxDecoration(color: assassinBlue),
-                          child: Image(
-                              image: AssetImage('assets/logo.jpg'),
-                              fit: BoxFit.fitWidth)),
-                      SizedBox(
-                        height: 10,
+                        width: 100,
+                        height: 90,
+                        decoration: BoxDecoration(color: assassinBlue),
+                        child: Image(
+                          image: AssetImage('assets/logo.jpg'),
+                          fit: BoxFit.fitWidth,
+                        ),
                       ),
+                      SizedBox(height: 10),
                       Image.asset('assets/assassin_logo.png'),
                     ],
                   ),
@@ -116,30 +118,15 @@ class AgentCard extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Name',
-                          style: labelStyle,
-                        ),
+                        Text('Name', style: labelStyle),
                         SizedBox(height: 3),
-                        Text(
-                          'Matteo Renzi',
-                          style: valueStyle,
-                        ),
+                        Text('Matteo Renzi', style: valueStyle),
                         SizedBox(height: 6),
-                        Text(
-                          'Codename',
-                          style: labelStyle,
-                        ),
+                        Text('Codename', style: labelStyle),
                         SizedBox(height: 3),
-                        Text(
-                          'Bischero Fiorentino',
-                          style: valueStyle,
-                        ),
+                        Text('Bischero Fiorentino', style: valueStyle),
                         SizedBox(height: 6),
-                        Text(
-                          'Identifier',
-                          style: labelStyle,
-                        ),
+                        Text('Identifier', style: labelStyle),
                         SizedBox(height: 3),
                         Text('M4JS124', style: valueStyle),
                         SizedBox(height: 8),
@@ -150,13 +137,17 @@ class AgentCard extends ConsumerWidget {
                               style: labelStyle,
                             ),
                             SizedBox(width: 4),
-                            Text('5',
-                                style: valueStyle.copyWith(color: assassinRed)),
+                            Text(
+                              '5',
+                              style: valueStyle.copyWith(color: assassinRed),
+                            ),
                             SizedBox(width: 15),
                             Text('Total Kills', style: labelStyle),
                             SizedBox(width: 4),
-                            Text('11',
-                                style: valueStyle.copyWith(color: assassinRed))
+                            Text(
+                              '11',
+                              style: valueStyle.copyWith(color: assassinRed),
+                            )
                           ],
                         )
                       ],

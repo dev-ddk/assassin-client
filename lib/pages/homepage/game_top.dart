@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 
 // Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:timer_builder/timer_builder.dart';
 
 // Project imports:
 import 'package:assassin_client/colors.dart';
@@ -14,10 +15,11 @@ import 'package:assassin_client/utils/cached_state.dart';
 import 'package:assassin_client/utils/failures.dart';
 
 class GameRoute extends ConsumerWidget {
+  const GameRoute({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    //TODO: build this with future builder and provide a time scope
-    final game = watch(gameState).state;
+    final game = watch(gameState);
     final size = MediaQuery.of(context).size;
 
     final textStyle =
@@ -31,7 +33,8 @@ class GameRoute extends ConsumerWidget {
           style: textStyle,
         ),
         AssassinTimer(
-          duration: Duration(days: 1, hours: 2, minutes: 3, seconds: 4),
+          startDate: DateTime.parse('2021-09-26T13:53:23.543406Z'),
+          duration: Duration(days: 7),
         ),
         Container(
           alignment: Alignment.center,
@@ -76,7 +79,7 @@ class GameRoute extends ConsumerWidget {
       addAutomaticKeepAlives: true,
       itemBuilder: (context, i) {
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10),
           child: AssassinPlayerCard(
             username: lobby.users[i].username,
             variant: i % 2 == 1,
@@ -90,9 +93,11 @@ class GameRoute extends ConsumerWidget {
 class AssassinTimer extends StatelessWidget {
   const AssassinTimer({
     Key? key,
+    required this.startDate,
     required this.duration,
   }) : super(key: key);
 
+  final DateTime startDate;
   final Duration duration;
 
   @override
@@ -103,55 +108,62 @@ class AssassinTimer extends StatelessWidget {
     final timeStyleBig = textStyle.copyWith(fontSize: 60);
     final timeStyleSmall = textStyle.copyWith(fontSize: 12);
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+    return TimerBuilder.periodic(
+      Duration(seconds: 1),
+      builder: (context) {
+        final duration = this.duration - DateTime.now().difference(startDate);
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              duration.inDays.toString().padLeft(2, '0'),
-              style: timeStyleBig,
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  duration.inDays.toString().padLeft(2, '0'),
+                  style: timeStyleBig,
+                ),
+                Text('days', style: timeStyleSmall),
+              ],
             ),
-            Text('days', style: timeStyleSmall),
-          ],
-        ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              (duration.inHours % 24).toString().padLeft(2, '0'),
-              style: timeStyleBig,
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  (duration.inHours % 24).toString().padLeft(2, '0'),
+                  style: timeStyleBig,
+                ),
+                Text('hours', style: timeStyleSmall),
+              ],
             ),
-            Text('hours', style: timeStyleSmall),
-          ],
-        ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              (duration.inMinutes % 60).toString().padLeft(2, '0'),
-              style: timeStyleBig,
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  (duration.inMinutes % 60).toString().padLeft(2, '0'),
+                  style: timeStyleBig,
+                ),
+                Text('minutes', style: timeStyleSmall),
+              ],
             ),
-            Text('minutes', style: timeStyleSmall),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  (duration.inSeconds % 60).toString().padLeft(2, '0'),
+                  style: timeStyleBig,
+                ),
+                Text('seconds', style: timeStyleSmall),
+              ],
+            )
           ],
-        ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              (duration.inSeconds % 60).toString().padLeft(2, '0'),
-              style: timeStyleBig,
-            ),
-            Text('seconds', style: timeStyleSmall),
-          ],
-        )
-      ],
+        );
+      },
     );
   }
 }

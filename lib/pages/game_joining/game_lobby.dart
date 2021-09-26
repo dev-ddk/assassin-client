@@ -1,4 +1,5 @@
 // Flutter imports:
+import 'package:assassin_client/providers/providers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -19,9 +20,10 @@ class GameLobbyRoute extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    final lobby = watch(gameState).state;
-    final user = watch(userState).state;
+    final lobby = watch(gameState);
+    final user = watch(userState);
     final size = MediaQuery.of(context).size;
+    final gameController = watch(gameViewCntrl);
 
     return lobby.fold<Widget>(
       () => CircularProgressIndicator(),
@@ -41,7 +43,12 @@ class GameLobbyRoute extends ConsumerWidget {
               _buildTapText(context),
               _buildLobbyCode(context, game.gameCode),
               SizedBox(height: 20),
-              _buildStartGameButton(size, game, user.cache?.username),
+              _buildStartGameButton(
+                size,
+                game,
+                user.state.cache?.username,
+                gameController,
+              ),
               _buildPlayerInLobbyText(context),
               SizedBox(height: 20),
               _buildPlayerList(context, game),
@@ -52,8 +59,8 @@ class GameLobbyRoute extends ConsumerWidget {
     );
   }
 
-  // ignore: unused_element
-  Widget _buildStartGameButton(Size size, GameEntity game, String? userName) {
+  Widget _buildStartGameButton(
+      Size size, GameEntity game, String? userName, gameController) {
     if (userName != null && userName == game.admin) {
       return Padding(
         padding: const EdgeInsets.only(bottom: 20.0),
@@ -61,7 +68,7 @@ class GameLobbyRoute extends ConsumerWidget {
           width: size.width / 2,
           height: size.width / 4,
           text: 'Start Game!',
-          onPressed: () {},
+          onPressed: () => gameController.startGame(),
         ),
       );
     } else {
@@ -180,6 +187,8 @@ class AssassinPlayerCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
+    final borderRadius = BorderRadius.circular(24);
+
     var children = [
       Container(
         decoration: BoxDecoration(
@@ -204,22 +213,22 @@ class AssassinPlayerCard extends StatelessWidget {
       children = children.reversed.toList();
     }
 
-    return Container(
-      width: size.width / 1.1,
-      height: 100,
-      decoration: BoxDecoration(
-        color: variant ? assassinLightBlue : assassinBlue,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: variant ? assassinDarkBlue2 : assassinDarkBlue,
-          width: 4,
+    return Material(
+      elevation: 10,
+      borderRadius: borderRadius,
+      child: Container(
+        width: size.width / 1.1,
+        height: 100,
+        decoration: BoxDecoration(
+          color: variant ? assassinLightBlue : assassinBlue,
+          borderRadius: borderRadius,
         ),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: children,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: children,
+        ),
       ),
     );
   }

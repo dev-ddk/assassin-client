@@ -223,6 +223,7 @@ class _LoginFormState extends State<LoginForm> {
         (loginData) async {
           unawaited(Navigator.popAndPushNamed(context, '/homepage'));
           unawaited(context.read(userViewCntrl).updateState());
+          unawaited(context.read(gameViewCntrl).updateState());
 
           // starts polling for game updates
           context.read(gameUpdater).state.start();

@@ -1,4 +1,6 @@
 // Flutter imports:
+import 'package:assassin_client/models/game_status_model.dart';
+import 'package:assassin_client/pages/game_joining/game_lobby.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -22,7 +24,7 @@ class HomePageRoute extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    final game = watch(gameState).state;
+    final game = watch(gameState);
 
     return game.fold(
       () => const TemplatePage(
@@ -31,35 +33,35 @@ class HomePageRoute extends ConsumerWidget {
       ),
       (error, [fallback]) {
         switch (error.runtimeType) {
-          case CacheFailure:
+          case StatusFailure:
             return const JoinGameRoute();
           default:
-            return TemplatePage(
-              title: error.runtimeType.toString(),
-            );
+            return TemplatePage(title: error.message);
         }
       },
-      //TODO: detect status and the show LOBBY or HOMEPAGE
-      (game) => HomePage(lobbyName: game.gameName.toUpperCase()),
+      (game) {
+        if (game.gameStatus == GameStatus.WAITING) {
+          return const GameLobbyRoute();
+        }
+
+        return HomePage(lobbyName: game.gameName.toUpperCase());
+      },
     );
   }
 }
 
-// ignore: must_be_immutable
 class HomePage extends ConsumerWidget {
   final String lobbyName;
 
   HomePage({
     Key? key,
     required this.lobbyName,
-  }) : super(
-          key: key,
-        );
+  }) : super(key: key);
 
-  Map<Widget, IconData> pages = {
+  final Map<Widget, IconData> pages = {
+    const GameRoute(): FontAwesomeIcons.users,
     const TargetRoute(): FontAwesomeIcons.skullCrossbones,
-    GameRoute(): FontAwesomeIcons.users,
-    GameSettingsRoute(): Icons.settings,
+    const GameSettingsRoute(): Icons.settings,
   };
 
   final controllerProvider = ChangeNotifierProvider((ref) => PageController());

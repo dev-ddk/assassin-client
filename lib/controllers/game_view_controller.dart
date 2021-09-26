@@ -18,8 +18,9 @@ import 'package:assassin_client/utils/failures.dart';
 import 'package:assassin_client/utils/periodic_task.dart';
 import 'package:assassin_client/utils/riverpod_utils.dart';
 
-final gameState =
-    StateProvider<CachedState<Failure, GameEntity>>((ref) => CachedState());
+final gameState = ChangeNotifierProvider<CachedState<Failure, GameEntity>>(
+    (ref) => CachedState());
+
 var logger = Logger(printer: PrettyPrinter());
 
 final gameUpdater = StateProvider<PeriodicTask>(
@@ -68,7 +69,7 @@ class GameViewController {
             // Convert model to entity
             .mapRight((status) => _convertFromModel(gameCode, model, status)));
 
-    read(gameState).state = read(gameState).state.set(newValue);
+    read(gameState).set(newValue);
 
     return newValue;
   }

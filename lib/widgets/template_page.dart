@@ -25,60 +25,56 @@ class TemplatePage extends StatelessWidget {
       color: assassinDarkestBlue,
     );
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
-      child: LayoutBuilder(
-        builder: (context, constraints) => Scaffold(
-          backgroundColor: assassinDarkestBlue,
-          bottomNavigationBar: bottomNavigationBar,
-          body: CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                actionsIconTheme: iconTheme,
-                iconTheme: iconTheme,
-                pinned: true,
-                snap: true,
-                floating: true,
-                backgroundColor: Colors.transparent,
-                foregroundColor: assassinDarkestBlue,
-                brightness: Brightness.light,
-                actions: appBarActions,
-                flexibleSpace: Hero(
-                  tag: title,
-                  child: Container(
-                    alignment: Alignment.bottomCenter,
-                    padding: const EdgeInsets.only(bottom: 16),
-                    width: constraints.maxWidth,
-                    height: double.infinity,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.vertical(
-                        bottom: Radius.circular(24),
-                      ),
-                      color: assassinWhite,
+    return LayoutBuilder(
+      builder: (context, constraints) => Scaffold(
+        backgroundColor: assassinDarkestBlue,
+        bottomNavigationBar: bottomNavigationBar,
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              actionsIconTheme: iconTheme,
+              iconTheme: iconTheme,
+              pinned: true,
+              snap: true,
+              floating: true,
+              backgroundColor: Colors.transparent,
+              foregroundColor: assassinDarkestBlue,
+              actions: appBarActions,
+              flexibleSpace: Hero(
+                tag: title,
+                child: Container(
+                  alignment: Alignment.bottomCenter,
+                  padding: const EdgeInsets.only(bottom: 16),
+                  width: constraints.maxWidth,
+                  height: double.infinity,
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.vertical(
+                      bottom: Radius.circular(24),
                     ),
-                    child: Text(
-                      title,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context)
-                          .textTheme
-                          .headline5!
-                          .copyWith(color: assassinDarkestBlue),
-                    ),
+                    color: assassinWhite,
+                  ),
+                  child: Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline5!
+                        .copyWith(color: assassinDarkestBlue),
                   ),
                 ),
               ),
-              SliverToBoxAdapter(
-                child: ConstrainedBox(
-                  constraints: constraints.copyWith(
-                    minHeight: constraints.maxHeight -
-                        (bottomNavigationBar != null ? 170 : 95),
-                    maxHeight: double.infinity,
-                  ),
-                  child: child,
+            ),
+            SliverToBoxAdapter(
+              child: ConstrainedBox(
+                constraints: constraints.copyWith(
+                  minHeight: constraints.maxHeight -
+                      (bottomNavigationBar != null ? 170 : 95),
+                  maxHeight: double.infinity,
                 ),
+                child: child,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

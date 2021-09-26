@@ -49,7 +49,7 @@ class AgentViewController {
   AgentViewController(this.read, this.agentDS, this.codenameDS);
 
   Future<Either<Failure, AgentEntity>> updateState() async {
-    final gameCntrl = read(gameViewCntrl);
+    GameViewController gameCntrl = read(gameViewCntrl);
 
     final maybeGameCode = await read(gameState)
         .state
