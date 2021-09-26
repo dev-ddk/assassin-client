@@ -1,4 +1,4 @@
 // Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-typedef Watcher<T> = T Function(AlwaysAliveProviderBase<Object?, T> provider);
+typedef Watcher = T Function<T>(AlwaysAliveProviderBase<Object?, T> provider);

@@ -5,7 +5,6 @@ import 'package:logger/logger.dart';
 import 'package:pedantic/pedantic.dart';
 
 // Project imports:
-import 'package:assassin_client/controllers/user_view_controller.dart';
 import 'package:assassin_client/datasources/end_game_datasources.dart';
 import 'package:assassin_client/datasources/game_status_datasources.dart';
 import 'package:assassin_client/datasources/lobby_datasources.dart';
@@ -39,7 +38,7 @@ class GameViewController {
   GameViewController(this.read, this.gameDS, this.statusDS, this.endDS);
 
   Future<Either<Failure, GameEntity>> updateState() async {
-    final userCntrl = read(userViewCntrl) as UserViewController;
+    final userCntrl = read(userViewCntrl);
 
     /* TO SKIP UPDATE IF NOT EMPTY
     final newState = await read(userState)
@@ -56,9 +55,7 @@ class GameViewController {
         .thenRightSync(_failIfNull);
 
     if (maybeNewCode.isLeft) {
-      final fail = Left<Failure, GameEntity>(maybeNewCode.left);
-
-      read(gameState).set(fail);
+      read(gameState).set(Left(maybeNewCode.left));
 
       return Left(maybeNewCode.left);
     }

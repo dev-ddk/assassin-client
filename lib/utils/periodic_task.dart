@@ -14,7 +14,10 @@ class PeriodicTask {
   PeriodicTask({required this.task, required this.period});
 
   ///Starts the autoupdater
-  void start() {
+  void start({bool zeroWait = false}) {
+    if (zeroWait) {
+      task();
+    }
     // Stop if already running
     if (_updater != null) {
       stop();

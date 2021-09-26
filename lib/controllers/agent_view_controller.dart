@@ -16,8 +16,8 @@ import 'package:assassin_client/utils/failures.dart';
 import 'package:assassin_client/utils/periodic_task.dart';
 import 'package:assassin_client/utils/riverpod_utils.dart';
 
-final agentState =
-    StateProvider<CachedState<Failure, AgentEntity>>((ref) => CachedState());
+final agentState = ChangeNotifierProvider<CachedState<Failure, AgentEntity>>(
+    (ref) => CachedState());
 
 final agentUpdater = StateProvider<PeriodicTask>(
   (ref) => PeriodicTask(
@@ -49,14 +49,15 @@ class AgentViewController {
   AgentViewController(this.read, this.agentDS, this.codenameDS);
 
   Future<Either<Failure, AgentEntity>> updateState() async {
-    GameViewController gameCntrl = read(gameViewCntrl);
+    final gameCntrl = read(gameViewCntrl);
 
     final maybeGameCode = await read(gameState)
-        .state
         .ifEmptyAsync(gameCntrl.updateState)
         .mapRight((game) => game.gameCode);
 
     if (maybeGameCode.isLeft) {
+      // Update state
+      read(gameState).set(Left(maybeGameCode.left));
       // Autoconvert the future to correct return type
       return Left(maybeGameCode.left);
     }
@@ -65,7 +66,7 @@ class AgentViewController {
 
     final newValue =
         await agentDS.agentInfo(gameCode).mapRight(_convertFromModel);
-    read(agentState).state = read(agentState).state.set(newValue);
+    read(agentState).set(newValue);
 
     return newValue;
   }
@@ -74,7 +75,6 @@ class AgentViewController {
     final gameCntrl = read(gameViewCntrl);
 
     return await read(gameState)
-        .state
         .ifEmptyAsync(gameCntrl.updateState)
         .mapRight((game) => game.gameCode)
         .thenRight((gameCode) => agentDS.kill(gameCode))

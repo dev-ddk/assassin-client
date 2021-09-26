@@ -12,8 +12,8 @@ import 'package:assassin_client/utils/failures.dart';
 import 'package:assassin_client/utils/periodic_task.dart';
 import 'package:assassin_client/utils/riverpod_utils.dart';
 
-final userState =
-    StateProvider<CachedState<Failure, UserEntity>>((ref) => CachedState());
+final userState = ChangeNotifierProvider<CachedState<Failure, UserEntity>>(
+    (ref) => CachedState());
 
 final userUpdater = StateProvider<PeriodicTask>(
   (ref) => PeriodicTask(
@@ -31,7 +31,7 @@ class UserViewController {
   Future<Either<Failure, UserEntity>> updateState() async {
     final newValue = await userDS.userInfo().mapRight(UserEntity.fromUserModel);
 
-    read(userState).state = read(userState).state.set(newValue);
+    read(userState).set(newValue);
 
     return newValue;
   }

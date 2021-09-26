@@ -1,5 +1,4 @@
 // Flutter imports:
-import 'package:assassin_client/providers/providers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +11,7 @@ import 'package:assassin_client/colors.dart';
 import 'package:assassin_client/controllers/game_view_controller.dart';
 import 'package:assassin_client/controllers/user_view_controller.dart';
 import 'package:assassin_client/entities/entities.dart';
+import 'package:assassin_client/providers/providers.dart';
 import 'package:assassin_client/widgets/template_page.dart';
 import 'package:assassin_client/widgets/user_input.dart';
 
@@ -46,7 +46,7 @@ class GameLobbyRoute extends ConsumerWidget {
               _buildStartGameButton(
                 size,
                 game,
-                user.state.cache?.username,
+                user.cache?.username,
                 gameController,
               ),
               _buildPlayerInLobbyText(context),
