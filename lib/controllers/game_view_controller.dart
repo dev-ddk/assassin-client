@@ -39,7 +39,7 @@ class GameViewController {
   GameViewController(this.read, this.gameDS, this.statusDS, this.endDS);
 
   Future<Either<Failure, GameEntity>> updateState() async {
-    UserViewController userCntrl = read(userViewCntrl);
+    final userCntrl = read(userViewCntrl) as UserViewController;
 
     /* TO SKIP UPDATE IF NOT EMPTY
     final newState = await read(userState)
@@ -56,6 +56,10 @@ class GameViewController {
         .thenRightSync(_failIfNull);
 
     if (maybeNewCode.isLeft) {
+      final fail = Left<Failure, GameEntity>(maybeNewCode.left);
+
+      read(gameState).set(fail);
+
       return Left(maybeNewCode.left);
     }
 
