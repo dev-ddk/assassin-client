@@ -14,13 +14,21 @@ class PeriodicTask {
   PeriodicTask({required this.task, required this.period});
 
   ///Starts the autoupdater
-  void start({bool zeroWait = false}) {
+  void start({bool zeroWait = false, bool restartIfRunning = false}) {
+    // Do nothing if already running is true and restartIfRunning = false
+    if (_updater != null && !restartIfRunning) {
+      if (zeroWait) {
+        task();
+      }
+      return;
+    }
+    // Stop if already running and restartIfRunning = true
+    if (_updater != null && restartIfRunning) {
+      stop();
+    }
+    // In all cases execute task immediatly (fire and forget)
     if (zeroWait) {
       task();
-    }
-    // Stop if already running
-    if (_updater != null) {
-      stop();
     }
     _updater = Timer.periodic(
       period,

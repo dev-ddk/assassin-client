@@ -23,10 +23,12 @@ class AgentRemoteStorage implements AgentDataSource {
   ) async {
     final dio = Dio(baseOptions());
 
-    return await authenticateRequest(dio).thenRight(_agentInfoRequest);
+    return await authenticateRequest(dio)
+        .thenRight((dio) => _agentInfoRequest(dio, lobbyCode));
   }
 
-  Future<Either<Failure, AgentModel>> _agentInfoRequest(Dio dio) async {
+  Future<Either<Failure, AgentModel>> _agentInfoRequest(
+      Dio dio, String lobbyCode) async {
     try {
       final response = await dio.get('agent_info');
 
