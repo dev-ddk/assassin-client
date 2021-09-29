@@ -22,7 +22,7 @@ final gameState = ChangeNotifierProvider<CachedState<Failure, GameEntity>>(
 
 var logger = Logger(printer: PrettyPrinter());
 
-final gameUpdater = StateProvider<PeriodicTask>(
+final gameUpdater = Provider<PeriodicTask>(
   (ref) => PeriodicTask(
     task: () async => unawaited(ref.watch(gameViewCntrl).updateState()),
     period: Duration(seconds: 10),

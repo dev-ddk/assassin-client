@@ -37,7 +37,7 @@ dependencies:
   firebase_messaging: null
   flutter:
     sdk: flutter
-  flutter_riverpod: null
+  flutter_riverpod: ^0.14.0+3
   flutter_svg: ^0.22.0
   font_awesome_flutter: null
   freezed_annotation: null

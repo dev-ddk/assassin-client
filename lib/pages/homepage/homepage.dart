@@ -1,6 +1,4 @@
 // Flutter imports:
-import 'package:assassin_client/models/game_status_model.dart';
-import 'package:assassin_client/pages/game_joining/game_lobby.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -12,11 +10,14 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // Project imports:
 import 'package:assassin_client/colors.dart';
 import 'package:assassin_client/controllers/game_view_controller.dart';
+import 'package:assassin_client/models/game_status_model.dart';
+import 'package:assassin_client/pages/game_joining/game_lobby.dart';
 import 'package:assassin_client/pages/game_joining/join_game.dart';
 import 'package:assassin_client/pages/homepage/game_settings.dart';
 import 'package:assassin_client/pages/homepage/game_top.dart';
 import 'package:assassin_client/pages/homepage/target.dart';
 import 'package:assassin_client/utils/failures.dart';
+import 'package:assassin_client/widgets/periodic_task_scope.dart';
 import 'package:assassin_client/widgets/template_page.dart';
 
 class HomePageRoute extends ConsumerWidget {
@@ -71,29 +72,32 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, ScopedReader watch) {
     final controller = watch(controllerProvider);
 
-    return TemplatePage(
-      title: lobbyName,
-      bottomNavigationBar: CurvedNavigationBar(
-        animationDuration: duration,
-        backgroundColor: Colors.transparent,
-        color: assassinWhite,
-        items: pages.values.map((i) => FaIcon(i)).toList(),
-        onTap: (index) {
-          controller.animateToPage(
-            index,
-            duration: duration,
-            curve: Curves.ease,
-          );
-        },
-      ),
-      child: Container(
-        height: 0, // needed only to give the pageview a vertical size
-        child: PageView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          controller: controller,
-          itemBuilder: (context, index) {
-            return pages.keys.elementAt(index);
+    return PeriodicTaskScope(
+      provider: gameUpdater,
+      child: TemplatePage(
+        title: lobbyName,
+        bottomNavigationBar: CurvedNavigationBar(
+          animationDuration: duration,
+          backgroundColor: Colors.transparent,
+          color: assassinWhite,
+          items: pages.values.map((i) => FaIcon(i)).toList(),
+          onTap: (index) {
+            controller.animateToPage(
+              index,
+              duration: duration,
+              curve: Curves.ease,
+            );
           },
+        ),
+        child: Container(
+          height: 0, // needed only to give the pageview a vertical size
+          child: PageView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            controller: controller,
+            itemBuilder: (context, index) {
+              return pages.keys.elementAt(index);
+            },
+          ),
         ),
       ),
     );
