@@ -17,7 +17,6 @@ import 'package:pedantic/pedantic.dart';
 
 // Project imports:
 import 'package:assassin_client/colors.dart';
-import 'package:assassin_client/controllers/game_view_controller.dart';
 import 'package:assassin_client/main.dart';
 import 'package:assassin_client/providers/providers.dart';
 import 'package:assassin_client/utils/login_utils.dart';
@@ -226,7 +225,7 @@ class _LoginFormState extends State<LoginForm> {
           unawaited(context.read(userViewCntrl).updateState());
 
           // starts polling for game updates
-          context.read(agentUpdater).state.start(zeroWait: true);
+          //context.read(gameUpdater).start();
 
           print(await FirebaseAuth.instance.currentUser!.getIdToken());
         },

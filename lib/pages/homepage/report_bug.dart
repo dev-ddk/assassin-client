@@ -8,7 +8,22 @@ import 'package:assassin_client/widgets/template_page.dart';
 import 'package:assassin_client/widgets/user_input.dart';
 
 class ReportBugRoute extends StatelessWidget {
-  ReportBugRoute({Key? key}) : super(key: key);
+  const ReportBugRoute({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return TemplatePage(
+      title: 'REPORT BUG',
+      child: Padding(
+        padding: const EdgeInsets.all(40.0),
+        child: ReportBugForm(),
+      ),
+    );
+  }
+}
+
+class ReportBugForm extends StatelessWidget {
+  ReportBugForm({Key? key}) : super(key: key);
 
   final _formKey = GlobalKey<FormState>();
 
@@ -17,24 +32,18 @@ class ReportBugRoute extends StatelessWidget {
     var textTheme =
         Theme.of(context).textTheme.bodyText2!.copyWith(color: assassinWhite);
 
-    return TemplatePage(
-      title: 'REPORT BUG',
-      child: Padding(
-        padding: const EdgeInsets.all(40.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              _buildTopText(textTheme),
-              const SizedBox(height: 20),
-              _buildFormField(),
-              const SizedBox(height: 20),
-              _buildBottomText(textTheme),
-              const SizedBox(height: 50),
-              AssassinConfirmButton(text: 'SEND REPORT', onPressed: () {}),
-            ],
-          ),
-        ),
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          _buildTopText(textTheme),
+          const SizedBox(height: 20),
+          _buildFormField(),
+          const SizedBox(height: 20),
+          _buildBottomText(textTheme),
+          const SizedBox(height: 50),
+          AssassinConfirmButton(text: 'SEND REPORT', onPressed: () {}),
+        ],
       ),
     );
   }

@@ -52,7 +52,9 @@ class GameSettingsRoute extends ConsumerWidget {
                 SizedBox(height: 20),
                 AssassinConfirmButton(
                   text: 'REPORT BUG',
-                  onPressed: () {},
+                  heroTag: 'REPORT BUG',
+                  onPressed: () =>
+                      Navigator.pushNamed(context, '/homepage/report_bug'),
                 ),
               ],
             ),

@@ -1,6 +1,8 @@
+// Flutter imports:
+import 'package:flutter/foundation.dart';
+
 // Package imports:
 import 'package:either_dart/either.dart';
-import 'package:flutter/foundation.dart';
 
 class CachedState<L, R> extends ChangeNotifier {
   Either<L, R?> _state;
@@ -30,8 +32,8 @@ class CachedState<L, R> extends ChangeNotifier {
     T Function(L left, [R? cache]) left,
     T Function(R right) right,
   ) {
-    print(
-        'State Right = ${_state.isRight} - Cache Non null = ${_cache != null}');
+    //print(
+    //    'State Right = ${_state.isRight} - Cache Non null = ${_cache != null}');
     if (_cache == null && _state.isRight) {
       return empty();
     }
@@ -40,6 +42,21 @@ class CachedState<L, R> extends ChangeNotifier {
     } else {
       return right(_state.right!);
     }
+  }
+
+  T biFold<T, RR>(
+      CachedState<L, RR> other,
+      T Function() empty,
+      T Function(L left, [R? cache1, RR? cache2]) left,
+      T Function(R right1, RR right2) right) {
+    if (isEmpty || other.isEmpty) {
+      return empty();
+    }
+    if (isLeft || other.isLeft) {
+      return left(_state.then((_) => other._state).left, _cache, other._cache);
+    }
+
+    return right(_state.right!, other._state.right!);
   }
 
   Either<L, R> ifEmpty(

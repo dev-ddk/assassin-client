@@ -1,4 +1,5 @@
 // Flutter imports:
+import 'package:assassin_client/pages/homepage/report_bug.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
@@ -27,6 +28,7 @@ final Map<String, Widget> routes = {
   '/': const LoginRoute(),
   '/register': const RegisterRoute(),
   '/homepage': const HomePageRoute(),
+  '/homepage/report_bug': const ReportBugRoute(),
   '/homepage/join-game': const JoinGameRoute(),
   '/homepage/join-game/join-lobby': const JoinLobbyRoute(), //TODO: ??
   '/homepage/join-game/configure-lobby': ConfigureLobbyRoute(),
@@ -52,11 +54,11 @@ class AssassinApp extends ConsumerWidget {
         //TODO: error handling
         child: routes[settings.name]!,
 
-        type: PageTransitionType.bottomToTop,
+        type: PageTransitionType.fade,
         alignment: Alignment.center,
         reverseDuration: const Duration(milliseconds: 400),
         duration: const Duration(milliseconds: 400),
-        curve: Curves.easeIn,
+        curve: Curves.easeInOut,
         settings: settings,
       ),
     );

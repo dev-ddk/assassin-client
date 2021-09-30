@@ -19,7 +19,7 @@ import 'package:assassin_client/utils/riverpod_utils.dart';
 final agentState = ChangeNotifierProvider<CachedState<Failure, AgentEntity>>(
     (ref) => CachedState());
 
-final agentUpdater = StateProvider<PeriodicTask>(
+final agentUpdater = Provider<PeriodicTask>(
   (ref) => PeriodicTask(
     task: () async => unawaited(ref.watch(agentViewCntrl).updateState()),
     period: Duration(seconds: 10),
