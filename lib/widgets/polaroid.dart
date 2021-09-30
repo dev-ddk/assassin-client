@@ -17,18 +17,27 @@ final rotationProvider = StateProvider<bool>((ref) => false);
 /// without resorting to a complex implementation with an AnimationController
 
 class Polaroid extends ConsumerWidget {
-  const Polaroid({
-    Key? key,
-    this.targetLabel,
-    this.targetPicture,
-    required this.animateDuration,
-    this.description,
-  }) : super(key: key);
+  const Polaroid.target(
+      {Key? key,
+      required this.targetLabel,
+      required this.targetPicture,
+      required this.animateDuration})
+      : withTarget = true,
+        description = null,
+        super(key: key);
+
+  const Polaroid.description(
+      {Key? key, required this.description, required this.animateDuration})
+      : withTarget = false,
+        targetPicture = null,
+        targetLabel = null,
+        super(key: key);
 
   final String? targetLabel;
   final Widget? targetPicture;
   final Duration animateDuration;
   final String? description;
+  final bool withTarget;
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
@@ -51,11 +60,8 @@ class Polaroid extends ConsumerWidget {
             children: [
               _buildBack(),
               _buildSheet(rotationState),
-              if (targetLabel != null && targetPicture != null)
-                _buildTarget(rotationState, size, context),
-              if (targetLabel == null &&
-                  targetPicture == null &&
-                  description != null)
+              if (withTarget) _buildTarget(rotationState, size, context),
+              if (!withTarget)
                 AnimatedOpacity(
                   curve: StepCurve(),
                   duration: animateDuration,
