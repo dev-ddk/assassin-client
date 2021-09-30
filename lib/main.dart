@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -47,7 +48,7 @@ class AssassinApp extends ConsumerWidget {
   Widget build(BuildContext context, ScopedReader watch) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: _buildTheme(),
+      theme: _buildTheme(context),
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       onGenerateRoute: (settings) => PageTransition(
@@ -64,8 +65,11 @@ class AssassinApp extends ConsumerWidget {
     );
   }
 
-  ThemeData _buildTheme() {
+  ThemeData _buildTheme(context) {
     return ThemeData(
+      appBarTheme: AppBarTheme(
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+      ),
       primarySwatch: Colors.blue,
       fontFamily: 'Open Sans',
       textTheme: const TextTheme(
