@@ -1,5 +1,4 @@
 // Package imports:
-import 'package:assassin_client/controllers/agent_view_controller.dart';
 import 'package:either_dart/either.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';

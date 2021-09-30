@@ -756,12 +756,10 @@ class __$AgentEntityCopyWithImpl<$Res> extends _$AgentEntityCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_AgentEntity implements _AgentEntity {
+class _$_AgentEntity extends _AgentEntity {
   _$_AgentEntity(
-      {required this.agentName,
-      this.target,
-      this.alive = true,
-      this.kills = 0});
+      {required this.agentName, this.target, this.alive = true, this.kills = 0})
+      : super._();
 
   @override
   final String agentName;
@@ -808,12 +806,13 @@ class _$_AgentEntity implements _AgentEntity {
       __$AgentEntityCopyWithImpl<_AgentEntity>(this, _$identity);
 }
 
-abstract class _AgentEntity implements AgentEntity {
+abstract class _AgentEntity extends AgentEntity {
   factory _AgentEntity(
       {required String agentName,
       String? target,
       bool alive,
       int kills}) = _$_AgentEntity;
+  _AgentEntity._() : super._();
 
   @override
   String get agentName => throw _privateConstructorUsedError;

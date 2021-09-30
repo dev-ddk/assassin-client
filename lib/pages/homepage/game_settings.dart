@@ -2,20 +2,19 @@
 import 'dart:math';
 
 // Flutter imports:
-import 'package:assassin_client/controllers/agent_view_controller.dart';
-import 'package:assassin_client/controllers/user_view_controller.dart';
-import 'package:assassin_client/datasources/agent_datasources.dart';
-import 'package:assassin_client/entities/entities.dart';
-import 'package:assassin_client/utils/cached_state.dart';
-import 'package:assassin_client/utils/failures.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 // Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 // Project imports:
 import 'package:assassin_client/colors.dart';
+import 'package:assassin_client/controllers/agent_view_controller.dart';
+import 'package:assassin_client/controllers/user_view_controller.dart';
+import 'package:assassin_client/entities/entities.dart';
+import 'package:assassin_client/utils/cached_state.dart';
+import 'package:assassin_client/utils/failures.dart';
 import 'package:assassin_client/utils/step_curve.dart';
 import 'package:assassin_client/widgets/user_input.dart';
 
