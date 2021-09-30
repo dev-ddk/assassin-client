@@ -5,6 +5,7 @@ part 'agent_model.g.dart';
 
 @JsonSerializable()
 class AgentModel {
+  String codename;
   String? target;
   @JsonKey(name: 'target_propic')
   Uri? targetPropic;
@@ -12,6 +13,7 @@ class AgentModel {
   int kills;
 
   AgentModel({
+    required this.codename,
     this.target,
     this.targetPropic,
     required this.alive,

@@ -2,6 +2,7 @@
 import 'dart:ui';
 
 // Flutter imports:
+import 'package:assassin_client/controllers/agent_view_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -223,10 +224,9 @@ class _LoginFormState extends State<LoginForm> {
         (loginData) async {
           unawaited(Navigator.popAndPushNamed(context, '/homepage'));
           unawaited(context.read(userViewCntrl).updateState());
-          unawaited(context.read(gameViewCntrl).updateState());
 
           // starts polling for game updates
-          context.read(gameUpdater).state.start();
+          context.read(agentUpdater).state.start(zeroWait: true);
 
           print(await FirebaseAuth.instance.currentUser!.getIdToken());
         },

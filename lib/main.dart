@@ -28,7 +28,7 @@ final Map<String, Widget> routes = {
   '/register': const RegisterRoute(),
   '/homepage': const HomePageRoute(),
   '/homepage/join-game': const JoinGameRoute(),
-  '/homepage/join-game/join-lobby': JoinLobbyRoute(),
+  '/homepage/join-game/join-lobby': const JoinLobbyRoute(), //TODO: ??
   '/homepage/join-game/configure-lobby': ConfigureLobbyRoute(),
   '/homepage/join-game/lobby': const GameLobbyRoute(),
   '/edit-profile': const EditProfileRoute(),

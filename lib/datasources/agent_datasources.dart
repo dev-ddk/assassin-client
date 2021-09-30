@@ -30,7 +30,13 @@ class AgentRemoteStorage implements AgentDataSource {
   Future<Either<Failure, AgentModel>> _agentInfoRequest(
       Dio dio, String lobbyCode) async {
     try {
-      final response = await dio.get('agent_info');
+      final response = await dio.get(
+        'agent_info',
+        queryParameters: {'gameCode': lobbyCode},
+      );
+
+      logger.i('/agent_info: response code ${response.statusCode}');
+      logger.d(response.data);
 
       return Right(AgentModel.fromJson(response.data));
     } on DioError catch (e) {
@@ -49,7 +55,7 @@ class AgentRemoteStorage implements AgentDataSource {
         return Left(
           DioNetworkFailure.log(
             code: 'NET-000',
-            message: '/kill network failure',
+            message: '/agent_info network failure',
             errorType: e.type,
             logger: logger,
             level: Level.error,

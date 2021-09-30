@@ -8,6 +8,7 @@ part of 'agent_model.dart';
 
 AgentModel _$AgentModelFromJson(Map<String, dynamic> json) {
   return AgentModel(
+    codename: json['codename'] as String,
     target: json['target'] as String?,
     targetPropic: json['target_propic'] == null
         ? null

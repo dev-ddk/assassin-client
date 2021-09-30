@@ -82,7 +82,7 @@ class AgentViewController {
   }
 
   AgentEntity _convertFromModel(AgentModel model) => AgentEntity(
-        agentName: 'PLACEHOLDERONI', //TODO: Find a way to get it from APIs
+        agentName: model.codename, //TODO: Find a way to get it from APIs
         target: model.target,
         alive: model.alive,
         kills: model.kills,

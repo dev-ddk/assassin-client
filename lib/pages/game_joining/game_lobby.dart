@@ -214,20 +214,20 @@ class AssassinPlayerCard extends StatelessWidget {
     }
 
     return Material(
-      elevation: 10,
+      elevation: 4,
       borderRadius: borderRadius,
-      child: Container(
-        width: size.width / 1.1,
-        height: 100,
-        decoration: BoxDecoration(
-          color: variant ? assassinLightBlue : assassinBlue,
-          borderRadius: borderRadius,
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: children,
+      color: variant ? assassinLightBlue : assassinBlue,
+      child: InkWell(
+        borderRadius: borderRadius,
+        onTap: () {},
+        child: Container(
+          height: 100,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: children,
+          ),
         ),
       ),
     );
