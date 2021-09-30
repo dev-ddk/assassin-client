@@ -1,4 +1,5 @@
 // Flutter imports:
+import 'package:assassin_client/colors.dart';
 import 'package:assassin_client/pages/homepage/report_bug.dart';
 import 'package:flutter/material.dart';
 
@@ -67,9 +68,7 @@ class AssassinApp extends ConsumerWidget {
 
   ThemeData _buildTheme(context) {
     return ThemeData(
-      appBarTheme: AppBarTheme(
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-      ),
+      appBarTheme: AppBarTheme(systemOverlayStyle: SystemUiOverlayStyle.dark),
       primarySwatch: Colors.blue,
       fontFamily: 'Open Sans',
       textTheme: const TextTheme(

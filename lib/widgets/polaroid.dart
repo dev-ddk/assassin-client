@@ -73,8 +73,9 @@ class Polaroid extends ConsumerWidget {
                     child: Text(
                       description!,
                       softWrap: true,
-                      style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                      style: Theme.of(context).textTheme.bodyText1!.copyWith(
                             fontFamily: 'Special Elite',
+                            height: 1.3,
                           ),
                     ),
                   ),
@@ -130,10 +131,12 @@ class Polaroid extends ConsumerWidget {
       duration: animateDuration,
       opacity: rotationState ? 1 : 0,
       child: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.only(top: 24.0, left: 24.0),
         child: Container(
           transformAlignment: Alignment.center,
-          transform: Matrix4.identity()..rotateZ(pi / 32),
+          transform: Matrix4.identity()
+            ..rotateZ(pi / 32)
+            ..translate(-10.0, -20.0),
           color: assassinBlue,
         ),
       ),
