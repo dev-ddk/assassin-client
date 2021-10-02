@@ -35,9 +35,7 @@ class PeriodicTask {
       task();
     }
 
-    _useCount++;
-
-    if (_useCount > 0) {
+    if (_useCount == 0) {
       _updater = Timer.periodic(
         period,
         (timer) {
@@ -45,6 +43,8 @@ class PeriodicTask {
         },
       );
     }
+
+    _useCount++;
   }
 
   /// Halts the autoupdater and sets refcount to 0
@@ -65,6 +65,7 @@ class PeriodicTask {
     if (_useCount > 0) {
       _useCount--;
     }
+
     if (_useCount == 0) {
       _updater?.cancel();
       _updater = null;

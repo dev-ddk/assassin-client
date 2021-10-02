@@ -24,7 +24,7 @@ var logger = Logger(printer: PrettyPrinter());
 
 final gameUpdater = Provider<PeriodicTask>(
   (ref) => PeriodicTask(
-    task: () async => unawaited(ref.watch(gameViewCntrl).updateState()),
+    task: () async => unawaited(ref.read(gameViewCntrl).updateState()),
     period: Duration(seconds: 10),
   ),
 );

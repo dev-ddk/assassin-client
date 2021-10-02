@@ -17,7 +17,7 @@ final userState = ChangeNotifierProvider<CachedState<Failure, UserEntity>>(
 
 final userUpdater = Provider<PeriodicTask>(
   (ref) => PeriodicTask(
-    task: () async => unawaited(ref.watch(userViewCntrl).updateState()),
+    task: () async => unawaited(ref.read(userViewCntrl).updateState()),
     period: Duration(seconds: 10),
   ),
 );
