@@ -3,6 +3,7 @@ import 'dart:math';
 
 // Flutter imports:
 import 'package:assassin_client/widgets/player_card.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
@@ -56,27 +57,38 @@ class GameSettingsRoute extends ConsumerWidget {
                 SizedBox(height: 20),
                 AssassinConfirmButton(
                   text: 'LOGOUT',
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        content: Text('Are you sure you want to logout?'),
-                        actions: [
-                          TextButton(
-                            child: Text('Cancel'),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                          TextButton(
-                            child: Text('Logout'),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+                  onPressed: () => showLogoutDialog(context),
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<dynamic> showLogoutDialog(BuildContext context) {
+    final style =
+        Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 16.0);
+
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: assassinWhite,
+        content: Text('Are you sure you want to logout?', style: style),
+        actions: [
+          TextButton(
+            child: Text('Cancel', style: style),
+            onPressed: () => Navigator.pop(context),
+          ),
+          TextButton(
+            child: Text('Logout', style: style.copyWith(color: assassinRed)),
+            onPressed: () {
+              FirebaseAuth.instance.signOut();
+
+              Navigator.popUntil(context, (route) => false);
+              Navigator.pushNamed(context, '/');
+            },
           ),
         ],
       ),
@@ -169,7 +181,10 @@ class AgentCard extends ConsumerWidget {
                       SizedBox(height: 6),
                       Text('Codename', style: labelStyle),
                       SizedBox(height: 3),
-                      Text(agent.agentName, style: valueStyle),
+                      Text(
+                        toBeginningOfSentenceCase(agent.agentName)!,
+                        style: valueStyle,
+                      ),
                       SizedBox(height: 28),
                       _buildKillCounters(labelStyle, valueStyle)
                     ],

@@ -40,6 +40,7 @@ BaseOptions baseOptions({contentType = 'application/json'}) {
 
 Future<Either<Failure, Dio>> authenticateRequest(Dio dio) async {
   final token = await _auth.currentUser?.getIdToken();
+
   if (token == null) {
     return Left(
       AuthFailure.log(

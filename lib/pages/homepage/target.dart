@@ -46,7 +46,7 @@ class TargetRoute extends ConsumerWidget {
             agent.fold(
               () => Text('Loading...'),
               (left, [cache]) => Text('Errore'),
-              _buildPolaroid,
+              (agent) => _buildPolaroid(agent.target),
             ),
             AssassinConfirmButton(
               text: 'REPORT KILL!',
@@ -67,10 +67,10 @@ class TargetRoute extends ConsumerWidget {
     );
   }
 
-  Widget _buildPolaroid(AgentEntity agent) {
-    if (agent.hasActiveTarget) {
+  Widget _buildPolaroid(target) {
+    if (target != null) {
       return Polaroid.target(
-        targetLabel: agent.target,
+        targetLabel: target,
         targetPicture: Image(
           image: AssetImage('assets/enricone.jpg'),
           fit: BoxFit.fitWidth,
