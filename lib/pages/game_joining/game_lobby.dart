@@ -1,4 +1,6 @@
 // Flutter imports:
+import 'package:assassin_client/pages/homepage/game_settings.dart';
+import 'package:assassin_client/widgets/player_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -109,7 +111,6 @@ class GameLobbyRoute extends ConsumerWidget {
     );
   }
 */
-  // ignore: unused_element
   Widget _buildPlayerInLobbyText(context) {
     return Text(
       'Players in the Lobby',
@@ -120,37 +121,32 @@ class GameLobbyRoute extends ConsumerWidget {
     );
   }
 
-  // ignore: unused_element
   Widget _buildLobbyCode(context, code) {
+    final style1 = Theme.of(context).textTheme.headline6!.copyWith(
+        foreground: Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 6
+          ..color = assassinDarkBlue,
+        fontSize: 60);
+
+    final style2 = Theme.of(context)
+        .textTheme
+        .headline6!
+        .copyWith(color: assassinBlue, fontSize: 60);
+
     return GestureDetector(
       onTap: () => Clipboard.setData(ClipboardData(text: code)),
       child: Stack(
         children: <Widget>[
           // Stroked text as border.
-          Text(
-            code,
-            style: Theme.of(context).textTheme.headline6!.copyWith(
-                  foreground: Paint()
-                    ..style = PaintingStyle.stroke
-                    ..strokeWidth = 6
-                    ..color = assassinDarkBlue,
-                  fontSize: 60,
-                ),
-          ),
+          Text(code, style: style1),
           // Solid text as fill.
-          Text(
-            code,
-            style: Theme.of(context)
-                .textTheme
-                .headline6!
-                .copyWith(color: assassinBlue, fontSize: 60),
-          ),
+          Text(code, style: style2),
         ],
       ),
     );
   }
 
-  // ignore: unused_element
   Widget _buildTapText(context) {
     return Text(
       'Tap to copy to clipboard',
@@ -160,7 +156,6 @@ class GameLobbyRoute extends ConsumerWidget {
     );
   }
 
-  // ignore: unused_element
   Widget _buildTopText(context) {
     return Text(
       'Send this code to your friends!',
@@ -169,67 +164,6 @@ class GameLobbyRoute extends ConsumerWidget {
           .textTheme
           .headline6!
           .copyWith(color: assassinWhite, fontSize: 20),
-    );
-  }
-}
-
-class AssassinPlayerCard extends StatelessWidget {
-  const AssassinPlayerCard({
-    Key? key,
-    required this.username,
-    this.variant = false,
-  }) : super(key: key);
-
-  final String username;
-  final bool variant;
-
-  @override
-  Widget build(BuildContext context) {
-    // final size = MediaQuery.of(context).size;
-
-    final borderRadius = BorderRadius.circular(24);
-
-    var children = [
-      Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(40),
-          border: Border.all(
-            color: variant ? assassinDarkBlue2 : assassinDarkBlue,
-            width: 2,
-          ),
-        ),
-        child: ClipOval(child: Image.asset('assets/test_propic.png')),
-      ),
-      Text(
-        username,
-        style: Theme.of(context)
-            .textTheme
-            .bodyText1!
-            .copyWith(color: assassinDarkBlue, fontSize: 20),
-      ),
-    ];
-
-    if (variant) {
-      children = children.reversed.toList();
-    }
-
-    return Material(
-      elevation: 4,
-      borderRadius: borderRadius,
-      color: variant ? assassinLightBlue : assassinBlue,
-      child: InkWell(
-        borderRadius: borderRadius,
-        onTap: () {},
-        child: Container(
-          height: 100,
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: children,
-          ),
-        ),
-      ),
     );
   }
 }

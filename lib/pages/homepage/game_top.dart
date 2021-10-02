@@ -1,5 +1,6 @@
 // Flutter imports:
 import 'package:assassin_client/controllers/agent_view_controller.dart';
+import 'package:assassin_client/widgets/player_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -20,40 +21,36 @@ class GameRoute extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    final agent = watch(agentState);
-
     final game = watch(gameState);
-    final size = MediaQuery.of(context).size;
 
     final textStyle =
         Theme.of(context).textTheme.headline5!.copyWith(color: assassinWhite);
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        Wrap(
-          alignment: WrapAlignment.center,
-          children: [
-            Text(
-              'The assassin game will end in:',
-              style: textStyle,
-            ),
-            game.fold(
-              () => Center(child: CircularProgressIndicator()),
-              (fail, [fallback]) => Center(),
-              (game) => AssassinTimer(
-                startDate: game.startTime!,
-                duration: Duration(days: 7),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 24.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Wrap(
+            alignment: WrapAlignment.center,
+            children: [
+              Text(
+                'The assassin game will end in:',
+                style: textStyle,
               ),
-            ),
-          ],
-        ),
-        Container(
-          alignment: Alignment.center,
-          height: size.width,
-          child: _buildLobbyPlayers(context, game),
-        )
-      ],
+              game.fold(
+                () => Center(child: CircularProgressIndicator()),
+                (fail, [fallback]) => Center(),
+                (game) => AssassinTimer(
+                  startDate: game.startTime!,
+                  duration: Duration(days: 7),
+                ),
+              ),
+            ],
+          ),
+          _buildLobbyPlayers(context, game)
+        ],
+      ),
     );
   }
 
@@ -65,9 +62,10 @@ class GameRoute extends ConsumerWidget {
     //3. The (first) request is still awaiting a response
 
     return gameCState.fold(
-        () => _buildLoadingScreen(context),
-        (failure, [_]) => _buildErrorMessage(context),
-        (lobby) => _buildPlayerList(context, lobby));
+      () => _buildLoadingScreen(context),
+      (failure, [_]) => _buildErrorMessage(context),
+      (lobby) => _buildPlayerList(context, lobby),
+    );
   }
 
   Widget _buildLoadingScreen(context) {
@@ -85,19 +83,30 @@ class GameRoute extends ConsumerWidget {
   }
 
   Widget _buildPlayerList(context, GameEntity lobby) {
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: lobby.users.length,
-      addAutomaticKeepAlives: true,
-      itemBuilder: (context, i) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10),
-          child: AssassinPlayerCard(
-            username: lobby.users[i].username,
-            variant: i % 2 == 1,
-          ),
-        );
-      },
+    final textStyle =
+        Theme.of(context).textTheme.headline5!.copyWith(color: assassinWhite);
+
+    return Column(
+      children: [
+        Text('Players in this game:', style: textStyle),
+        ListView.builder(
+          shrinkWrap: true,
+          itemCount: lobby.users.length,
+          addAutomaticKeepAlives: true,
+          itemBuilder: (context, i) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 10.0,
+                horizontal: 10.0,
+              ),
+              child: AssassinPlayerCard(
+                username: lobby.users[i].username,
+                variant: i % 2 == 1,
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }

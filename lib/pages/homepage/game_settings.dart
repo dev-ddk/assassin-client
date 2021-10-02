@@ -2,10 +2,12 @@
 import 'dart:math';
 
 // Flutter imports:
+import 'package:assassin_client/widgets/player_card.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
 // Project imports:
@@ -31,21 +33,47 @@ class GameSettingsRoute extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          SizedBox(height: 20),
-          _buildAgentCard(user, agent),
+          Column(
+            children: [
+              _buildAgentCard(user, agent),
+              SizedBox(height: 20),
+              _buildShowHideButton(),
+            ],
+          ),
           SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.all(24.0),
             child: Column(
               children: [
-                _buildShowHideButton(),
-                SizedBox(height: 20),
                 AssassinConfirmButton(
                   text: 'REPORT BUG',
                   heroTag: 'REPORT BUG',
                   onPressed: () =>
                       Navigator.pushNamed(context, '/homepage/report_bug'),
+                ),
+                SizedBox(height: 20),
+                AssassinConfirmButton(
+                  text: 'LOGOUT',
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        content: Text('Are you sure you want to logout?'),
+                        actions: [
+                          TextButton(
+                            child: Text('Cancel'),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                          TextButton(
+                            child: Text('Logout'),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -72,16 +100,9 @@ class GameSettingsRoute extends ConsumerWidget {
     CachedState<Failure, AgentEntity> agent,
   ) {
     if (agent.isRight && user.isRight) {
-      final username = user.state.right?.username;
-      final agentName = agent.state.right?.agentName;
-      final kills = agent.state.right?.kills;
-      final totalKills = agent.state.right?.kills; //TODO: statitics
-
       return AgentCard(
-        username: username!,
-        codename: toBeginningOfSentenceCase(agentName!)!,
-        kills: kills!,
-        totalKills: totalKills!,
+        username: user.state.right!.username,
+        agent: agent.state.right!,
       );
     } else {
       return Center(child: CircularProgressIndicator());
@@ -93,17 +114,13 @@ class AgentCard extends ConsumerWidget {
   AgentCard({
     this.duration = const Duration(milliseconds: 400),
     required this.username,
-    required this.codename,
-    required this.kills,
-    required this.totalKills,
+    required this.agent,
     Key? key,
   }) : super(key: key);
 
   final Duration duration;
   final String username;
-  final String codename;
-  final int kills;
-  final int totalKills;
+  final AgentEntity agent;
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
@@ -115,7 +132,7 @@ class AgentCard extends ConsumerWidget {
     final valueStyle = Theme.of(context)
         .textTheme
         .bodyText1!
-        .copyWith(fontFamily: 'Special Elite', fontSize: 18.0);
+        .copyWith(fontFamily: 'Special Elite', fontSize: 24.0, height: 1.2);
 
     final stepCurve = StepCurve();
 
@@ -138,25 +155,24 @@ class AgentCard extends ConsumerWidget {
             curve: stepCurve,
             duration: duration,
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildLogo(),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Username', style: labelStyle),
-                        SizedBox(height: 3),
-                        Text(username, style: valueStyle),
-                        SizedBox(height: 6),
-                        Text('Codename', style: labelStyle),
-                        SizedBox(height: 3),
-                        Text(codename, style: valueStyle),
-                        SizedBox(height: 28),
-                        _buildKillCounters(labelStyle, valueStyle)
-                      ],
-                    ),
+                _buildLogos(),
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Username', style: labelStyle),
+                      SizedBox(height: 3),
+                      Text(username, style: valueStyle),
+                      SizedBox(height: 6),
+                      Text('Codename', style: labelStyle),
+                      SizedBox(height: 3),
+                      Text(agent.agentName, style: valueStyle),
+                      SizedBox(height: 28),
+                      _buildKillCounters(labelStyle, valueStyle)
+                    ],
                   ),
                 )
               ],
@@ -172,7 +188,11 @@ class AgentCard extends ConsumerWidget {
               height: 200,
               transform: Matrix4.identity()..rotateY(pi),
               transformAlignment: Alignment.center,
-              child: Image.asset('assets/assassin_logo.png'),
+              child: Image.asset(
+                'assets/assassin_logo.png',
+                color: Colors.white60,
+                colorBlendMode: BlendMode.modulate,
+              ),
             ),
           )
         ]),
@@ -185,35 +205,35 @@ class AgentCard extends ConsumerWidget {
       children: [
         Text('Game Kills: ', style: labelStyle),
         SizedBox(width: 4),
-        Text(kills.toString(), style: valueStyle.copyWith(color: assassinRed)),
+        Text(
+          agent.kills.toString(),
+          style: valueStyle.copyWith(color: assassinRed),
+        ),
         SizedBox(width: 15),
         Text('Total Kills', style: labelStyle),
         SizedBox(width: 4),
         Text(
-          totalKills.toString(),
+          agent.kills.toString(),
           style: valueStyle.copyWith(color: assassinRed),
         )
       ],
     );
   }
 
-  Widget _buildLogo() {
+  Widget _buildLogos() {
     return Container(
       padding: const EdgeInsets.all(12.0),
       width: 100,
       child: Column(
         children: [
-          Container(
-            width: 100,
-            height: 90,
-            decoration: BoxDecoration(color: assassinBlue),
-            child: Image(
-              image: AssetImage('assets/logo.jpg'),
-              fit: BoxFit.fitWidth,
-            ),
-          ),
           SizedBox(height: 10),
-          Image.asset('assets/assassin_logo.png'),
+          //TODO: add image
+          AssassinAvatar(username: username, imageUrl: null),
+          SizedBox(height: 10),
+          SizedBox(
+            height: 80,
+            child: SvgPicture.asset('assets/assassin_logo.svg'),
+          ),
         ],
       ),
     );
