@@ -43,6 +43,7 @@ class GameEntity with _$GameEntity {
   factory GameEntity({
     required String gameName,
     required String gameCode,
+    DateTime? startTime,
     @Default(<OtherUserEntity>[]) List<OtherUserEntity> users,
     @Default(GameStatus.WAITING) GameStatus gameStatus,
     required String admin,

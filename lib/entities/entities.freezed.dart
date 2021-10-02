@@ -1,5 +1,6 @@
+// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
 
 part of 'entities.dart';
 
@@ -403,12 +404,14 @@ class _$GameEntityTearOff {
   _GameEntity call(
       {required String gameName,
       required String gameCode,
+      DateTime? startTime,
       List<OtherUserEntity> users = const <OtherUserEntity>[],
       GameStatus gameStatus = GameStatus.WAITING,
       required String admin}) {
     return _GameEntity(
       gameName: gameName,
       gameCode: gameCode,
+      startTime: startTime,
       users: users,
       gameStatus: gameStatus,
       admin: admin,
@@ -423,6 +426,7 @@ const $GameEntity = _$GameEntityTearOff();
 mixin _$GameEntity {
   String get gameName => throw _privateConstructorUsedError;
   String get gameCode => throw _privateConstructorUsedError;
+  DateTime? get startTime => throw _privateConstructorUsedError;
   List<OtherUserEntity> get users => throw _privateConstructorUsedError;
   GameStatus get gameStatus => throw _privateConstructorUsedError;
   String get admin => throw _privateConstructorUsedError;
@@ -440,6 +444,7 @@ abstract class $GameEntityCopyWith<$Res> {
   $Res call(
       {String gameName,
       String gameCode,
+      DateTime? startTime,
       List<OtherUserEntity> users,
       GameStatus gameStatus,
       String admin});
@@ -457,6 +462,7 @@ class _$GameEntityCopyWithImpl<$Res> implements $GameEntityCopyWith<$Res> {
   $Res call({
     Object? gameName = freezed,
     Object? gameCode = freezed,
+    Object? startTime = freezed,
     Object? users = freezed,
     Object? gameStatus = freezed,
     Object? admin = freezed,
@@ -470,6 +476,10 @@ class _$GameEntityCopyWithImpl<$Res> implements $GameEntityCopyWith<$Res> {
           ? _value.gameCode
           : gameCode // ignore: cast_nullable_to_non_nullable
               as String,
+      startTime: startTime == freezed
+          ? _value.startTime
+          : startTime // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       users: users == freezed
           ? _value.users
           : users // ignore: cast_nullable_to_non_nullable
@@ -495,6 +505,7 @@ abstract class _$GameEntityCopyWith<$Res> implements $GameEntityCopyWith<$Res> {
   $Res call(
       {String gameName,
       String gameCode,
+      DateTime? startTime,
       List<OtherUserEntity> users,
       GameStatus gameStatus,
       String admin});
@@ -514,6 +525,7 @@ class __$GameEntityCopyWithImpl<$Res> extends _$GameEntityCopyWithImpl<$Res>
   $Res call({
     Object? gameName = freezed,
     Object? gameCode = freezed,
+    Object? startTime = freezed,
     Object? users = freezed,
     Object? gameStatus = freezed,
     Object? admin = freezed,
@@ -527,6 +539,10 @@ class __$GameEntityCopyWithImpl<$Res> extends _$GameEntityCopyWithImpl<$Res>
           ? _value.gameCode
           : gameCode // ignore: cast_nullable_to_non_nullable
               as String,
+      startTime: startTime == freezed
+          ? _value.startTime
+          : startTime // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       users: users == freezed
           ? _value.users
           : users // ignore: cast_nullable_to_non_nullable
@@ -549,6 +565,7 @@ class _$_GameEntity implements _GameEntity {
   _$_GameEntity(
       {required this.gameName,
       required this.gameCode,
+      this.startTime,
       this.users = const <OtherUserEntity>[],
       this.gameStatus = GameStatus.WAITING,
       required this.admin});
@@ -557,6 +574,8 @@ class _$_GameEntity implements _GameEntity {
   final String gameName;
   @override
   final String gameCode;
+  @override
+  final DateTime? startTime;
   @JsonKey(defaultValue: const <OtherUserEntity>[])
   @override
   final List<OtherUserEntity> users;
@@ -568,7 +587,7 @@ class _$_GameEntity implements _GameEntity {
 
   @override
   String toString() {
-    return 'GameEntity(gameName: $gameName, gameCode: $gameCode, users: $users, gameStatus: $gameStatus, admin: $admin)';
+    return 'GameEntity(gameName: $gameName, gameCode: $gameCode, startTime: $startTime, users: $users, gameStatus: $gameStatus, admin: $admin)';
   }
 
   @override
@@ -581,6 +600,9 @@ class _$_GameEntity implements _GameEntity {
             (identical(other.gameCode, gameCode) ||
                 const DeepCollectionEquality()
                     .equals(other.gameCode, gameCode)) &&
+            (identical(other.startTime, startTime) ||
+                const DeepCollectionEquality()
+                    .equals(other.startTime, startTime)) &&
             (identical(other.users, users) ||
                 const DeepCollectionEquality().equals(other.users, users)) &&
             (identical(other.gameStatus, gameStatus) ||
@@ -595,6 +617,7 @@ class _$_GameEntity implements _GameEntity {
       runtimeType.hashCode ^
       const DeepCollectionEquality().hash(gameName) ^
       const DeepCollectionEquality().hash(gameCode) ^
+      const DeepCollectionEquality().hash(startTime) ^
       const DeepCollectionEquality().hash(users) ^
       const DeepCollectionEquality().hash(gameStatus) ^
       const DeepCollectionEquality().hash(admin);
@@ -609,6 +632,7 @@ abstract class _GameEntity implements GameEntity {
   factory _GameEntity(
       {required String gameName,
       required String gameCode,
+      DateTime? startTime,
       List<OtherUserEntity> users,
       GameStatus gameStatus,
       required String admin}) = _$_GameEntity;
@@ -617,6 +641,8 @@ abstract class _GameEntity implements GameEntity {
   String get gameName => throw _privateConstructorUsedError;
   @override
   String get gameCode => throw _privateConstructorUsedError;
+  @override
+  DateTime? get startTime => throw _privateConstructorUsedError;
   @override
   List<OtherUserEntity> get users => throw _privateConstructorUsedError;
   @override

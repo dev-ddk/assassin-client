@@ -25,7 +25,7 @@ Wait until you are re-deployed.
 
 We trust that you will not fail us again.
 
-                  ~ The Assassin Master
+      ~ The Assassin Master
                   """;
 
 class TargetRoute extends ConsumerWidget {

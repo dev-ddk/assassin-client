@@ -250,6 +250,7 @@ class AssassinDropDownForm extends ConsumerWidget {
     final hintStyle = textStyle.copyWith(
       color: assassinDarkBlue.withAlpha(180),
     );
+
     final errorStyle = textStyle.copyWith(color: assassinRed, fontSize: 14.0);
 
     return InputDecoration(
@@ -291,8 +292,9 @@ class AssassinConfirmButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final style =
-        Theme.of(context).textTheme.headline5!.copyWith(color: textColor);
+    final style = Theme.of(context).textTheme.headline5!.copyWith(
+          color: onPressed == null ? textColor.withAlpha(120) : textColor,
+        );
 
     return heroTag != null
         ? Hero(tag: heroTag!, child: _buildButton(style))
@@ -305,7 +307,7 @@ class AssassinConfirmButton extends StatelessWidget {
       height: height,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          elevation: 10,
+          elevation: 4,
           primary: backgroundColor,
           onSurface: assassinRed,
           onPrimary: assassinRed,

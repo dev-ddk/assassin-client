@@ -102,14 +102,19 @@ class GameViewController {
         );
 
   GameEntity _convertFromModel(
-          String gameCode, LobbyModel model, GameStatus status) =>
-      GameEntity(
-        gameName: model.name,
-        gameCode: gameCode,
-        admin: model.admin!,
-        gameStatus: status,
-        users: model.players
-            .map((e) => OtherUserEntity(username: e.username))
-            .toList(),
-      );
+    String gameCode,
+    LobbyModel model,
+    GameStatus status,
+  ) {
+    return GameEntity(
+      gameName: model.name,
+      gameCode: gameCode,
+      admin: model.admin,
+      gameStatus: status,
+      startTime: model.startTime,
+      users: model.players
+          .map((e) => OtherUserEntity(username: e.username))
+          .toList(),
+    );
+  }
 }

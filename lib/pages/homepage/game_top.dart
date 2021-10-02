@@ -1,4 +1,5 @@
 // Flutter imports:
+import 'package:assassin_client/controllers/agent_view_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -19,6 +20,8 @@ class GameRoute extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
+    final agent = watch(agentState);
+
     final game = watch(gameState);
     final size = MediaQuery.of(context).size;
 
@@ -35,9 +38,13 @@ class GameRoute extends ConsumerWidget {
               'The assassin game will end in:',
               style: textStyle,
             ),
-            AssassinTimer(
-              startDate: DateTime.parse('2021-09-26T13:53:23.543406Z'),
-              duration: Duration(days: 7),
+            game.fold(
+              () => Center(child: CircularProgressIndicator()),
+              (fail, [fallback]) => Center(),
+              (game) => AssassinTimer(
+                startDate: game.startTime!,
+                duration: Duration(days: 7),
+              ),
             ),
           ],
         ),

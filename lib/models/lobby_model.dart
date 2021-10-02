@@ -7,13 +7,15 @@ part 'lobby_model.g.dart';
 class LobbyModel {
   @JsonKey(name: 'game_name')
   final String name;
-  @JsonKey(name: 'admin_nickame')
-  String? admin;
+  @JsonKey(name: 'admin_nickname')
+  String admin;
+  @JsonKey(name: 'start_time')
+  DateTime? startTime;
   final List<UserLobbyModel> players;
 
   LobbyModel({
     required this.name,
-    this.admin,
+    required this.admin,
     List<UserLobbyModel>? players,
   }) : players = players ?? [];
 
@@ -23,7 +25,7 @@ class LobbyModel {
 
   Map<String, dynamic> toJson() => _$LobbyModelToJson(this);
 
-  bool isAdmin(String username) => admin != null && username == admin;
+  bool isAdmin(String username) => username == admin;
 }
 
 @JsonSerializable(explicitToJson: true)
