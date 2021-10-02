@@ -185,7 +185,7 @@ class AssassinPlayerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    // final size = MediaQuery.of(context).size;
 
     final borderRadius = BorderRadius.circular(24);
 

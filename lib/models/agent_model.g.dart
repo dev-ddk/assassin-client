@@ -20,6 +20,7 @@ AgentModel _$AgentModelFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$AgentModelToJson(AgentModel instance) =>
     <String, dynamic>{
+      'codename': instance.codename,
       'target': instance.target,
       'target_propic': instance.targetPropic?.toString(),
       'alive': instance.alive,

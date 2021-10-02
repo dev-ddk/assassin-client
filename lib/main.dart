@@ -1,11 +1,9 @@
 // Flutter imports:
-import 'package:assassin_client/colors.dart';
-import 'package:assassin_client/pages/homepage/report_bug.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 // Package imports:
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -16,6 +14,7 @@ import 'package:assassin_client/pages/game_joining/game_lobby.dart';
 import 'package:assassin_client/pages/game_joining/join_game.dart';
 import 'package:assassin_client/pages/game_joining/join_lobby.dart';
 import 'package:assassin_client/pages/homepage/homepage.dart';
+import 'package:assassin_client/pages/homepage/report_bug.dart';
 import 'package:assassin_client/pages/login.dart';
 import 'package:assassin_client/pages/register.dart';
 

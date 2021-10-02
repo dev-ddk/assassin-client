@@ -27,6 +27,16 @@ class CachedState<L, R> extends ChangeNotifier {
     return set(Right(right));
   }
 
+  T? foldRightOrNull<T>(
+    T? Function(R right) right,
+  ) {
+    if (isRight) {
+      return right(_state.right!);
+    } else {
+      return null;
+    }
+  }
+
   T fold<T>(
     T Function() empty,
     T Function(L left, [R? cache]) left,

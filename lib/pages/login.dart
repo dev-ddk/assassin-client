@@ -2,7 +2,6 @@
 import 'dart:ui';
 
 // Flutter imports:
-import 'package:assassin_client/controllers/agent_view_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

@@ -51,10 +51,14 @@ class GameEntity with _$GameEntity {
 
 @freezed
 class AgentEntity with _$AgentEntity {
+  AgentEntity._();
+
   factory AgentEntity({
     required String agentName,
     String? target,
     @Default(true) bool alive,
     @Default(0) int kills,
   }) = _AgentEntity;
+
+  bool get hasActiveTarget => target != null && alive;
 }

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 // Project imports:
 import 'package:assassin_client/colors.dart';
-import 'package:flutter/services.dart';
 
 class TemplatePage extends StatelessWidget {
   const TemplatePage({
