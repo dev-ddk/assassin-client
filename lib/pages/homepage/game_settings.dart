@@ -29,7 +29,7 @@ class GameSettingsRoute extends ConsumerWidget {
     final user = watch(userState);
 
     return Padding(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
       child: Column(
         children: [
           SizedBox(height: 20),
@@ -39,15 +39,7 @@ class GameSettingsRoute extends ConsumerWidget {
             padding: const EdgeInsets.all(24.0),
             child: Column(
               children: [
-                //Show/Hide Button
-                Consumer(builder: (context, watch, _) {
-                  final rotationState = watch(rotationProvider).state;
-                  return AssassinConfirmButton(
-                    text: rotationState ? 'SHOW ID CARD' : 'HIDE ID CARD',
-                    onPressed: () =>
-                        context.read(rotationProvider).state ^= true,
-                  );
-                }),
+                _buildShowHideButton(),
                 SizedBox(height: 20),
                 AssassinConfirmButton(
                   text: 'REPORT BUG',
@@ -60,6 +52,18 @@ class GameSettingsRoute extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildShowHideButton() {
+    return Consumer(
+      builder: (context, watch, _) {
+        final rotationState = watch(rotationProvider).state;
+        return AssassinConfirmButton(
+          text: rotationState ? 'SHOW ID CARD' : 'HIDE ID CARD',
+          onPressed: () => context.read(rotationProvider).state ^= true,
+        );
+      },
     );
   }
 
