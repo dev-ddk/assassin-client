@@ -28,13 +28,18 @@ class GameRoute extends ConsumerWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        Text(
-          'The assassin game will end in:',
-          style: textStyle,
-        ),
-        AssassinTimer(
-          startDate: DateTime.parse('2021-09-26T13:53:23.543406Z'),
-          duration: Duration(days: 7),
+        Wrap(
+          alignment: WrapAlignment.center,
+          children: [
+            Text(
+              'The assassin game will end in:',
+              style: textStyle,
+            ),
+            AssassinTimer(
+              startDate: DateTime.parse('2021-09-26T13:53:23.543406Z'),
+              duration: Duration(days: 7),
+            ),
+          ],
         ),
         Container(
           alignment: Alignment.center,

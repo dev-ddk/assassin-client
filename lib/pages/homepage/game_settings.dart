@@ -114,6 +114,8 @@ class AgentCard extends ConsumerWidget {
         .bodyText1!
         .copyWith(fontFamily: 'Special Elite', fontSize: 18.0);
 
+    final stepCurve = StepCurve();
+
     return AnimatedContainer(
       duration: duration,
       transformAlignment: Alignment.center,
@@ -130,7 +132,7 @@ class AgentCard extends ConsumerWidget {
           ),
           AnimatedOpacity(
             opacity: rotationState ? 1.0 : 0.0,
-            curve: StepCurve(),
+            curve: stepCurve,
             duration: duration,
             child: Row(
               children: [
@@ -157,6 +159,19 @@ class AgentCard extends ConsumerWidget {
               ],
             ),
           ),
+          AnimatedOpacity(
+            opacity: rotationState ? 0.0 : 1.0,
+            duration: duration,
+            curve: stepCurve,
+            child: Container(
+              padding: const EdgeInsets.all(12.0),
+              alignment: Alignment.center,
+              height: 200,
+              transform: Matrix4.identity()..rotateY(pi),
+              transformAlignment: Alignment.center,
+              child: Image.asset('assets/assassin_logo.png'),
+            ),
+          )
         ]),
       ),
     );
