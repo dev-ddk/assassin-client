@@ -14,8 +14,8 @@ import 'package:assassin_client/widgets/template_page.dart';
 import 'package:assassin_client/widgets/user_input.dart';
 import '../../colors.dart';
 
-class ConfigureLobbyRoute extends ConsumerWidget {
-  ConfigureLobbyRoute({Key? key}) : super(key: key);
+class ConfigureLobbyPage extends ConsumerWidget {
+  ConfigureLobbyPage({Key? key}) : super(key: key);
 
   final _formKey = GlobalKey<FormState>();
   final lobbynameController = TextEditingController();
@@ -43,7 +43,7 @@ class ConfigureLobbyRoute extends ConsumerWidget {
     );
 
     return TemplatePage(
-      title: 'CONFIGURE LOBBY',
+      title: 'CREATE LOBBY',
       child: Padding(
         padding: EdgeInsets.all(12.0),
         child: Form(

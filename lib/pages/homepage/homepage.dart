@@ -1,5 +1,6 @@
 // Flutter imports:
 import 'package:assassin_client/controllers/agent_view_controller.dart';
+import 'package:assassin_client/entities/entities.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +14,7 @@ import 'package:assassin_client/colors.dart';
 import 'package:assassin_client/controllers/game_view_controller.dart';
 import 'package:assassin_client/models/game_status_model.dart';
 import 'package:assassin_client/pages/game_joining/game_lobby.dart';
-import 'package:assassin_client/pages/game_joining/join_game.dart';
+import 'package:assassin_client/pages/homepage/join_game.dart';
 import 'package:assassin_client/pages/homepage/game_settings.dart';
 import 'package:assassin_client/pages/homepage/game_top.dart';
 import 'package:assassin_client/pages/homepage/target.dart';
@@ -21,8 +22,8 @@ import 'package:assassin_client/utils/failures.dart';
 import 'package:assassin_client/widgets/periodic_task_scope.dart';
 import 'package:assassin_client/widgets/template_page.dart';
 
-class HomePageRoute extends ConsumerWidget {
-  const HomePageRoute({Key? key}) : super(key: key);
+class HomepagePage extends ConsumerWidget {
+  const HomepagePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
@@ -31,43 +32,81 @@ class HomePageRoute extends ConsumerWidget {
     return PeriodicTaskScope(
       provider: agentUpdater,
       child: game.fold(
-        () => const TemplatePage(
-          title: 'ASSASSIN',
-          child: Center(child: CircularProgressIndicator()),
-        ),
+        () => _buildLoading(),
         (error, [fallback]) {
           switch (error.runtimeType) {
             case StatusFailure:
-              return const JoinGameRoute();
+              return _buildNotInLobby();
             default:
-              return TemplatePage(title: error.message);
+              return _buildError(error);
           }
         },
         (game) {
           if (game.gameStatus == GameStatus.WAITING) {
-            return const GameLobbyRoute();
+            return _buildLobby(game);
+          } else {
+            return _buildGame(game);
           }
-
-          return HomePage(lobbyName: game.gameName.toUpperCase());
         },
       ),
+    );
+  }
+
+  Widget _buildLoading() {
+    return const TemplatePage(
+      title: 'ASSASSIN',
+      child: Center(child: CircularProgressIndicator()),
+    );
+  }
+
+  Widget _buildError(Failure error) {
+    return TemplatePage(title: error.message);
+  }
+
+  Widget _buildNotInLobby() {
+    final pages = {
+      const JoinGamePage(): FontAwesomeIcons.gamepad,
+      const GameSettingsPage(): Icons.settings,
+    };
+
+    return HomePage(lobbyName: 'ASSASSIN', pages: pages);
+  }
+
+  Widget _buildLobby(GameEntity game) {
+    final pages = {
+      const GameLobbyPage(): FontAwesomeIcons.gamepad,
+      const GameSettingsPage(): Icons.settings,
+    };
+
+    return HomePage(
+      lobbyName: game.gameName.toUpperCase(),
+      pages: pages,
+    );
+  }
+
+  Widget _buildGame(GameEntity game) {
+    final pages = {
+      const GameRecapPage(): FontAwesomeIcons.users,
+      const TargetRoute(): FontAwesomeIcons.skullCrossbones,
+      const GameSettingsPage(): Icons.settings,
+    };
+
+    return HomePage(
+      lobbyName: game.gameName.toUpperCase(),
+      pages: pages,
     );
   }
 }
 
 class HomePage extends ConsumerWidget {
   final String lobbyName;
+  final Map<Widget, IconData> pages;
 
   HomePage({
     Key? key,
     required this.lobbyName,
+    required this.pages,
   }) : super(key: key);
-
-  final Map<Widget, IconData> pages = {
-    const GameRoute(): FontAwesomeIcons.users,
-    const TargetRoute(): FontAwesomeIcons.skullCrossbones,
-    const GameSettingsRoute(): Icons.settings,
-  };
 
   final controllerProvider = ChangeNotifierProvider((ref) => PageController());
   static const duration = Duration(milliseconds: 300);

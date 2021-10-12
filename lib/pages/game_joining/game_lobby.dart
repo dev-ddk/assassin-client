@@ -17,8 +17,8 @@ import 'package:assassin_client/providers/providers.dart';
 import 'package:assassin_client/widgets/template_page.dart';
 import 'package:assassin_client/widgets/user_input.dart';
 
-class GameLobbyRoute extends ConsumerWidget {
-  const GameLobbyRoute({Key? key}) : super(key: key);
+class GameLobbyPage extends ConsumerWidget {
+  const GameLobbyPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {

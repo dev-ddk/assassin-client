@@ -7,8 +7,8 @@ import 'package:assassin_client/colors.dart';
 import 'package:assassin_client/widgets/template_page.dart';
 import 'package:assassin_client/widgets/user_input.dart';
 
-class ReportBugRoute extends StatelessWidget {
-  const ReportBugRoute({Key? key}) : super(key: key);
+class ReportBugPage extends StatelessWidget {
+  const ReportBugPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

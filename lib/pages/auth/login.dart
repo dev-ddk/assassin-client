@@ -19,8 +19,8 @@ import 'package:assassin_client/main.dart';
 import 'package:assassin_client/utils/login_utils.dart';
 import 'package:assassin_client/widgets/user_input.dart';
 
-class LoginRoute extends StatelessWidget {
-  const LoginRoute({Key? key}) : super(key: key);
+class LoginPage extends StatelessWidget {
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

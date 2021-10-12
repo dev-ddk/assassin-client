@@ -1,4 +1,5 @@
 // Flutter imports:
+import 'package:assassin_client/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -6,17 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:page_transition/page_transition.dart';
-
-// Project imports:
-import 'package:assassin_client/pages/edit_profile.dart';
-import 'package:assassin_client/pages/game_joining/configure_lobby.dart';
-import 'package:assassin_client/pages/game_joining/game_lobby.dart';
-import 'package:assassin_client/pages/game_joining/join_game.dart';
-import 'package:assassin_client/pages/game_joining/join_lobby.dart';
-import 'package:assassin_client/pages/homepage/homepage.dart';
-import 'package:assassin_client/pages/homepage/report_bug.dart';
-import 'package:assassin_client/pages/login.dart';
-import 'package:assassin_client/pages/register.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,13 +18,13 @@ void main() async {
 final Map<String, Widget> routes = {
   '/': const LoginRoute(),
   '/register': const RegisterRoute(),
+  '/report_bug': const ReportBugRoute(),
   '/homepage': const HomePageRoute(),
-  '/homepage/report_bug': const ReportBugRoute(),
-  '/homepage/join-game': const JoinGameRoute(),
-  '/homepage/join-game/join-lobby': const JoinLobbyRoute(), //TODO: ??
-  '/homepage/join-game/configure-lobby': ConfigureLobbyRoute(),
-  '/homepage/join-game/lobby': const GameLobbyRoute(),
-  '/edit-profile': const EditProfileRoute(),
+  '/join-game': const JoinGameRoute(),
+  '/join-lobby': const JoinLobbyRoute(),
+  '/create-lobby': const ConfigureLobbyRoute(),
+  // '/homepage/join-game/lobby': const GameLobbyRoute(),
+  // '/edit-profile': const EditProfileRoute(),
 };
 
 final firebaseProvider = FutureProvider<FirebaseApp>(
@@ -55,10 +45,10 @@ class AssassinApp extends ConsumerWidget {
         //TODO: error handling
         child: routes[settings.name]!,
 
-        type: PageTransitionType.fade,
+        type: PageTransitionType.bottomToTop,
         alignment: Alignment.center,
-        reverseDuration: const Duration(milliseconds: 400),
-        duration: const Duration(milliseconds: 400),
+        reverseDuration: const Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
         settings: settings,
       ),
@@ -67,7 +57,10 @@ class AssassinApp extends ConsumerWidget {
 
   ThemeData _buildTheme(context) {
     return ThemeData(
-      appBarTheme: AppBarTheme(systemOverlayStyle: SystemUiOverlayStyle.dark),
+      appBarTheme: AppBarTheme(
+          systemOverlayStyle: SystemUiOverlayStyle.dark.copyWith(
+        statusBarColor: Colors.transparent,
+      )),
       primarySwatch: Colors.blue,
       fontFamily: 'Open Sans',
       textTheme: const TextTheme(

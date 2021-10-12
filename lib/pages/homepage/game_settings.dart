@@ -23,8 +23,8 @@ import 'package:assassin_client/widgets/user_input.dart';
 
 final rotationProvider = StateProvider<bool>((ref) => true);
 
-class GameSettingsRoute extends ConsumerWidget {
-  const GameSettingsRoute({Key? key}) : super(key: key);
+class GameSettingsPage extends ConsumerWidget {
+  const GameSettingsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
@@ -51,8 +51,7 @@ class GameSettingsRoute extends ConsumerWidget {
                 AssassinConfirmButton(
                   text: 'REPORT BUG',
                   heroTag: 'REPORT BUG',
-                  onPressed: () =>
-                      Navigator.pushNamed(context, '/homepage/report_bug'),
+                  onPressed: () => Navigator.pushNamed(context, '/report_bug'),
                 ),
                 SizedBox(height: 20),
                 AssassinConfirmButton(

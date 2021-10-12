@@ -2,10 +2,10 @@
 import 'dart:ui';
 
 // Flutter imports:
+import 'package:assassin_client/widgets/template_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 // Package imports:
 import 'package:firebase_auth/firebase_auth.dart';
@@ -21,53 +21,36 @@ import 'package:assassin_client/providers/providers.dart';
 import 'package:assassin_client/utils/login_utils.dart';
 import 'package:assassin_client/widgets/user_input.dart';
 
-class LoginRoute extends StatelessWidget {
-  const LoginRoute({Key? key}) : super(key: key);
+class LoginPage extends StatelessWidget {
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
-      child: LayoutBuilder(
-        builder: (context, constraints) => Scaffold(
-          backgroundColor: assassinDarkestBlue,
-          body: SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: constraints.copyWith(
-                minHeight: constraints.maxHeight,
-                maxHeight: double.infinity,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(14.0),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    _buildBody(constraints),
-                    _buildRegisterButton(context),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
+    return TemplatePage(
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          _buildBody(),
+          _buildRegisterButton(context),
+        ],
       ),
     );
   }
 
-  Widget _buildBody(constraints) {
+  Widget _buildBody() {
     return Column(
       children: [
         const Logo(),
         const SizedBox(height: 40),
         const LoginForm(),
-        const SizedBox(height: 20),
-        // _buildSocialLoginButtons(context),
+        const SizedBox(height: 40),
+        _buildSocialLoginButtons(),
       ],
     );
   }
 
   // ignore: unused_element
-  Widget _buildSocialLoginButtons(context) {
+  Widget _buildSocialLoginButtons() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -299,7 +282,7 @@ class SocialLoginButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: RawMaterialButton(
-        onPressed: () {},
+        onPressed: null,
         elevation: 2.0,
         fillColor: Colors.white,
         padding: const EdgeInsets.all(15.0),

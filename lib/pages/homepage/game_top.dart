@@ -12,12 +12,11 @@ import 'package:timer_builder/timer_builder.dart';
 import 'package:assassin_client/colors.dart';
 import 'package:assassin_client/controllers/game_view_controller.dart';
 import 'package:assassin_client/entities/entities.dart';
-import 'package:assassin_client/pages/game_joining/game_lobby.dart';
 import 'package:assassin_client/utils/cached_state.dart';
 import 'package:assassin_client/utils/failures.dart';
 
-class GameRoute extends ConsumerWidget {
-  const GameRoute({Key? key}) : super(key: key);
+class GameRecapPage extends ConsumerWidget {
+  const GameRecapPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {

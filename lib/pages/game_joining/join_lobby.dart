@@ -13,8 +13,8 @@ import 'package:assassin_client/widgets/template_page.dart';
 import 'package:assassin_client/widgets/user_input.dart';
 import '../../colors.dart';
 
-class JoinLobbyRoute extends ConsumerWidget {
-  const JoinLobbyRoute({Key? key}) : super(key: key);
+class JoinLobbyPage extends ConsumerWidget {
+  const JoinLobbyPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
