@@ -23,6 +23,8 @@ final Map<String, Widget> routes = {
   '/join-game': const JoinGameRoute(),
   '/join-lobby': const JoinLobbyRoute(),
   '/create-lobby': const ConfigureLobbyRoute(),
+  '/notification-testing': const NotificationTestingRoute(),
+
   // '/homepage/join-game/lobby': const GameLobbyRoute(),
   // '/edit-profile': const EditProfileRoute(),
 };

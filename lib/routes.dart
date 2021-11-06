@@ -4,6 +4,7 @@ import 'package:assassin_client/pages/game_joining/join_lobby.dart';
 import 'package:assassin_client/pages/homepage/homepage.dart';
 import 'package:assassin_client/pages/homepage/report_bug.dart';
 import 'package:assassin_client/pages/login.dart';
+import 'package:assassin_client/pages/notification_test.dart';
 import 'package:assassin_client/pages/register.dart';
 import 'package:flutter/material.dart';
 
@@ -54,4 +55,11 @@ class ConfigureLobbyRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ConfigureLobbyPage();
+}
+
+class NotificationTestingRoute extends StatelessWidget {
+  const NotificationTestingRoute({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => NotificationTestingPage();
 }
