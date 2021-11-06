@@ -10,30 +10,7 @@ import 'package:assassin_client/utils/login_utils.dart';
 
 var logger = Logger(printer: PrettyPrinter());
 
-class LobbyRepository {
-  final RemoteLobbyStorage _remoteLobbyStorage;
-
-  LobbyRepository(this._remoteLobbyStorage);
-
-  Future<Either<Failure, LobbyModel>> createAndJoinLobby(
-      String lobbyName) async {
-    return await _remoteLobbyStorage
-        .createGame(lobbyName)
-        .thenRight((lobbyCode) => lobbyInfo(lobbyCode));
-  }
-
-  Future<Either<Failure, LobbyModel>> joinLobby(String lobbyCode) async {
-    return await _remoteLobbyStorage
-        .joinGame(lobbyCode)
-        .thenRight((_) => lobbyInfo(lobbyCode));
-  }
-
-  Future<Either<Failure, LobbyModel>> lobbyInfo(String lobbyCode) async {
-    return await _remoteLobbyStorage.gameInfo(lobbyCode);
-  }
-}
-
-abstract class RemoteLobbyStorage {
+abstract class LobbyDataSource {
   Future<Either<Failure, String>> createGame(String lobbyName);
 
   Future<Either<Failure, void>> joinGame(String lobbyCode);
@@ -41,22 +18,31 @@ abstract class RemoteLobbyStorage {
   Future<Either<Failure, LobbyModel>> gameInfo(String lobbyCode);
 }
 
-class RemoteLobbyStorageImpl implements RemoteLobbyStorage {
+class LobbyRemoteStorage implements LobbyDataSource {
   @override
-  Future<Either<Failure, String>> createGame(String lobbyName) async {
+  Future<Either<Failure, String>> createGame(
+    String lobbyName,
+  ) async {
     final dio = Dio(baseOptions());
+
     return authenticateRequest(dio)
         .thenRight((dio) => _createGameRequest(dio, lobbyName));
   }
 
   Future<Either<Failure, String>> _createGameRequest(
-      Dio dio, String lobbyName) async {
+    Dio dio,
+    String lobbyName,
+  ) async {
     try {
-      final response =
-          await dio.post('create_game', data: {'game_name': lobbyName});
+      final response = await dio.post(
+        'create_game',
+        data: {'game_name': lobbyName},
+      );
 
       logger.i('/create_game success\nResponse: ${response.data}');
-      return Right(response.data['game_id']);
+      logger.d(response.data);
+
+      return Right(response.data['gameCode']);
     } on DioError catch (e) {
       final response = e.response;
 
@@ -85,20 +71,32 @@ class RemoteLobbyStorageImpl implements RemoteLobbyStorage {
   }
 
   @override
-  Future<Either<Failure, void>> joinGame(String lobbyCode) async {
+  Future<Either<Failure, void>> joinGame(
+    String lobbyCode,
+  ) async {
     final dio = Dio(baseOptions());
+
     return authenticateRequest(dio)
         .thenRight((dio) => _joinGameRequest(dio, lobbyCode));
   }
 
   Future<Either<Failure, void>> _joinGameRequest(
-      Dio dio, String lobbyCode) async {
+    Dio dio,
+    String lobbyCode,
+  ) async {
     try {
-      await dio.get('join_game', queryParameters: {'game_id': lobbyCode});
+      final response = await dio.get(
+        'join_game',
+        queryParameters: {'gameCode': lobbyCode},
+      );
+
+      logger.i(response);
+      logger.d(response.data);
+
       return Right(null);
     } on DioError catch (e) {
       final response = e.response;
-      print(response);
+
       if (response != null) {
         if (response.statusCode == 404) {
           return Left(
@@ -133,23 +131,32 @@ class RemoteLobbyStorageImpl implements RemoteLobbyStorage {
   }
 
   @override
-  Future<Either<Failure, LobbyModel>> gameInfo(String lobbyCode) async {
+  Future<Either<Failure, LobbyModel>> gameInfo(
+    String lobbyCode,
+  ) async {
     final dio = Dio(baseOptions());
+
     return authenticateRequest(dio)
         .thenRight((dio) => _gameInfoRequest(dio, lobbyCode));
   }
 
   Future<Either<Failure, LobbyModel>> _gameInfoRequest(
-      Dio dio, String lobbyName) async {
+    Dio dio,
+    String lobbyCode,
+  ) async {
     try {
-      final response =
-          await dio.get('game_info', queryParameters: {'game_id': lobbyName});
-      logger.i('/join_game: response code ${response.statusCode}');
+      final response = await dio.get(
+        'game_info',
+        queryParameters: {'gameCode': lobbyCode},
+      );
+
+      logger.i('/game_info: response code ${response.statusCode}');
       logger.d(response.data);
+
       return Right(LobbyModel.fromJson(response.data));
     } on DioError catch (e) {
       final response = e.response;
-      print(response);
+
       if (response != null) {
         if (response.statusCode == 404) {
           return Left(

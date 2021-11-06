@@ -1,6 +1,5 @@
 // Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 // Project imports:
 import 'package:assassin_client/colors.dart';
@@ -8,54 +7,84 @@ import 'package:assassin_client/colors.dart';
 class TemplatePage extends StatelessWidget {
   const TemplatePage({
     Key? key,
-    required this.title,
+    this.title,
     this.child,
     this.appBarActions = const [],
     this.bottomNavigationBar,
   }) : super(key: key);
 
-  final String title;
+  final String? title;
   final Widget? child;
   final List<Widget> appBarActions;
   final Widget? bottomNavigationBar;
 
   @override
   Widget build(BuildContext context) {
-    final appbar = AppBar(
-      centerTitle: true,
-      backwardsCompatibility: false,
-      backgroundColor: assassinWhite,
-      foregroundColor: assassinDarkestBlue,
-      actions: appBarActions,
-      title: Text(
-        title,
-        style: Theme.of(context)
-            .textTheme
-            .headline5!
-            .copyWith(color: assassinDarkestBlue),
-      ),
+    final iconTheme = IconTheme.of(context).copyWith(
+      color: assassinDarkestBlue,
     );
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-      ),
-      child: LayoutBuilder(
-        builder: (context, constraints) => Scaffold(
-          appBar: appbar,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final topBar =
+            title != null ? _buildTopBar(context, constraints) : null;
+
+        return Scaffold(
           backgroundColor: assassinDarkestBlue,
           bottomNavigationBar: bottomNavigationBar,
-          body: SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: constraints.copyWith(
-                minHeight: constraints.maxHeight -
-                    appbar.preferredSize.height -
-                    (bottomNavigationBar != null ? 110 : 35),
-                maxHeight: double.infinity,
+          body: CustomScrollView(
+            slivers: [
+              if (title != null)
+                SliverAppBar(
+                  actionsIconTheme: iconTheme,
+                  iconTheme: iconTheme,
+                  pinned: true,
+                  snap: true,
+                  floating: true,
+                  backgroundColor: Colors.transparent,
+                  foregroundColor: assassinDarkestBlue,
+                  actions: appBarActions,
+                  flexibleSpace: topBar,
+                ),
+              SliverToBoxAdapter(
+                child: ConstrainedBox(
+                  constraints: constraints.copyWith(
+                    minHeight: constraints.maxHeight -
+                        (bottomNavigationBar != null ? 75 : 0) -
+                        (title != null ? 95 : 0),
+                    maxHeight: double.infinity,
+                  ),
+                  child: child,
+                ),
               ),
-              child: child,
-            ),
+            ],
           ),
+        );
+      },
+    );
+  }
+
+  Widget _buildTopBar(BuildContext context, BoxConstraints constraints) {
+    return Hero(
+      tag: title!,
+      child: Container(
+        alignment: Alignment.bottomCenter,
+        padding: const EdgeInsets.only(bottom: 16),
+        width: constraints.maxWidth,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(24),
+          ),
+          color: assassinWhite,
+        ),
+        child: Text(
+          title!,
+          textAlign: TextAlign.center,
+          style: Theme.of(context)
+              .textTheme
+              .headline5!
+              .copyWith(color: assassinDarkestBlue),
         ),
       ),
     );

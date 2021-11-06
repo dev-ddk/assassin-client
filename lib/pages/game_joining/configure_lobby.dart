@@ -10,13 +10,12 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // Project imports:
 import 'package:assassin_client/providers/providers.dart';
 import 'package:assassin_client/utils/failures.dart';
-import 'package:assassin_client/widgets/buttons.dart';
-import 'package:assassin_client/widgets/form_fields.dart';
 import 'package:assassin_client/widgets/template_page.dart';
+import 'package:assassin_client/widgets/user_input.dart';
 import '../../colors.dart';
 
-class ConfigureLobbyRoute extends ConsumerWidget {
-  ConfigureLobbyRoute({Key? key}) : super(key: key);
+class ConfigureLobbyPage extends ConsumerWidget {
+  ConfigureLobbyPage({Key? key}) : super(key: key);
 
   final _formKey = GlobalKey<FormState>();
   final lobbynameController = TextEditingController();
@@ -27,7 +26,8 @@ class ConfigureLobbyRoute extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    final maxPlayers = watch(maxPlayersProvider).state;
+    // final maxPlayers = watch(maxPlayersProvider).state;
+
     final textStyle =
         Theme.of(context).textTheme.bodyText2!.copyWith(color: assassinWhite);
 
@@ -43,7 +43,7 @@ class ConfigureLobbyRoute extends ConsumerWidget {
     );
 
     return TemplatePage(
-      title: 'CONFIGURE LOBBY',
+      title: 'CREATE LOBBY',
       child: Padding(
         padding: EdgeInsets.all(12.0),
         child: Form(
@@ -59,7 +59,7 @@ class ConfigureLobbyRoute extends ConsumerWidget {
               const SizedBox(height: 4),
               dropdownButton,
               const SizedBox(height: 60),
-              _buildConfirmButton(context, maxPlayers),
+              _buildConfirmButton(context),
             ],
           ),
         ),
@@ -67,7 +67,7 @@ class ConfigureLobbyRoute extends ConsumerWidget {
     );
   }
 
-  Widget _buildConfirmButton(BuildContext context, maxPlayers) {
+  Widget _buildConfirmButton(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40.0),
       child: AssassinConfirmButton(
@@ -75,12 +75,15 @@ class ConfigureLobbyRoute extends ConsumerWidget {
         onPressed: () async {
           if (_formKey.currentState!.validate()) {
             final lobbyname = lobbynameController.text;
-            final lobbyRepo = context.read(lobbyProvider);
+            final lobbyVC = context.read(gameViewCntrl);
 
-            await lobbyRepo.createAndJoinLobby(lobbyname).fold(
-                  (failure) => _handleError(context, failure),
-                  (_) => Navigator.pushNamed(context, '/homepage/'),
-                );
+            await lobbyVC.createGame(lobbyname).fold(
+              (failure) => _handleError(context, failure),
+              (lobby) {
+                Navigator.popUntil(context, (route) => false);
+                Navigator.pushNamed(context, '/homepage/join-game/lobby');
+              },
+            );
           }
         },
       ),

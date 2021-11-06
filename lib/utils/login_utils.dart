@@ -1,12 +1,23 @@
 // Package imports:
 import 'package:dio/dio.dart';
 import 'package:either_dart/either.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:logger/logger.dart';
 
 // Project imports:
 import 'failures.dart';
+
+final String? Function(dynamic) emailValidator = (value) {
+  if (value?.isEmpty) {
+    return 'email must not be empty';
+  }
+  return EmailValidator.validate(value) ? null : 'invalid email';
+};
+
+final passwordValidator =
+    (value) => value?.isEmpty ? 'password must not be empty' : null;
 
 final _auth = FirebaseAuth.instance;
 
@@ -29,6 +40,7 @@ BaseOptions baseOptions({contentType = 'application/json'}) {
 
 Future<Either<Failure, Dio>> authenticateRequest(Dio dio) async {
   final token = await _auth.currentUser?.getIdToken();
+
   if (token == null) {
     return Left(
       AuthFailure.log(

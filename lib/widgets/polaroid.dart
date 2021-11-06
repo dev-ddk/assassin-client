@@ -17,18 +17,27 @@ final rotationProvider = StateProvider<bool>((ref) => false);
 /// without resorting to a complex implementation with an AnimationController
 
 class Polaroid extends ConsumerWidget {
-  const Polaroid({
-    Key? key,
-    this.targetLabel,
-    this.targetPicture,
-    required this.animateDuration,
-    this.description,
-  }) : super(key: key);
+  const Polaroid.target(
+      {Key? key,
+      required this.targetLabel,
+      required this.targetPicture,
+      required this.animateDuration})
+      : withTarget = true,
+        description = null,
+        super(key: key);
+
+  const Polaroid.description(
+      {Key? key, required this.description, required this.animateDuration})
+      : withTarget = false,
+        targetPicture = null,
+        targetLabel = null,
+        super(key: key);
 
   final String? targetLabel;
   final Widget? targetPicture;
   final Duration animateDuration;
   final String? description;
+  final bool withTarget;
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
@@ -51,11 +60,8 @@ class Polaroid extends ConsumerWidget {
             children: [
               _buildBack(),
               _buildSheet(rotationState),
-              if (targetLabel != null && targetPicture != null)
-                _buildTarget(rotationState, size, context),
-              if (targetLabel == null &&
-                  targetPicture == null &&
-                  description != null)
+              if (withTarget) _buildTarget(rotationState, size, context),
+              if (!withTarget)
                 AnimatedOpacity(
                   curve: StepCurve(),
                   duration: animateDuration,
@@ -67,8 +73,9 @@ class Polaroid extends ConsumerWidget {
                     child: Text(
                       description!,
                       softWrap: true,
-                      style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                      style: Theme.of(context).textTheme.bodyText1!.copyWith(
                             fontFamily: 'Special Elite',
+                            height: 1.3,
                           ),
                     ),
                   ),
@@ -124,10 +131,12 @@ class Polaroid extends ConsumerWidget {
       duration: animateDuration,
       opacity: rotationState ? 1 : 0,
       child: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.only(top: 24.0, left: 24.0),
         child: Container(
           transformAlignment: Alignment.center,
-          transform: Matrix4.identity()..rotateZ(pi / 32),
+          transform: Matrix4.identity()
+            ..rotateZ(pi / 32)
+            ..translate(-10.0, -20.0),
           color: assassinBlue,
         ),
       ),

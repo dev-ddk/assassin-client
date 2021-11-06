@@ -18,7 +18,7 @@ extension GameStatusGettersAndSetters on GameStatus {
 
   static GameStatus? fromString(String string) {
     switch (string) {
-      case 'WAITING':
+      case 'WAITING_FOR_PLAYERS':
         return GameStatus.WAITING;
       case 'ACTIVE':
         return GameStatus.ACTIVE;

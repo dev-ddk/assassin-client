@@ -3,73 +3,81 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
-import 'package:either_dart/src/future_extension.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/src/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // Project imports:
 import 'package:assassin_client/providers/providers.dart';
-import 'package:assassin_client/utils/failures.dart';
-import 'package:assassin_client/widgets/buttons.dart';
-import 'package:assassin_client/widgets/form_fields.dart';
+import 'package:assassin_client/utils/regex.dart';
 import 'package:assassin_client/widgets/template_page.dart';
+import 'package:assassin_client/widgets/user_input.dart';
 import '../../colors.dart';
 
-class JoinLobbyRoute extends StatelessWidget {
-  JoinLobbyRoute({Key? key}) : super(key: key);
-
-  final lobbynameController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+class JoinLobbyPage extends ConsumerWidget {
+  const JoinLobbyPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final textStyle =
-        Theme.of(context).textTheme.headline6!.copyWith(color: assassinWhite);
+  Widget build(BuildContext context, ScopedReader watch) {
     return TemplatePage(
       title: 'JOIN LOBBY',
       child: Padding(
-        padding: EdgeInsets.all(12.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Insert the code\nof the lobby',
-                style: textStyle,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 60),
-              _buildLobbyNameField(context),
-              const SizedBox(height: 60),
-              _buildConfirmButton(context),
-            ],
-          ),
-        ),
+        padding: const EdgeInsets.all(24.0),
+        child: Center(child: LobbyCodeForm()),
+      ),
+    );
+  }
+}
+
+class LobbyCodeForm extends StatefulWidget {
+  const LobbyCodeForm({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  _LobbyCodeFormState createState() => _LobbyCodeFormState();
+}
+
+class _LobbyCodeFormState extends State<LobbyCodeForm> {
+  final _formKey = GlobalKey<FormState>();
+  final _lobbyNameController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    final style =
+        Theme.of(context).textTheme.bodyText2!.copyWith(color: assassinWhite);
+
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          Text('LobbyCode', textAlign: TextAlign.center, style: style),
+          const SizedBox(height: 10),
+          _buildLobbyNameField(),
+          const SizedBox(height: 40),
+          _buildConfirmButton(context),
+        ],
       ),
     );
   }
 
   Widget _buildConfirmButton(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 40.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: AssassinConfirmButton(
         text: 'JOIN GAME',
         onPressed: () async {
-          final formState = _formKey.currentState!;
-          final lobbyCode = lobbynameController.text;
-          print('premuto');
-          if (formState.validate()) {
-            await context.read(lobbyProvider).joinLobby(lobbyCode).fold(
-                (failure) => _handleError(context, failure),
-                (_) => Navigator.pushNamed(
-                    context, '/homepage/joingame/game-lobby'));
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('LobbyCode null!'),
+          if (_formKey.currentState!.validate()) {
+            //TODO: finish
+            final result = await context
+                .read(gameViewCntrl)
+                .joinGame(_lobbyNameController.text);
+
+            result.fold(
+              (error) => ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Failed to join lobby')),
               ),
+              (newLobby) =>
+                  Navigator.pushNamed(context, '/homepage/join-game/lobby'),
             );
           }
         },
@@ -77,47 +85,14 @@ class JoinLobbyRoute extends StatelessWidget {
     );
   }
 
-  void _handleError(BuildContext context, Failure failure) {
-    if (failure is AuthFailure) {
-      Navigator.of(context).popUntil((route) => route.isFirst);
-    } else if (failure is RequestFailure) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-              'We had problem to process your request (${failure.response.statusCode})! Please try again'),
-        ),
-      );
-    } else if (failure is LobbyNotExistsFailure) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('This lobby does not exists'),
-        ),
-      );
-    } else if (failure is DioNetworkFailure) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Network Error!'),
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error!'),
-        ),
-      );
-    }
-  }
-
-  Widget _buildLobbyNameField(BuildContext context) {
-    // alphanumeric characters (only uppercase)
-    final regex = RegExp(r'([0-9]|[A-Z])+');
-
+  Widget _buildLobbyNameField() {
     return AssassinFormField(
       icon: FontAwesomeIcons.gamepad,
-      controller: lobbynameController,
+      controller: _lobbyNameController,
       hintText: 'Casa Surace',
       validator: (value) {
-        if (!regex.hasMatch(value ?? '')) {
+        //TODO: fix
+        if (lobbyRegex.hasMatch(value ?? '')) {
           return 'Invalid lobby code';
         }
         return null;
